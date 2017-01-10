@@ -1,30 +1,8 @@
-<h1 align="center">
-  <br>
-	<img width="800" src="https://cloud.githubusercontent.com/assets/4281887/14516854/792107ac-0231-11e6-95dd-86bb2b5197e3.png">
-	<br>
-  <br>
-  <br>
-</h1>
-
-[![Dependency Status](https://img.shields.io/david/lvarayut/relay-fullstack.svg)](https://github.com/lvarayut/relay-fullstack)
-[![devDependency Status](https://img.shields.io/david/dev/lvarayut/relay-fullstack.svg)](https://github.com/lvarayut/relay-fullstack)
-> Relay Fullstack is a Relay scaffolding application that aims to help you get up and running a project without worrying about integrating tools. It comes with many modern technologies; Relay, GraphQL, Express, ES6/ES7, JSX, Webpack, Babel, Material Design Lite, and PostCSS. Relay Fullstack is also using [Hot-reload](https://github.com/gaearon/react-transform-hmr) to real time update the screen whenever any code changes.
-
-## Example
-![Demo](https://cloud.githubusercontent.com/assets/4281887/13377800/9c4705a2-de1d-11e5-82cb-745e16d5b1c4.gif)
-> Check out the [Live demo](http://relay-fullstack.herokuapp.com) on Heroku.
-
 ## Usage
 
-### Basic
-
-The basic installation contains only general technologies needed by most of the projects, Relay Fullstack is totally unopinionated. If you wanted to include a database, flow, or any specific technologies, please see the [Advance](#advance) section.
+#### Basic
 
 Clone the repository to your local directory
-```bash
-$ git clone https://github.com/lvarayut/relay-fullstack.git
-$ cd relay-fullstack
-```
 
 Install all dependencies & Start developing
 ```bash
@@ -33,28 +11,6 @@ $ npm start
 ```
 
 Launch your favorite web browser and go to `http://localhost:3000` for Relay application or `http://localhost:8000` for GraphiQL.
-
-### Advance
-
-Relay Fullstack is integrated with Yeoman that allows you to choose technologies that suit your needs, the options are including database, flow, and etc.
-
-Install `yo` and [generator-relay-fullstack](https://www.npmjs.com/package/generator-relay-fullstack) globally
-
-```bash
-$ npm install -g yo generator-relay-fullstack
-```
-
-Create a new directory and start the generator, it will prompt some questions to help you get up and running
-
-```bash
-$ mkdir relay-fullstack && cd $_
-$ yo relay-fullstack
-$ npm start
-```
-
-Launch your favorite web browser and go to `http://localhost:3000` for Relay application or `http://localhost:8000` for GraphiQL.
-
-> NOTE: generator-relay-fullstack is currently working with minimal functionalities. Database, Flow, and Sub-generator are work-in-progress.
 
 ## Deployment
 
@@ -139,8 +95,6 @@ $ npm run update
 [JSX]( https://facebook.github.io/react/docs/jsx-in-depth.html) - JSX is a JavaScript syntax extension that looks similar to XML. You can use a simple JSX syntactic transform with React.
 
 ### Designs
-[Material Design Lite](http://getmdl.io) - Material Design Lite lets you add a Material Design look and feel to your websites.
-
 [PostCSS](http://postcss.org) - PostCSS is a tool for transforming CSS with JavaScript. It has roughly 200 plugins to help you write CSS easier.
 
 ### Additional Tools
@@ -158,24 +112,4 @@ $ npm run update
 
 [CSS Modules](https://github.com/css-modules/css-modules) - CSS file in which all class names and animation names are scoped locally by default.
 
-## Credits
-- Relay Fullstack is inspired by [relay-starter-kit](https://github.com/relayjs/relay-starter-kit). Please take a look at the original code to learn more.
-- Handcrafted with ♥ by Varayut Lerdkanlayanawat.
 
-## Contributors
-
-[<img alt="lvarayut" src="https://avatars.githubusercontent.com/u/4281887?v=3&s=117" width="117">](https://github.com/lvarayut) |[<img alt="maksugr" src="https://avatars.githubusercontent.com/u/8699120?v=3&s=117" width="117">](https://github.com/maksugr) |[<img alt="ianaya89" src="https://avatars.githubusercontent.com/u/3258966?v=3&s=117" width="117">](https://github.com/ianaya89) |[<img alt="crucialfelix" src="https://avatars.githubusercontent.com/u/218738?v=3&s=117" width="117">](https://github.com/crucialfelix) |[<img alt="jg123" src="https://avatars.githubusercontent.com/u/693277?v=3&s=117" width="117">](https://github.com/jg123) |[<img alt="jtfell" src="https://avatars.githubusercontent.com/u/6702746?v=3&s=117" width="117">](https://github.com/jtfell) |
-:---: |:---: |:---: |:---: |:---: |:---: |
-[lvarayut](https://github.com/lvarayut) |[maksugr](https://github.com/maksugr) |[ianaya89](https://github.com/ianaya89) |[crucialfelix](https://github.com/crucialfelix) |[jg123](https://github.com/jg123) |[jtfell](https://github.com/jtfell) |
-
-[<img alt="arnif" src="https://avatars.githubusercontent.com/u/1312916?v=3&s=117" width="117">](https://github.com/arnif) |[<img alt="kkostov" src="https://avatars.githubusercontent.com/u/4718042?v=3&s=117" width="117">](https://github.com/kkostov) |[<img alt="lexun" src="https://avatars.githubusercontent.com/u/1910143?v=3&s=117" width="117">](https://github.com/lexun) |[<img alt="narongdejsrn" src="https://avatars.githubusercontent.com/u/1563323?v=3&s=117" width="117">](https://github.com/narongdejsrn) |[<img alt="ncrmro" src="https://avatars.githubusercontent.com/u/8276365?v=3&s=117" width="117">](https://github.com/ncrmro) |[<img alt="sankalpk" src="https://avatars.githubusercontent.com/u/1317291?v=3&s=117" width="117">](https://github.com/sankalpk) |
-:---: |:---: |:---: |:---: |:---: |:---: |
-[arnif](https://github.com/arnif) |[kkostov](https://github.com/kkostov) |[lexun](https://github.com/lexun) |[narongdejsrn](https://github.com/narongdejsrn) |[ncrmro](https://github.com/ncrmro) |[sankalpk](https://github.com/sankalpk) |
-
-[<img alt="kennydee" src="https://avatars.githubusercontent.com/u/1484406?v=3&s=117" width="117">](https://github.com/kennydee) |
-:---: |
-[kennydee](https://github.com/kennydee) |
-
-## License
-
-MIT © [Varayut Lerdkanlayanawat](https://github.com/lvarayut)
