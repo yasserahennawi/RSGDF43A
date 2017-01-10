@@ -1,0 +1,73 @@
+# Blogger
+	- Signin with email or username and password
+	- Edit his profile
+		- Settings
+			- Name (first, last, neckname -> used when author)
+			- Email
+			- Change password
+			- Upload image
+		- Payment details
+		- show list of his products
+		- 
+	- Create new product (specials)
+		- First step
+			- Enter title
+			- Upload cover (can be resized)
+			- Choose author (might be himself)
+			- Select nutritions (can only select one)
+			- Select generes (can select many)
+			- Add description
+			- Choose number of recipes and add price ?
+		- Second step (repeated for the number of recipes)
+			- Enter recipe title
+			- Select difficulity
+			- Enter calories
+			- Enter preparation time
+			- Select nutritions (can only select one) ?
+			- Select main difficulity
+			- Add ingredient (can add many)
+				- Enter amount
+				- Enter unit
+				- Enter ingredientName
+				- Enter additions (optional)
+			- Add preparation instructions (can add many)
+	- Show table of invoices (accounting)
+		- ID
+		- Date
+		- number
+		- product name
+		- price
+
+
+# Admin
+	- Signin with email or username and password
+	- Display list of products (accepted, rejected, waiting)
+		- Accept special
+		- Reject special
+	- Display list of members
+		- ID
+		- Register date
+		- number of products
+		- name
+	- Edit member information
+		- Settings
+			- Name (first, last, neckname -> used when author)
+			- Email
+			- Change password
+		- Payment details
+		- Show list of member products
+			- Accept special
+			- Reject special
+		- Show table of member invoices
+			- ID
+			- Date
+			- number
+			- product name
+			- price
+
+# User
+	- Create and manage groups
+	- Go to a group
+		- Search for products and add them
+		- Remove already existing products
+	- Manage invoices
