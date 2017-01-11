@@ -37,3 +37,6 @@ build/
 *.swp
 *.vim
 
+
+.idea
+.env
