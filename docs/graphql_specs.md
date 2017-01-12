@@ -3,6 +3,20 @@ Mutations
 
 # User Mutations
 - SignIn with email, username and password
+```
+mutation {
+  login(input: {email: "<email>", password:"<password>"}) {
+    token
+    error {
+      message,
+      validationMessages {
+        key
+        value
+      }
+    }
+  }
+}
+```
 - Update user profile
 - Update payment details
 
