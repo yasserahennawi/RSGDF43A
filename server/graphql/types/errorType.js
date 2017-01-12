@@ -21,6 +21,7 @@ import {
   cursorForObjectInConnection
 } from 'graphql-relay';
 
+
 const validationMessageType = new GraphQLObjectType({
   name: 'ValidationMessage',
   description: 'Validation error',
@@ -37,5 +38,7 @@ export default () => new GraphQLObjectType({
     message: { type: new GraphQLNonNull(GraphQLString) },
     name: { type: new GraphQLNonNull(GraphQLString) },
     validationMessages: { type: new GraphQLList(validationMessageType) },
+    // Disable stack on production
+    stack: { type: GraphQLString },
   }),
 });

@@ -6,6 +6,7 @@ export default function ForbiddenError(message) {
   this.toObject = () => ({
     message: this.message,
     name: this.name,
+    stack: this.stack,
   });
 
 }

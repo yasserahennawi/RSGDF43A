@@ -23,6 +23,7 @@ export default function ValidationError(messages) {
     message: this.message,
     name: this.name,
     validationMessages: this.getMessages(),
+    stack: this.stack,
   });
 }
 ValidationError.prototype = Object.create(Error.prototype);

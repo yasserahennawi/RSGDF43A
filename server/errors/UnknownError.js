@@ -6,6 +6,7 @@ export default function UnkownError(messages) {
   this.toObject = () => ({
     message: this.message,
     name: this.name,
+    stack: this.stack,
   });
 }
 UnkownError.prototype = Object.create(Error.prototype);

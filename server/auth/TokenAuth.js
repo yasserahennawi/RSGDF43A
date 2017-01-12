@@ -34,7 +34,7 @@ export default class TokenAuth {
     if(! viewerId) {
       return this.getGuest();
     }
-    return this.userRepository.findById(viewerId);
+    return this.userRepository.getOwner(viewerId);
   }
 
   async getViewerId(token) {

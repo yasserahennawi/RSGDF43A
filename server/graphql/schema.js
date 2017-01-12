@@ -16,6 +16,7 @@ import configureUserType from './types/userType';
 
 // Import mutations
 import configureLoginMutation from './mutations/loginMutation';
+import configureRegisterMutation from './mutations/registerMutation';
 import configureSetViewerMutation from './mutations/setViewerMutation';
 
 export default ({
@@ -25,6 +26,7 @@ export default ({
 
   commandExecuter,
   loginUserCommand,
+  registerUserCommand,
 }) => {
 
   /**
@@ -75,6 +77,7 @@ export default ({
    */
   const setViewerMutation = configureSetViewerMutation(authManager);
   const loginMutation = configureLoginMutation(commandExecuter, loginUserCommand, userType, errorType);
+  const registerMutation = configureRegisterMutation(commandExecuter, registerUserCommand, userType, errorType);
 
   /**
    * Construct schema (query and mutation)
@@ -101,7 +104,8 @@ export default ({
       name: 'Mutation',
       fields: () => ({
         setViewer: setViewerMutation,
-        login: loginMutation
+        login: loginMutation,
+        register: registerMutation,
       })
     }),
   });

@@ -3,6 +3,8 @@ import passwordHash from 'password-hash-and-salt';
 import ValidationError from '../errors/ValidationError';
 import { checkEqualIds } from '../utils/mongo';
 import Q from 'q';
+import * as _ from 'lodash';
+import uniqueValidator from 'mongoose-unique-validator';
 
 export default (mongoose) => {
   const USER_TYPES = ['Blogger', 'Admin', 'Customer'];
@@ -12,7 +14,7 @@ export default (mongoose) => {
     lastName: {type: String, required: true},
     nickName: {type: String, required: true},
 
-    email: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
 
     profileImage: {
@@ -37,10 +39,10 @@ export default (mongoose) => {
     onlineAt: {type: Date, default: Date.now},
   });
 
-  userSchema.method('isAdmin', () => this.userType === 'Admin');
-  userSchema.method('isGuest', () => false);
-  userSchema.method('isBlogger', () => this.userType === 'Blogger');
-  userSchema.method('isCustomer', () => this.userType === 'Customer');
+  userSchema.method('isAdmin', function() { return this.userType === 'Admin'; });
+  userSchema.method('isGuest', function() { return false; });
+  userSchema.method('isBlogger', function() { return this.userType === 'Blogger'; });
+  userSchema.method('isCustomer', function() { return this.userType === 'Customer'; });
 
   /**
    * Check if id is the same
@@ -73,6 +75,20 @@ export default (mongoose) => {
   });
 
   /**
+   * Pre validate middleware
+   * - Add default values
+   * @param {Function} next
+   */
+  userSchema.pre('validate', function(next) {
+    // Default values
+    if(! this.nickName) {
+      this.nickName = this.firstName.charAt(0).toLowerCase() + _.upperFirst(this.lastName);
+    }
+
+    next();
+  });
+
+  /**
    * Pre save middleware
    * - Hash password if it has been modified
    * @param {Function} next
@@ -84,6 +100,8 @@ export default (mongoose) => {
 
     next();
   });
+
+  userSchema.plugin(uniqueValidator);
 
   return mongoose.model('User', userSchema);
 }

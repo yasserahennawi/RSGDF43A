@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import './errors/extendError';
+
 /// Import all models
 import configureUserModel from './models/UserModel';
 

@@ -16,6 +16,10 @@ export default class UserRepository extends Repository {
     return this.model.findOne({ email }).exec();
   }
 
+  getOwner(id) {
+    return this.model.findOne({ _id: id }).exec();
+  }
+
   async getViewer(email, password) {
     // Get user by email
     const user = await this.model.findOne({ email }).exec();
@@ -43,13 +47,15 @@ export default class UserRepository extends Repository {
     if(!viewer.isAdmin() && !viewer.checkId(id)) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    return this.model.update({ _id: id }, data).exec();
+    const user = this.model.findById({ _id: id }).exec();
+    return user.save();
   }
 
   remove(viewer, id) {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    return this.model.remove({ _id: id }).exec();
+    const user = this.model.findById({ _id: id }).exec();
+    return user.remove();
   }
 }

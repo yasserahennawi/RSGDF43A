@@ -29,16 +29,13 @@ export default (commandExecuter, loginUserCommand, userType, errorType) => mutat
     viewer: { type: userType },
     error: { type: errorType },
   },
-  mutateAndGetPayload: async ({ email, password }, { viewer }) => {
+  mutateAndGetPayload: async ({ email, password }, context) => {
     try {
-      return await commandExecuter.execute(loginUserCommand, viewer, email, password);
+      const { token, viewer } = await commandExecuter.execute(loginUserCommand, context.viewer, email, password);
+      context.viewer = viewer;
+      return { token, viewer };
     } catch(e) {
-      if((e instanceof ForbiddenError)
-      || (e instanceof ValidationError)) {
-        return { error: e.toObject() };
-      }
-      // Unkown error
-      throw e;
+      return { error: e.toObject() };
     }
   }
 });

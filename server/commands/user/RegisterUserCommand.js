@@ -14,8 +14,9 @@ export default class RegisterUserCommand {
    * @param {Object} attrs user profile attributes you want to update
    * @return {Promise} promise resolve with the updated user object
    */
-  async execute(viewer, userType, {
+  async execute(viewer, {
     email,
+    userType,
     firstName,
     lastName,
     nickName,
@@ -25,15 +26,12 @@ export default class RegisterUserCommand {
     addressZipcode,
     addressCountry,
   }) {
-    // If not the same blogger nor an admin then reject
-    if(view.isGuest() || !viewer.isAdmin()) {
-      throw new ForbiddenError('Not authorized to do this action!');
-    }
-
     let password = await this.generateNewPassword();
 
-    await this.userRepository.create({
+    const user = await this.userRepository.create(viewer, {
       email,
+      userType,
+      password,
       firstName,
       lastName,
       nickName,
@@ -44,6 +42,7 @@ export default class RegisterUserCommand {
       addressCountry,
     });
 
-    await console.log("Sending email");
+    await console.log("Sending email", user, password);
+    return user;
   }
 }
