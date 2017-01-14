@@ -21,7 +21,13 @@ import {
   cursorForObjectInConnection
 } from 'graphql-relay';
 
-export default (nodeInterface, imageType) => new GraphQLObjectType({
+import IoC from 'AppIoC';
+
+export const userType = (
+  userModel,
+  nodeInterface,
+  imageType
+) => new GraphQLObjectType({
   name: 'User',
   description: 'A person who uses our app',
   fields: () => ({
@@ -32,5 +38,8 @@ export default (nodeInterface, imageType) => new GraphQLObjectType({
     email: { type: GraphQLString },
     profileImage: { type: imageType },
   }),
-  interfaces: [nodeInterface]
+  interfaces: [nodeInterface],
+  isTypeOf: obj => obj instanceof userModel || !!obj.isGuest,
 });
+
+IoC.callable('userType', ['userModel', 'nodeInterface', 'imageType'], userType);

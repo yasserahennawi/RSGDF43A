@@ -14,6 +14,8 @@ import {
   globalIdField,
 } from 'graphql-relay';
 
+import IoC from 'AppIoC';
+
 // @TODO Find a better place for this method
 function getNearestVersion(image, width, height, resolutionMargin = 0) {
   if(! width || !height) {
@@ -57,7 +59,7 @@ const versionType = new GraphQLObjectType({
   }),
 });
 
-export default () => new GraphQLObjectType({
+export const imageType = () => new GraphQLObjectType({
   name: 'Image',
   description: 'Image object',
   fields: () => ({
@@ -76,3 +78,5 @@ export default () => new GraphQLObjectType({
     }
   }),
 });
+
+IoC.callable('imageType', [], imageType);

@@ -21,6 +21,7 @@ import {
   cursorForObjectInConnection
 } from 'graphql-relay';
 
+import IoC from 'AppIoC';
 
 const validationMessageType = new GraphQLObjectType({
   name: 'ValidationMessage',
@@ -31,7 +32,7 @@ const validationMessageType = new GraphQLObjectType({
   })
 });
 
-export default () => new GraphQLObjectType({
+export const errorType = () => new GraphQLObjectType({
   name: 'Error',
   description: 'Unified error type in our system',
   fields: () => ({
@@ -42,3 +43,5 @@ export default () => new GraphQLObjectType({
     stack: { type: GraphQLString },
   }),
 });
+
+IoC.callable('errorType', [], errorType);
