@@ -68,6 +68,8 @@ export async function runProductionServer() {
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
   relayServer.use(restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({
+    graphiql: true,
+    pretty: true,
     schema: graphqlSchema,
     // formatError: formatError,
   }));

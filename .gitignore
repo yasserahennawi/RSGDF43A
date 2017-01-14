@@ -22,6 +22,11 @@ node_modules/
 build/
 
 # --------------------
+# Server build Files
+# --------------------
+build-server/
+
+# --------------------
 # IntelliJ Files
 # --------------------
 *.iml
