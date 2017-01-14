@@ -1,3 +1,4 @@
+import IoC from 'AppIoC';
 import * as jwt from 'jsonwebtoken';
 
 export default class JwtEncoderDecoder {
@@ -17,3 +18,5 @@ export default class JwtEncoderDecoder {
     return jwt.decode(token, this.secretKey);
   }
 }
+
+IoC.singleton('jwtEncoderDecoder', ['secretKey'], JwtEncoderDecoder);

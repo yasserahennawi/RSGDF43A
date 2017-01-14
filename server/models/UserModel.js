@@ -5,9 +5,10 @@ import { checkEqualIds } from '../utils/mongo';
 import Q from 'q';
 import * as _ from 'lodash';
 import uniqueValidator from 'mongoose-unique-validator';
+import IoC from 'AppIoC';
 
-export default (mongoose) => {
-  const USER_TYPES = ['Blogger', 'Admin', 'Customer'];
+export const userModel = (mongoose) => {
+  const USER_TYPES = ['Blogger', 'Admin', 'Customer', 'Super'];
 
   const userSchema = new Schema({
     firstName: {type: String, required: true},
@@ -37,9 +38,10 @@ export default (mongoose) => {
     userType: {type: String, enum: USER_TYPES, required: true},
 
     onlineAt: {type: Date, default: Date.now},
-  });
+  }, { timestamps: true });
 
-  userSchema.method('isAdmin', function() { return this.userType === 'Admin'; });
+  userSchema.method('isAdmin', function() { return this.userType === 'Admin' || this.isSuper(); });
+  userSchema.method('isSuper', function() { return this.userType === 'Super'; });
   userSchema.method('isGuest', function() { return false; });
   userSchema.method('isBlogger', function() { return this.userType === 'Blogger'; });
   userSchema.method('isCustomer', function() { return this.userType === 'Customer'; });
@@ -81,7 +83,7 @@ export default (mongoose) => {
    */
   userSchema.pre('validate', function(next) {
     // Default values
-    if(! this.nickName) {
+    if(! this.nickName && this.firstName && this.lastName) {
       this.nickName = this.firstName.charAt(0).toLowerCase() + _.upperFirst(this.lastName);
     }
 
@@ -105,3 +107,5 @@ export default (mongoose) => {
 
   return mongoose.model('User', userSchema);
 }
+
+IoC.callable('userModel', ['connection'], userModel);
