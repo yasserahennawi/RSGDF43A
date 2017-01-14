@@ -1,0 +1,16 @@
+import { Router } from 'express';
+import IoC from 'AppIoC';
+
+export const {{modelName}}Router = ({{modelName}}Controller) => {
+  const router = Router();
+
+  router.get('/', {{modelName}}Controller.find.bind({{modelName}}Controller));
+  router.get('/:{{modelName}}Id', {{modelName}}Controller.findById.bind({{modelName}}Controller));
+  router.post('/', {{modelName}}Controller.create.bind({{modelName}}Controller));
+  router.put('/:{{modelName}}Id', {{modelName}}Controller.update.bind({{modelName}}Controller));
+  router.delete('/:{{modelName}}Id', {{modelName}}Controller.remove.bind({{modelName}}Controller));
+
+  return router;
+}
+
+IoC.callable('{{modelName}}Router', ['{{modelName}}Controller'], {{modelName}}Router);
