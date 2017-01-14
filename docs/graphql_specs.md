@@ -17,6 +17,37 @@ mutation {
   }
 }
 ```
+- Set viewer from token (call this before any operation that requires a user authentication)
+```
+mutation {
+  setViewer(input: {token: "<token>"}) {
+    token
+  }
+}
+```
+- Register new user
+```
+register(input:{
+  email:"newUasser@gmail.com",
+  firstName: "New",
+  lastName: "User"
+  userType: "Blogger"
+}) {
+  user {
+    firstName
+    email
+  }
+  error {
+    message
+    name
+    validationMessages {
+      key
+      value
+    }
+    stack
+  }
+}
+```
 - Update user profile
 - Update payment details
 

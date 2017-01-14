@@ -51,6 +51,7 @@ const runSeeder = async () => {
   }
 
   console.log(chalk.green(`DB has been seeded successfully`));
+  process.exit();
 }
 
 // Run the function directly, if it's called from the command line
