@@ -45,7 +45,7 @@ export async function runGraphQLDevServer() {
   server.use(cors());
   // Middleware to set guest viewer
   server.use(addGuestViewerMiddleware);
-  server.use(restApiRouter);
+  server.use('/api/v1', restApiRouter);
   server.use('/', graphQLHTTP({
     graphiql: true,
     pretty: true,
@@ -62,10 +62,10 @@ export async function runProductionServer() {
   const relayServer = express();
   relayServer.use(bodyParser.json());
   relayServer.use(cors());
-  relayServer.use(historyApiFallback());
+  // relayServer.use(historyApiFallback());
   // Middleware to set guest viewer
   relayServer.use(addGuestViewerMiddleware);
-  relayServer.use(restApiRouter);
+  relayServer.use('/api/v1', restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({
     graphiql: true,
     pretty: true,

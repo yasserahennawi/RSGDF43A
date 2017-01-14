@@ -30,20 +30,20 @@ const runSeeder = async () => {
     );
     console.log(chalk.green(`Super user has been seeded`));
 
-    const allSeeders = {
-      genreSeederCommand,
-      ingredientSeederCommand,
-      invoiceSeederCommand,
-      nutritionSeederCommand,
-      orientationSeederCommand,
-      productSeederCommand,
-      recipeSeederCommand,
-    };
-
-    for(let key in allSeeders) {
-      await commandExecuter.execute(allSeeders[key], superUser);
-      console.log(chalk.green(`${key} has been executed`));
-    }
+    await commandExecuter.execute(genreSeederCommand, superUser);
+    console.log(chalk.green(`GenreSeederCommand has been executed`));
+    await commandExecuter.execute(ingredientSeederCommand, superUser);
+    console.log(chalk.green(`IngredientSeederCommand has been executed`));
+    await commandExecuter.execute(invoiceSeederCommand, superUser);
+    console.log(chalk.green(`InvoiceSeederCommand has been executed`));
+    await commandExecuter.execute(nutritionSeederCommand, superUser);
+    console.log(chalk.green(`NutritionSeederCommand has been executed`));
+    await commandExecuter.execute(orientationSeederCommand, superUser);
+    console.log(chalk.green(`OrientationSeederCommand has been executed`));
+    await commandExecuter.execute(productSeederCommand, superUser);
+    console.log(chalk.green(`ProductSeederCommand has been executed`));
+    await commandExecuter.execute(recipeSeederCommand, superUser);
+    console.log(chalk.green(`RecipeSeederCommand has been executed`));
 
 
   } catch(er) {
@@ -51,7 +51,6 @@ const runSeeder = async () => {
   }
 
   console.log(chalk.green(`DB has been seeded successfully`));
-  process.exit();
 }
 
 // Run the function directly, if it's called from the command line
