@@ -1,3 +1,4 @@
+import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
 
 export default class LoginUserCommand {
@@ -29,3 +30,5 @@ export default class LoginUserCommand {
     };
   }
 }
+
+IoC.singleton('loginUserCommand', ['authManager', 'userRepository'], LoginUserCommand);

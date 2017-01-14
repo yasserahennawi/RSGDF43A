@@ -1,3 +1,4 @@
+import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
 
 export default class UpdateUserCommand {
@@ -45,3 +46,5 @@ export default class UpdateUserCommand {
     return this.save();
   }
 }
+
+IoC.singleton('updateUserCommand', ['userRepository'], UpdateUserCommand);

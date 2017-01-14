@@ -1,3 +1,4 @@
+import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
 
 export default class RegisterUserCommand {
@@ -46,3 +47,5 @@ export default class RegisterUserCommand {
     return user;
   }
 }
+
+IoC.singleton('registerUserCommand', ['userRepository'], RegisterUserCommand);
