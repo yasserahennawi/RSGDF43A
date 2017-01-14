@@ -9,7 +9,7 @@ const configureDatabase = () => {
   // For backwards compatibility, Mongoose 4 returns mpromise promises by default.
   // Plugging in your own Promises Library (i.e.: Q.Promise)
   mongoose.Promise = Q.Promise;
-  return mongoose.createConnection('mongodb://127.0.0.1:27017/tastic');
+  return mongoose.createConnection(process.env.MONGODB_URI);
 }
 
 // Register connection

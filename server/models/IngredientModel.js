@@ -9,7 +9,7 @@ export const ingredientModel = (mongoose) => {
     category: {type: String, required: true},
     subCategory: {type: String},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_ingredients' });
 
   /**
    * Check if id is the same

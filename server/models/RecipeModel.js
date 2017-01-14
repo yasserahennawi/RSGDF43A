@@ -28,7 +28,7 @@ export const recipeModel = (mongoose) => {
       unit: {type: String, required: true},
     }],
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_recipes' });
 
   /**
    * Get all items for this recipe with ingredient and addition populated

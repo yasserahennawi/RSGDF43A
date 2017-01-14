@@ -11,7 +11,7 @@ export const invoiceModel = (mongoose) => {
     quantity: {type: Number, required: true},
     products: [{type: Schema.Types.ObjectId, ref: 'Product'}],
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_invoices' });
 
   /**
    * Check if id is the same

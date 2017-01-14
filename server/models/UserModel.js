@@ -38,7 +38,7 @@ export const userModel = (mongoose) => {
     userType: {type: String, enum: USER_TYPES, required: true},
 
     onlineAt: {type: Date, default: Date.now},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_users' });
 
   userSchema.method('isAdmin', function() { return this.userType === 'Admin' || this.isSuper(); });
   userSchema.method('isSuper', function() { return this.userType === 'Super'; });

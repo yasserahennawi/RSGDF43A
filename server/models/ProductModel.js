@@ -28,7 +28,7 @@ export const productModel = (mongoose) => {
     nutritions: [{type: Schema.Types.ObjectId, ref: 'Nutrition'}],
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
     author: {type: Schema.Types.ObjectId, ref: 'User'},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_products' });
 
   /**
    * Check if product is accepted

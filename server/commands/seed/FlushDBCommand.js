@@ -32,14 +32,14 @@ export default class FlushDBCommand {
     }
 
     const collections = [
-      'genres',
-      'ingredients',
-      'invoices',
-      'nutritions',
-      'orientations',
-      'products',
-      'recipes',
-      'users',
+      'new_genres',
+      'new_ingredients',
+      'new_invoices',
+      'new_nutritions',
+      'new_orientations',
+      'new_products',
+      'new_recipes',
+      'new_users',
     ];
 
     // Empty all collections

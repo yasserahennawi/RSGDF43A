@@ -7,7 +7,7 @@ export const nutritionModel = (mongoose) => {
   const nutritionSchema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
-  }, { timestamps: true });
+  }, { timestamps: true, collection: 'new_nutritions' });
 
   /**
    * Check if id is the same
