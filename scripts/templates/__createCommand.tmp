@@ -1,0 +1,22 @@
+import ForbiddenError from '../../errors/ForbiddenError';
+
+export default class Create{{ModelName}}Command {
+  constructor({{modelName}}Repository) {
+    this.{{modelName}}Repository = {{modelName}}Repository;
+  }
+
+  /**
+   * @param {Object} viewer Viewer trying to create {{modelName}}
+   * @param {Object} attrs
+   * @return {Promise} promise resolve with the created {{modelName}} object
+   */
+  async execute(viewer, {
+    name,
+  }) {
+    const {{modelName}} = await this.{{modelName}}Repository.create(viewer, {
+      name,
+    });
+
+    return {{modelName}};
+  }
+}

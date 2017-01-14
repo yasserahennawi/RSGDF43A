@@ -1,0 +1,18 @@
+import ForbiddenError from '../../errors/ForbiddenError';
+
+export default class Remove{{ModelName}}Command {
+  constructor({{modelName}}Repository) {
+    this.{{modelName}}Repository = {{modelName}}Repository;
+  }
+
+  /**
+   * @param {Object} viewer Viewer trying to remove {{modelName}}
+   * @param {String} id
+   * @return {Promise} promise resolve with true if remove was success
+   */
+  async execute(viewer, id) {
+    const {{modelName}} = await this.{{modelName}}Repository.remove(viewer, id);
+
+    return {{modelName}};
+  }
+}

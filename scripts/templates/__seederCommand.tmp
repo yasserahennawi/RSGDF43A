@@ -1,0 +1,18 @@
+import ForbiddenError from '../../errors/ForbiddenError';
+
+export default class {{ModelName}}SeederCommand {
+
+  constructor({{modelName}}Repository) {
+    this.{{modelName}}Repository = {{modelName}}Repository;
+  }
+
+  async execute(viewer) {
+    if(!viewer.isSuper()) {
+      throw new ForbiddenError("You are not authorized to do this action");
+    }
+
+    return await this.{{modelName}}Repository.create(viewer, [
+      { name: '{{modelName}}' },
+    ]);
+  }
+}

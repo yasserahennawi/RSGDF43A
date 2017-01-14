@@ -1,0 +1,44 @@
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql';
+
+import {
+  mutationWithClientMutationId,
+} from 'graphql-relay';
+
+export default ({
+  commandExecuter,
+  command,
+  {{modelName}}Type,
+  errorType,
+}) => mutationWithClientMutationId({
+  name: 'Remove{{ModelName}}Mutation',
+  inputFields: {
+    id: { type: GraphQLString },
+  },
+  outputFields: {
+    deleted: { type: GraphQLBoolean }
+  },
+  mutateAndGetPayload: async ({ id }, { viewer }) => {
+    try {
+      const deleted = await commandExecuter.execute(
+        command,
+        viewer,
+        id
+      );
+
+      return { deleted };
+    } catch(e) {
+      return { error: e.toObject() };
+    }
+  }
+});
+

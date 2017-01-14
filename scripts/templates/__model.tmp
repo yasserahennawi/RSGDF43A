@@ -1,0 +1,32 @@
+import { Schema } from 'mongoose';
+import { checkEqualIds } from '../utils/mongo';
+import uniqueValidator from 'mongoose-unique-validator';
+
+export default (mongoose) => {
+  const {{modelName}}Schema = new Schema({
+    name: {type: String, required: true, unique: true},
+    creator: {type: Schema.Types.ObjectId, ref: 'User'},
+  });
+
+  /**
+   * Check if id is the same
+   * @param {ObjectId} {{modelName}} id
+   * @return {boolean} true if the same {{modelName}}
+   */
+  {{modelName}}Schema.method('checkId', function(id) {
+    return checkEqualIds(id, this._id);
+  });
+
+  /**
+   * Get creator
+   * @return {Object}
+   */
+  {{modelName}}Schema.method('getCreator', async function() {
+    await this.populate('creator').execPopulate();
+    return this.creator;
+  });
+
+  {{modelName}}Schema.plugin(uniqueValidator);
+
+  return mongoose.model('{{ModelName}}', {{modelName}}Schema);
+}

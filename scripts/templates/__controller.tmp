@@ -1,0 +1,37 @@
+import Controller from './Controller';
+
+export default class {{ModelName}}Controller extends Controller {
+  constructor({{modelName}}Repository) {
+    this.{{modelName}}Repository = {{modelName}}Repository;
+  }
+
+  find(req, res, next) {
+    this.{{modelName}}Repository.find(req.viewer, req.query)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  findById(req, res, next) {
+    this.{{modelName}}Repository.findById(req.viewer, req.params.id)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  create(req, res, next) {
+    this.{{modelName}}Repository.create(req.viewer, req.body)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  update(req, res, next) {
+    this.{{modelName}}Repository.update(req.viewer, req.params.id, req.body)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  remove(req, res, next) {
+    this.{{modelName}}Repository.remove(req.viewer)
+      .then(result => this.successResponse(res, { deleted: true }))
+      .then(null, next);
+  }
+}

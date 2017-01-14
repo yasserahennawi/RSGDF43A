@@ -1,0 +1,32 @@
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString
+} from 'graphql';
+
+import {
+  globalIdField,
+  connectionDefinitions,
+} from 'graphql-relay';
+
+export default ({
+  nodeInterface,
+  userType,
+}) => new GraphQLObjectType({
+  name: '{{ModelName}}',
+  fields: () => ({
+    id: globalIdField('{{ModelName}}'),
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    creator: {
+      type: new GraphQLNonNull(userType),
+      resolve: {{modelName}} => {{modelName}}.getCreator(),
+    },
+  }),
+  interfaces: [nodeInterface]
+});

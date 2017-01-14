@@ -1,0 +1,46 @@
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql';
+
+import {
+  mutationWithClientMutationId,
+} from 'graphql-relay';
+
+export default ({
+  commandExecuter,
+  command,
+  {{modelName}}Type,
+  errorType,
+}) => mutationWithClientMutationId({
+  name: 'Update{{ModelName}}Mutation',
+  inputFields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+  },
+  outputFields: {
+    {{modelName}}: { type: {{modelName}}Type },
+  },
+  mutateAndGetPayload: async ({ id, ...inputs }, { viewer }) => {
+    try {
+      const {{modelName}} = await commandExecuter.execute(
+        command,
+        viewer,
+        id,
+        inputs
+      );
+
+      return { {{modelName}} };
+    } catch(e) {
+      return { error: e.toObject() };
+    }
+  }
+});
+

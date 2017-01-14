@@ -1,0 +1,36 @@
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString
+} from 'graphql';
+
+import {
+  connectionDefinitions,
+  connectionArgs,
+  connectionFromPromisedArray,
+} from 'graphql-relay';
+
+export default ({
+  {{modelName}}Repository,
+  {{modelsName}}ConnectionType,
+}) => {
+  return {
+    type: {{modelsName}}ConnectionType,
+    args: {
+      // Relay search args
+      ...connectionArgs,
+      // Our custom search criteria goes here
+      name: {type: GraphQLString},
+    },
+    resolve: (viewer, { name, ...args }) => connectionFromPromisedArray(
+      {{modelName}}Repository.find(viewer, { name }),
+      args
+    ),
+  }
+}
