@@ -10,12 +10,12 @@ import {
   runProductionServer,
 } from './server';
 
-configureKernel();
-
 // Load dotenv env. variables
 if (fs.existsSync(path.join(process.cwd(), '.env'))) {
   require('dotenv').config();
 }
+
+configureKernel();
 
 // Start the application
 // If it's a development env.
