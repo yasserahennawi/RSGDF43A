@@ -2,6 +2,7 @@ export default class Repository {
 
   constructor() {
     const abstractMethods = [
+      'find',
       'findById',
       'create',
       'update',
@@ -18,4 +19,9 @@ export default class Repository {
       }
     }
   }
+
+  async createAll(viewer, arr) {
+    return await arr.map(data => this.create(viewer, data));
+  }
+
 }

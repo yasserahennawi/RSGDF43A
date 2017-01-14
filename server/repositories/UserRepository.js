@@ -1,23 +1,49 @@
 import Repository from './Repository';
 import ValidationError from  '../errors/ValidationError';
 import ForbiddenError from  '../errors/ForbiddenError';
+import IoC from 'AppIoC';
 
 export default class UserRepository extends Repository {
-  constructor(model) {
+  constructor(model, secretKey) {
     super();
     this.model = model;
+    this.secretKey = secretKey;
+  }
+
+  getSuperUser() {
+    return this.model.findOne({ email: "superUserMaintenance@tastetastic.com" }).exec();
+  }
+
+  createSuperUser() {
+    return this.model.create({
+      email: "superUserMaintenance@tastetastic.com",
+      // It's very important to create a strong password here that no one can figure out
+      password: new Buffer(this.secretKey).toString('base64'),
+      firstName: "Super",
+      lastName: "User",
+      userType: 'Super',
+    });
+  }
+
+  find(viewer, {
+    // All queries available for users
+    email,
+  }) {
+    if(viewer.isGuest()) {
+      throw new ForbiddenError("You dont have access to view users");
+    }
+
+    const query = this.mdoel.find();
+
+    if(email) {
+      query.where('email', email);
+    }
+
+    return query.exec();
   }
 
   findById(viewer, id) {
     return this.model.findById(id).exec();
-  }
-
-  findByEmail(viewer, email) {
-    return this.model.findOne({ email }).exec();
-  }
-
-  getOwner(id) {
-    return this.model.findOne({ _id: id }).exec();
   }
 
   async getViewer(email, password) {
@@ -59,3 +85,8 @@ export default class UserRepository extends Repository {
     return user.remove();
   }
 }
+
+IoC.singleton('userRepository', [
+  'userModel',
+  'secretKey'
+], UserRepository);
