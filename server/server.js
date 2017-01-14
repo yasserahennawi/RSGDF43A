@@ -60,9 +60,11 @@ export async function runProductionServer() {
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch Relay by creating a normal express server
   const relayServer = express();
+  relayServer.use(bodyParser.json());
+  relayServer.use(cors());
   relayServer.use(historyApiFallback());
   // Middleware to set guest viewer
-  graphql.use(addGuestViewerMiddleware);
+  relayServer.use(addGuestViewerMiddleware);
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
   relayServer.use(restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({

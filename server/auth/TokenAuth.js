@@ -14,7 +14,8 @@ export default class TokenAuth {
     if(! viewerId) {
       return this.guestUser;
     }
-    return this.userRepository.findById(this.guestUser, viewerId);
+    const viewer = await this.userRepository.findById(this.guestUser, viewerId);
+    return viewer || this.guestUser;
   }
 
   async getViewerId(token) {
