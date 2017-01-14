@@ -16,17 +16,16 @@ import {
   connectionFromPromisedArray,
 } from 'graphql-relay';
 
-export default ({
-  {{modelName}}Repository,
-  {{modelsName}}ConnectionType,
-}) => {
+import IoC from 'AppIoC';
+
+export const {{modelName}}Resolver = ({{modelName}}Repository, {{modelsName}}ConnectionType) => {
   return {
     type: {{modelsName}}ConnectionType,
     args: {
       // Relay search args
       ...connectionArgs,
       // Our custom search criteria goes here
-      name: {type: GraphQLString},
+      name: {type: GraphQLInt},
     },
     resolve: (viewer, { name, ...args }) => connectionFromPromisedArray(
       {{modelName}}Repository.find(viewer, { name }),
@@ -34,3 +33,5 @@ export default ({
     ),
   }
 }
+
+IoC.callable('{{modelName}}Resolver', ['{{modelName}}Repository', '{{modelsName}}ConnectionType'], {{modelName}}Resolver);

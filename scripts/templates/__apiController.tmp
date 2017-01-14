@@ -1,8 +1,20 @@
 import Controller from './Controller';
+import IoC from 'AppIoC';
 
 export default class {{ModelName}}Controller extends Controller {
-  constructor({{modelName}}Repository) {
+  constructor(
+    {{modelName}}Repository,
+    create{{ModelName}}Command,
+    update{{ModelName}}Command,
+    remove{{ModelName}}Command,
+    commandExecuter
+  ) {
+    super();
     this.{{modelName}}Repository = {{modelName}}Repository;
+    this.create{{ModelName}}Command = create{{ModelName}}Command;
+    this.update{{ModelName}}Command = update{{ModelName}}Command;
+    this.remove{{ModelName}}Command = remove{{ModelName}}Command;
+    this.commandExecuter = commandExecuter;
   }
 
   find(req, res, next) {
@@ -18,20 +30,29 @@ export default class {{ModelName}}Controller extends Controller {
   }
 
   create(req, res, next) {
-    this.{{modelName}}Repository.create(req.viewer, req.body)
+    this.commandExecuter.execute(this.create{{ModelName}}Command, req.viewer, req.body)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
 
   update(req, res, next) {
-    this.{{modelName}}Repository.update(req.viewer, req.params.id, req.body)
+    this.commandExecuter.execute(this.update{{ModelName}}Command, req.viewer, req.params.id, req.body)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
 
   remove(req, res, next) {
-    this.{{modelName}}Repository.remove(req.viewer)
-      .then(result => this.successResponse(res, { deleted: true }))
+    this.commandExecuter.execute(this.remove{{ModelName}}Command, req.viewer, req.params.id)
+      .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
 }
+
+
+IoC.singleton('{{modelName}}Controller', [
+  '{{modelName}}Repository',
+  'create{{ModelName}}Command',
+  'update{{ModelName}}Command',
+  'update{{ModelName}}Command',
+  'commandExecuter',
+], {{ModelName}}Controller)

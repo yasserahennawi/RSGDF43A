@@ -26,7 +26,7 @@ export default class UserController extends Controller {
   }
 
   findById(req, res, next) {
-    this.userRepository.findById(req.viewer, req.params.id)
+    this.userRepository.findById(req.viewer, req.params.userId)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
@@ -48,13 +48,13 @@ export default class UserController extends Controller {
   }
 
   update(req, res, next) {
-    this.commandExecuter.execute(this.updateUserCommand, req.viewer, req.params.id, req.body)
+    this.commandExecuter.execute(this.updateUserCommand, req.viewer, req.params.userId, req.body)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
 
   remove(req, res, next) {
-    this.commandExecuter.execute(this.removeUserCommand, req.viewer, req.params.id)
+    this.commandExecuter.execute(this.removeUserCommand, req.viewer, req.params.userId)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }

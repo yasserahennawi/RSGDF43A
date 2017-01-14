@@ -1,3 +1,4 @@
+import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
 
 export default class Update{{ModelName}}Command {
@@ -5,19 +6,15 @@ export default class Update{{ModelName}}Command {
     this.{{modelName}}Repository = {{modelName}}Repository;
   }
 
-  /**
-   * @param {Object} viewer Viewer trying to update {{modelName}}
-   * @param {String} id
-   * @param {Object} attrs
-   * @return {Promise} promise resolve with the updated {{modelName}} object
-   */
-  async execute(viewer, id, {
+  async execute(viewer, {{modelName}}Id, {
     name,
   }) {
-    const {{modelName}} = await this.{{modelName}}Repository.update(viewer, id, {
-      name,
+    const {{modelName}} = await this.{{modelName}}Repository.update(viewer, {{modelName}}Id, {
+      name
     });
 
     return {{modelName}};
   }
 }
+
+IoC.singleton('update{{ModelName}}Command', ['{{modelName}}Repository'], Update{{ModelName}}Command);

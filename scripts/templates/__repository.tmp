@@ -1,7 +1,8 @@
 import Repository from './Repository';
 import ValidationError from  '../errors/ValidationError';
 import ForbiddenError from  '../errors/ForbiddenError';
-import { getDocumentId } from '../utils/mongo';
+import IoC from 'AppIoC';
+import * as Q from 'q';
 
 export default class {{ModelName}}Repository extends Repository {
   constructor(model) {
@@ -12,16 +13,11 @@ export default class {{ModelName}}Repository extends Repository {
   find(viewer, {
     // Search criteria
     name,
-    creator,
   }) {
     const query = this.model.find();
 
     if(name) {
       query.where('name', name);
-    }
-
-    if(creator) {
-      query.where('creator', getDocumentId(creator));
     }
 
     return query.exec();
@@ -46,7 +42,6 @@ export default class {{ModelName}}Repository extends Repository {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-
     return this.model.update({ _id: id }, data).exec();
   }
 
@@ -54,7 +49,8 @@ export default class {{ModelName}}Repository extends Repository {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-
     return this.model.remove({ _id: id }).exec();
   }
 }
+
+IoC.singleton('{{modelName}}Repository', ['{{modelName}}Model'], {{ModelName}}Repository);

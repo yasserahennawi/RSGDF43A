@@ -2,11 +2,13 @@ import { Schema } from 'mongoose';
 import { checkEqualIds } from '../utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 
-export default (mongoose) => {
+import IoC from 'AppIoC';
+
+export const {{modelName}}Model = (mongoose) => {
   const {{modelName}}Schema = new Schema({
     name: {type: String, required: true, unique: true},
-    creator: {type: Schema.Types.ObjectId, ref: 'User'},
-  });
+    creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
+  }, { timestamps: true, collection: 'new_{{modelName}}s' });
 
   /**
    * Check if id is the same
@@ -28,5 +30,7 @@ export default (mongoose) => {
 
   {{modelName}}Schema.plugin(uniqueValidator);
 
-  return mongoose.model('{{ModelName}}', {{modelName}}Schema);
+  return mongoose.model('Genre', {{modelName}}Schema);
 }
+
+IoC.callable('{{modelName}}Model', ['connection'], {{modelName}}Model);

@@ -7,34 +7,27 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
-  GraphQLString,
+  GraphQLString
 } from 'graphql';
 
 import {
   mutationWithClientMutationId,
 } from 'graphql-relay';
 
-export default ({
-  commandExecuter,
-  command,
-  {{modelName}}Type,
-  errorType,
-}) => mutationWithClientMutationId({
-  name: 'Remove{{ModelName}}Mutation',
+import IoC from 'AppIoC';
+
+export const createMutation = (commandExecuter, remove{{ModelName}}Command, errorType) => mutationWithClientMutationId({
+  name: 'Remove{{ModelName}}',
   inputFields: {
-    id: { type: GraphQLString },
+    id: { type: new GraphQLNonNull(GraphQLString) },
   },
   outputFields: {
-    deleted: { type: GraphQLBoolean }
+    deleted: { type: GraphQLBoolean },
+    error: { type: errorType },
   },
   mutateAndGetPayload: async ({ id }, { viewer }) => {
     try {
-      const deleted = await commandExecuter.execute(
-        command,
-        viewer,
-        id
-      );
-
+      const deleted = await commandExecuter.execute(remove{{ModelName}}Command, viewer, id);
       return { deleted };
     } catch(e) {
       return { error: e.toObject() };
@@ -42,3 +35,4 @@ export default ({
   }
 });
 
+IoC.callable('createMutation', ['commandExecuter', 'remove{{ModelName}}Command', 'errorType'], createMutation);

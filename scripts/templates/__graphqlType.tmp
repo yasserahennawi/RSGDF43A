@@ -11,22 +11,31 @@ import {
 } from 'graphql';
 
 import {
-  globalIdField,
+  connectionArgs,
   connectionDefinitions,
+  connectionFromArray,
+  fromGlobalId,
+  globalIdField,
+  mutationWithClientMutationId,
+  nodeDefinitions,
+  cursorForObjectInConnection
 } from 'graphql-relay';
 
-export default ({
+import IoC from 'AppIoC';
+
+export const {{modelName}}Type = (
+  {{modelName}}Model,
   nodeInterface,
-  userType,
-}) => new GraphQLObjectType({
+  imageType
+) => new GraphQLObjectType({
   name: '{{ModelName}}',
+  description: 'A person who uses our app',
   fields: () => ({
     id: globalIdField('{{ModelName}}'),
-    name: { type: new GraphQLNonNull(GraphQLString) },
-    creator: {
-      type: new GraphQLNonNull(userType),
-      resolve: {{modelName}} => {{modelName}}.getCreator(),
-    },
+    name: { type: GraphQLString },
   }),
-  interfaces: [nodeInterface]
+  interfaces: [nodeInterface],
+  isTypeOf: obj => obj instanceof {{modelName}}Model,
 });
+
+IoC.callable('{{modelName}}Type', ['{{modelName}}Model', 'nodeInterface', 'imageType'], {{modelName}}Type);
