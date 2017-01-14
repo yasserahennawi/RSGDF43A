@@ -12,17 +12,14 @@ import {
 
 import {
   mutationWithClientMutationId,
-  globalIdField,
 } from 'graphql-relay';
 
-import ForbiddenError from '../../errors/ForbiddenError';
-import ValidationError from '../../errors/ValidationError';
+import IoC from 'AppIoC';
 
-export default (commandExecuter, registerUserCommand, userType, errorType) => mutationWithClientMutationId({
-  name: 'Register',
+export const updateUserMutation = (commandExecuter, command, userType, errorType) => mutationWithClientMutationId({
+  name: 'UpdateUser',
   inputFields: {
     email: { type: new GraphQLNonNull(GraphQLString) },
-    userType: { type: new GraphQLNonNull(GraphQLString) },
     firstName: { type: new GraphQLNonNull(GraphQLString) },
     lastName: { type: new GraphQLNonNull(GraphQLString) },
     nickName: { type: GraphQLString },
@@ -38,12 +35,13 @@ export default (commandExecuter, registerUserCommand, userType, errorType) => mu
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
     try {
-      const user = await commandExecuter.execute(registerUserCommand, viewer, attrs);
-
+      const user = await commandExecuter.execute(command, viewer, attrs);
       return { user };
     } catch(e) {
       return { error: e.toObject() };
     }
   }
 });
+
+IoC.callable('updateUserMutation', ['commandExecuter', 'updateUserCommand', 'userType', 'errorType'], updateUserMutation);
 

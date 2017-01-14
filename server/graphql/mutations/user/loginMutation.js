@@ -12,13 +12,11 @@ import {
 
 import {
   mutationWithClientMutationId,
-  globalIdField,
 } from 'graphql-relay';
 
-import ForbiddenError from '../../errors/ForbiddenError';
-import ValidationError from '../../errors/ValidationError';
+import IoC from 'AppIoC';
 
-export default (commandExecuter, loginUserCommand, userType, errorType) => mutationWithClientMutationId({
+export const loginMutation = (commandExecuter, command, userType, errorType) => mutationWithClientMutationId({
   name: 'Login',
   inputFields: {
     email: { type: new GraphQLNonNull(GraphQLString) },
@@ -31,7 +29,7 @@ export default (commandExecuter, loginUserCommand, userType, errorType) => mutat
   },
   mutateAndGetPayload: async ({ email, password }, context) => {
     try {
-      const { token, viewer } = await commandExecuter.execute(loginUserCommand, context.viewer, email, password);
+      const { token, viewer } = await commandExecuter.execute(command, context.viewer, email, password);
       context.viewer = viewer;
       return { token, viewer };
     } catch(e) {
@@ -40,3 +38,4 @@ export default (commandExecuter, loginUserCommand, userType, errorType) => mutat
   }
 });
 
+IoC.callable('loginMutation', ['commandExecuter', 'loginUserCommand', 'userType', 'errorType'], loginMutation);
