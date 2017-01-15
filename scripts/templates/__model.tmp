@@ -8,7 +8,7 @@ export const {{modelName}}Model = (mongoose) => {
   const {{modelName}}Schema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
-  }, { timestamps: true, collection: 'new_{{modelName}}s' });
+  }, { timestamps: true, collection: 'new_{{modelsName}}' });
 
   /**
    * Check if id is the same
@@ -30,7 +30,7 @@ export const {{modelName}}Model = (mongoose) => {
 
   {{modelName}}Schema.plugin(uniqueValidator);
 
-  return mongoose.model('Genre', {{modelName}}Schema);
+  return mongoose.model('{{ModelName}}', {{modelName}}Schema);
 }
 
 IoC.callable('{{modelName}}Model', ['connection'], {{modelName}}Model);

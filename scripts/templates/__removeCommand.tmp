@@ -1,15 +1,14 @@
 import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
 
-export default class Create{{ModelName}}Command {
+export default class Remove{{ModelName}}Command {
   constructor({{modelName}}Repository) {
     this.{{modelName}}Repository = {{modelName}}Repository;
   }
 
-  async execute(viewer, {{modelName}}) {
-    const deleted = await this.{{modelName}}Repository.remove(viewer, {{modelName}}Id);
-    return deleted;
+  async execute(viewer, {{modelName}}Id) {
+    return await this.{{modelName}}Repository.remove(viewer, {{modelName}}Id);
   }
 }
 
-IoC.singleton('remove{{ModelName}}Command', ['{{modelName}}Repository'], Create{{ModelName}}Command);
+IoC.singleton('remove{{ModelName}}Command', ['{{modelName}}Repository'], Remove{{ModelName}}Command);

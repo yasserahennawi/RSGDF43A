@@ -9,11 +9,9 @@ export default class Create{{ModelName}}Command {
   async execute(viewer, {
     name,
   }) {
-    const {{modelName}} = await this.{{modelName}}Repository.create(viewer, {
+    return await this.{{modelName}}Repository.create(viewer, {
       name
     });
-
-    return {{modelName}};
   }
 }
 

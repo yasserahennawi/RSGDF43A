@@ -16,8 +16,8 @@ import {
 
 import IoC from 'AppIoC';
 
-export const removeMutation = (commandExecuter, remove{{ModelName}}Command, errorType) => mutationWithClientMutationId({
-  name: 'Remove{{ModelName}}',
+export const removeMutation = (commandExecuter, removeGenreCommand, errorType) => mutationWithClientMutationId({
+  name: 'RemoveGenre',
   inputFields: {
     id: { type: new GraphQLNonNull(GraphQLString) },
   },
@@ -28,7 +28,7 @@ export const removeMutation = (commandExecuter, remove{{ModelName}}Command, erro
   },
   mutateAndGetPayload: async ({ id }, { viewer }) => {
     try {
-      const result = await commandExecuter.execute(remove{{ModelName}}Command, viewer, id);
+      const result = await commandExecuter.execute(removeGenreCommand, viewer, id);
       return { id: result._id, deleted: true };
     } catch(e) {
       return { error: e.toObject(), deleted: false };
@@ -36,4 +36,4 @@ export const removeMutation = (commandExecuter, remove{{ModelName}}Command, erro
   }
 });
 
-IoC.callable('remove{{ModelName}}Mutation', ['commandExecuter', 'remove{{ModelName}}Command', 'errorType'], removeMutation);
+IoC.callable('removeGenreMutation', ['commandExecuter', 'removeGenreCommand', 'errorType'], removeMutation);

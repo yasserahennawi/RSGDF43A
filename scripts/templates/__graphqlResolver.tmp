@@ -25,7 +25,7 @@ export const {{modelName}}Resolver = ({{modelName}}Repository, {{modelsName}}Con
       // Relay search args
       ...connectionArgs,
       // Our custom search criteria goes here
-      name: {type: GraphQLInt},
+      name: {type: GraphQLString},
     },
     resolve: (viewer, { name, ...args }) => connectionFromPromisedArray(
       {{modelName}}Repository.find(viewer, { name }),

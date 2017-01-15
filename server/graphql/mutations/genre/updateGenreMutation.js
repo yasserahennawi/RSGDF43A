@@ -16,24 +16,24 @@ import {
 
 import IoC from 'AppIoC';
 
-export const updateMutation = (commandExecuter, update{{ModelName}}Command, {{modelName}}Type, errorType) => mutationWithClientMutationId({
-  name: 'Update{{ModelName}}',
+export const updateMutation = (commandExecuter, updateGenreCommand, genreType, errorType) => mutationWithClientMutationId({
+  name: 'UpdateGenre',
   inputFields: {
     id: { type: new GraphQLNonNull(GraphQLString) },
     name: { type: new GraphQLNonNull(GraphQLString) },
   },
   outputFields: {
-    {{modelName}}: { type: {{modelName}}Type },
+    genre: { type: genreType },
     error: { type: errorType },
   },
   mutateAndGetPayload: async ({id, ...attrs}, { viewer }) => {
     try {
-      const {{modelName}} = await commandExecuter.execute(update{{ModelName}}Command, viewer, id, attrs);
-      return { {{modelName}} };
+      const genre = await commandExecuter.execute(updateGenreCommand, viewer, id, attrs);
+      return { genre };
     } catch(e) {
       return { error: e.toObject() };
     }
   }
 });
 
-IoC.callable('update{{ModelName}}Mutation', ['commandExecuter', 'update{{ModelName}}Command', '{{modelName}}Type', 'errorType'], updateMutation);
+IoC.callable('updateGenreMutation', ['commandExecuter', 'updateGenreCommand', 'genreType', 'errorType'], updateMutation);

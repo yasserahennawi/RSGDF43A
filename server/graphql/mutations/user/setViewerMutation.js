@@ -16,19 +16,33 @@ import {
 
 import IoC from 'AppIoC';
 
-export const setViewerMutation = (authManager) => mutationWithClientMutationId({
+export const setViewerMutation = (authManager, userType, commandExecuter, loginUserCommand) => mutationWithClientMutationId({
   name: 'SetViewer',
   inputFields: {
-    token: { type: new GraphQLNonNull(GraphQLString) },
-  },
-  outputFields: {
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
     token: { type: GraphQLString },
   },
-  mutateAndGetPayload: async ({ token }, context) => {
-    // @TODO Support basic authentication here
-    context.viewer = await authManager.getViewer(token);
-    return { token };
+  outputFields: {
+    viewer: { type: userType },
+  },
+  mutateAndGetPayload: async ({ token, email, password }, context) => {
+    // By default the viewer is the guest user.
+    const guestUser = context.viewer;
+    try {
+      if(email && password) {
+        const { viewer } = await commandExecuter.execute(loginUserCommand, guestUser, email, password);
+        context.viewer = viewer;
+        return { viewer };
+      } else {
+        context.viewer = await authManager.getViewer(token);
+        return { viewer };
+      }
+    } catch(error) {
+      // Dont fail if authentication failed, instead return a guest user.
+      return { viewer: guestUser };
+    }
   }
 });
 
-IoC.callable('setViewerMutation', ['authManager'], setViewerMutation);
+IoC.callable('setViewerMutation', ['authManager', 'userType', 'commandExecuter', 'loginUserCommand'], setViewerMutation);

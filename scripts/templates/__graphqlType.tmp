@@ -11,14 +11,8 @@ import {
 } from 'graphql';
 
 import {
-  connectionArgs,
-  connectionDefinitions,
-  connectionFromArray,
-  fromGlobalId,
   globalIdField,
-  mutationWithClientMutationId,
-  nodeDefinitions,
-  cursorForObjectInConnection
+  connectionDefinitions,
 } from 'graphql-relay';
 
 import IoC from 'AppIoC';
@@ -26,16 +20,19 @@ import IoC from 'AppIoC';
 export const {{modelName}}Type = (
   {{modelName}}Model,
   nodeInterface,
-  imageType
+  userType
 ) => new GraphQLObjectType({
   name: '{{ModelName}}',
-  description: 'A person who uses our app',
   fields: () => ({
     id: globalIdField('{{ModelName}}'),
-    name: { type: GraphQLString },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    creator: {
+      type: new GraphQLNonNull(userType),
+      resolve: {{modelName}} => {{modelName}}.getCreator(),
+    },
   }),
   interfaces: [nodeInterface],
   isTypeOf: obj => obj instanceof {{modelName}}Model,
 });
 
-IoC.callable('{{modelName}}Type', ['{{modelName}}Model', 'nodeInterface', 'imageType'], {{modelName}}Type);
+IoC.callable('{{modelName}}Type', ['{{modelName}}Model', 'nodeInterface', 'userType'], {{modelName}}Type);

@@ -4,13 +4,15 @@ import IoC from 'AppIoC';
 export const apiRouter = (
   authMiddleware,
   errorMiddleware,
-  userRouter
+  userRouter,
+  genreRouter
 ) => {
   let router = Router();
 
   // Authenticate user
   router.use(authMiddleware.setViewer.bind(authMiddleware));
   router.use('/user', userRouter);
+  router.use('/genre', genreRouter);
   router.use(errorMiddleware.log.bind(errorMiddleware));
   router.use(errorMiddleware.response.bind(errorMiddleware));
 
@@ -20,5 +22,6 @@ export const apiRouter = (
 IoC.callable('apiRouter', [
   'authMiddleware',
   'errorMiddleware',
-  'userRouter'
+  'userRouter',
+  'genreRouter',
 ], apiRouter);

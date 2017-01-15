@@ -9,11 +9,9 @@ export default class Update{{ModelName}}Command {
   async execute(viewer, {{modelName}}Id, {
     name,
   }) {
-    const {{modelName}} = await this.{{modelName}}Repository.update(viewer, {{modelName}}Id, {
+    return await this.{{modelName}}Repository.update(viewer, {{modelName}}Id, {
       name
     });
-
-    return {{modelName}};
   }
 }
 

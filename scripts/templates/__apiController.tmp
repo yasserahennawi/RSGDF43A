@@ -24,7 +24,7 @@ export default class {{ModelName}}Controller extends Controller {
   }
 
   findById(req, res, next) {
-    this.{{modelName}}Repository.findById(req.viewer, req.params.id)
+    this.{{modelName}}Repository.findById(req.viewer, req.params.{{modelName}}Id)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
@@ -36,14 +36,14 @@ export default class {{ModelName}}Controller extends Controller {
   }
 
   update(req, res, next) {
-    this.commandExecuter.execute(this.update{{ModelName}}Command, req.viewer, req.params.id, req.body)
+    this.commandExecuter.execute(this.update{{ModelName}}Command, req.viewer, req.params.{{modelName}}Id, req.body)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
 
   remove(req, res, next) {
-    this.commandExecuter.execute(this.remove{{ModelName}}Command, req.viewer, req.params.id)
-      .then(result => this.successResponse(res, { result }))
+    this.commandExecuter.execute(this.remove{{ModelName}}Command, req.viewer, req.params.{{modelName}}Id)
+      .then(result => this.successResponse(res, { result: { deleted: true, result: result._id } }))
       .then(null, next);
   }
 }
@@ -53,6 +53,6 @@ IoC.singleton('{{modelName}}Controller', [
   '{{modelName}}Repository',
   'create{{ModelName}}Command',
   'update{{ModelName}}Command',
-  'update{{ModelName}}Command',
+  'remove{{ModelName}}Command',
   'commandExecuter',
 ], {{ModelName}}Controller)

@@ -16,26 +16,26 @@ export const relayNodeDefinitions = (
   orientationRepository
 ) => {
 
-  const resolveGlobalId = globalId => {
+  const resolveGlobalId = (globalId, { viewer }) => {
     const { type, id } = fromGlobalId(globalId);
 
     switch(type) {
       case 'User':
-        return userRepository.findById(id);
+        return userRepository.findById(viewer, id);
       case 'Genre':
-        return genreRepository.findById(id);
+        return genreRepository.findById(viewer, id)
       case 'Ingredient':
-        return ingredientRepository.findById(id);
+        return ingredientRepository.findById(viewer, id);
       case 'Invoice':
-        return invoiceRepository.findById(id);
+        return invoiceRepository.findById(viewer, id);
       case 'Nutrition':
-        return nutritionRepository.findById(id);
+        return nutritionRepository.findById(viewer, id);
       case 'Product':
-        return productRepository.findById(id);
+        return productRepository.findById(viewer, id);
       case 'Recipe':
-        return recipeRepository.findById(id);
+        return recipeRepository.findById(viewer, id);
       case 'Orientation':
-        return orientationRepository.findById(id);
+        return orientationRepository.findById(viewer, id);
     }
   }
 

@@ -12,7 +12,11 @@ export const graphqlSchema = (
   viewerResolver,
   setViewerMutation,
   loginMutation,
-  registerMutation
+  registerMutation,
+  updateUserMutation,
+  createGenreMutation,
+  updateGenreMutation,
+  removeGenreMutation
 ) => {
 
   /**
@@ -36,6 +40,10 @@ export const graphqlSchema = (
         setViewer: setViewerMutation,
         login: loginMutation,
         register: registerMutation,
+        updateUser: updateUserMutation,
+        createGenre: createGenreMutation,
+        updateGenre: updateGenreMutation,
+        removeGenre: removeGenreMutation
       })
     }),
   });
@@ -44,7 +52,17 @@ export const graphqlSchema = (
 IoC.callable('graphqlSchema', [
   'nodeField',
   'viewerResolver',
+
+  // Authentication mutations
   'setViewerMutation',
   'loginMutation',
   'registerMutation',
+
+  // User mutations
+  'updateUserMutation',
+
+  // Genre mutations
+  'createGenreMutation',
+  'updateGenreMutation',
+  'removeGenreMutation',
 ], graphqlSchema);

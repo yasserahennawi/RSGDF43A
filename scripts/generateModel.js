@@ -35,21 +35,21 @@ const getData = (modelName) => {
 
 const runGenerator = (data, filesToGenerate) => {
   const files = [
-    { name: 'model'          , path: `models`                    , fileName: `${data.ModelName}Model`          },
-    { name: 'repository'     , path: `repositories`              , fileName: `${data.ModelName}Repository`     },
-    { name: 'seederCommand'  , path: `commands/seed`             , fileName: `${data.ModelName}SeederCommand`  },
-    { name: 'createCommand'  , path: `commands/${data.modelName}`, fileName: `Create${data.ModelName}Command`  },
-    { name: 'updateCommand'  , path: `commands/${data.modelName}`, fileName: `Update${data.ModelName}Command`  },
-    { name: 'removeCommand'  , path: `commands/${data.modelName}`, fileName: `Remove${data.ModelName}Command`  },
+    { name: 'model'          , path: `models`                              , fileName: `${data.ModelName}Model`          },
+    { name: 'repository'     , path: `repositories`                        , fileName: `${data.ModelName}Repository`     },
+    { name: 'seederCommand'  , path: `commands/seed`                       , fileName: `${data.ModelName}SeederCommand`  },
+    { name: 'createCommand'  , path: `commands/${data.modelName}`          , fileName: `Create${data.ModelName}Command`  },
+    { name: 'updateCommand'  , path: `commands/${data.modelName}`          , fileName: `Update${data.ModelName}Command`  },
+    { name: 'removeCommand'  , path: `commands/${data.modelName}`          , fileName: `Remove${data.ModelName}Command`  },
     // GraphQL mutations and query types
-    { name: 'createMutation' , path: `graphql/mutations`         , fileName: `create${data.ModelName}Mutation` },
-    { name: 'updateMutation' , path: `graphql/mutations`         , fileName: `update${data.ModelName}Mutation` },
-    { name: 'removeMutation' , path: `graphql/mutations`         , fileName: `remove${data.ModelName}Mutation` },
-    { name: 'graphqlType'    , path: `graphql/types`             , fileName: `${data.modelName}Type`           },
-    { name: 'graphqlResolver', path: `graphql/resolvers`         , fileName: `${data.modelName}Resolver`       },
+    { name: 'createMutation' , path: `graphql/mutations/${data.modelName}` , fileName: `create${data.ModelName}Mutation` },
+    { name: 'updateMutation' , path: `graphql/mutations/${data.modelName}` , fileName: `update${data.ModelName}Mutation` },
+    { name: 'removeMutation' , path: `graphql/mutations/${data.modelName}` , fileName: `remove${data.ModelName}Mutation` },
+    { name: 'graphqlType'    , path: `graphql/types`                       , fileName: `${data.modelName}Type`           },
+    { name: 'graphqlResolver', path: `graphql/resolvers`                   , fileName: `${data.modelName}Resolver`       },
     // REST API Controller and router
-    { name: 'apiController'  , path: `api/controllers`           , fileName: `${data.ModelName}Controller`     },
-    { name: 'apiRouter'      , path: `api/routers`               , fileName: `${data.modelName}Router`     },
+    { name: 'apiController'  , path: `api/controllers`                     , fileName: `${data.ModelName}Controller`     },
+    { name: 'apiRouter'      , path: `api/routers`                         , fileName: `${data.modelName}Router`     },
   ];
 
   return files
@@ -82,6 +82,8 @@ inquirer.prompt([
       'removeMutation',
       'graphqlType',
       'graphqlResolver',
+      'apiController',
+      'apiRouter',
     ],
     default: [
       'model',
@@ -95,6 +97,8 @@ inquirer.prompt([
       'removeMutation',
       'graphqlType',
       'graphqlResolver',
+      'apiController',
+      'apiRouter',
     ],
   },
 ]).then(answers => {

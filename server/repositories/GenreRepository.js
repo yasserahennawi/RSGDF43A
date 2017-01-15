@@ -1,6 +1,7 @@
 import Repository from './Repository';
 import ValidationError from  '../errors/ValidationError';
 import ForbiddenError from  '../errors/ForbiddenError';
+import ModelNotFoundError from  '../errors/ModelNotFoundError';
 import IoC from 'AppIoC';
 import * as Q from 'q';
 
@@ -10,7 +11,7 @@ export default class GenreRepository extends Repository {
     this.model = model;
   }
 
-  find(viewer, {
+  async find(viewer, {
     // Search criteria
   }) {
     const query = this.model.find();
@@ -18,11 +19,11 @@ export default class GenreRepository extends Repository {
     return query.exec();
   }
 
-  findById(viewer, id) {
+  async findById(viewer, id) {
     return this.model.findById(id).exec();
   }
 
-  create(viewer, data) {
+  async create(viewer, data) {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
@@ -33,18 +34,32 @@ export default class GenreRepository extends Repository {
     });
   }
 
-  update(viewer, id, data) {
+  async update(viewer, id, data) {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    return this.model.update({ _id: id }, data).exec();
+
+    const genre = await this.model.findById(id);
+
+    if(! genre) {
+      throw new ModelNotFoundError("The genre you are requesting to update doesnt exist");
+    }
+
+    return genre.set(data).save();
   }
 
-  remove(viewer, id) {
+  async remove(viewer, id) {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    return this.model.remove({ _id: id }).exec();
+
+    const genre = await this.model.findById(id);
+
+    if(! genre) {
+      throw new ModelNotFoundError("The genre you are requesting to remove doesnt exist");
+    }
+
+    return await genre.remove();
   }
 }
 
