@@ -15,41 +15,6 @@ basePath: /api/v1
 produces:
   - application/json
 paths:
-  /user:
-    parameters:
-      - name: Authorization
-        in: header
-        description: JWT Authorization token e.g. JWT {{token}}
-        required: false
-        type: string
-        format: string
-    get:
-      summary: User Type
-      description: |
-        List all users.
-      parameters:
-        - name: email
-          in: query
-          description: Search by email.
-          required: false
-          type: string
-          format: email
-      tags:
-        - User
-      responses:
-        200:
-          description: An array of users
-          schema:
-            type: object
-            properties:
-              result:
-                type: array
-                items:
-                  $ref: '#/definitions/User'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
 
   /user/login:
     post:
@@ -111,6 +76,41 @@ paths:
             properties:
               result:
                 $ref: "#/definitions/User"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT {{token}}
+        required: false
+        type: string
+        format: string
+    get:
+      summary: User Type
+      description: |
+        List all users.
+      parameters:
+        - name: email
+          in: query
+          description: Search by email.
+          required: false
+          type: string
+          format: email
+      tags:
+        - User
+      responses:
+        200:
+          description: An array of users
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/User'
         default:
           description: Unexpected error
           schema:

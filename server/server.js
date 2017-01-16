@@ -39,12 +39,8 @@ export async function runGraphQLDevServer() {
   const graphqlSchema = await IoC.resolve('graphqlSchema');
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch GraphQL
-  const server = express();
-  //
-  server.use(bodyParser.json());
-  server.use(cors());
+  const server = configureExpressServer(express());
   // Middleware to set guest viewer
-  server.use(addGuestViewerMiddleware);
   server.use('/api/v1', restApiRouter);
   server.use('/', graphQLHTTP({
     graphiql: true,
@@ -59,12 +55,8 @@ export async function runProductionServer() {
   const graphqlSchema = await IoC.resolve('graphqlSchema');
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch Relay by creating a normal express server
-  const relayServer = express();
-  relayServer.use(bodyParser.json());
-  relayServer.use(cors());
-  // relayServer.use(historyApiFallback());
+  const relayServer = configureExpressServer(express());
   // Middleware to set guest viewer
-  relayServer.use(addGuestViewerMiddleware);
   relayServer.use('/api/v1', restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({
     graphiql: true,
@@ -76,3 +68,11 @@ export async function runProductionServer() {
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
 
+
+
+function configureExpressServer(server) {
+  server.use(bodyParser.json());
+  server.use(cors());
+  server.use(addGuestViewerMiddleware);
+  return server;
+}
