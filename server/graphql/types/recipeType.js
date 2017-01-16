@@ -53,6 +53,8 @@ export const recipeType = (
       calories: { type: GraphQLString },
       difficulity: { type: GraphQLInt },
       mainImage: { type: imageType },
+      // One of dinner, breakfast, launch
+      mealType: { type: GraphQLString },
       orientation: { type: new GraphQLNonNull(orientationType) },
       nutritions: {
         type: nutritionsConnectionType,

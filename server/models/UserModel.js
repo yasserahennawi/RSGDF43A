@@ -9,6 +9,7 @@ import IoC from 'AppIoC';
 
 export const userModel = (mongoose) => {
   const USER_TYPES = ['Blogger', 'Admin', 'Customer', 'Super'];
+  const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
 
   const userSchema = new Schema({
     firstName: {type: String, required: true},
@@ -29,13 +30,22 @@ export const userModel = (mongoose) => {
       }],
     },
 
+    preferences: {
+      genre: {type: Schema.Types.ObjectId, ref: 'Genre'},
+      orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
+      balancedPercentage: Number,
+      healthyPercentage: Number,
+      alergies: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],
+      mealType: {type: String, enum: MEAL_TYPES},
+    },
+
     addressStreet: String,
     addressStreetNumber: String,
     addressComplement:String,
     addressZip: String,
     addressCountry: String,
 
-    userType: {type: String, enum: USER_TYPES, required: true},
+    userType: {type: String, enum: USER_TYPES, required: true, default: 'Customer'},
 
     onlineAt: {type: Date, default: Date.now},
   }, { timestamps: true, collection: 'new_users' });

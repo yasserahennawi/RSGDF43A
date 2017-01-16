@@ -63,25 +63,38 @@ export default class UserRepository extends Repository {
   }
 
   create(viewer, data) {
-    if(!viewer.isAdmin()) {
+    // Only admins can create different types of users
+    if((data.userType && data.userType !== 'Customer') && !viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
     return this.model.create(data);
   }
 
-  update(viewer, id, data) {
+  async update(viewer, id, data) {
+
+    // Check for old password here
+    // If the user is trying to update his password then we have to check his old password
+    // if(password) {
+    //   await this.verifyPassword(oldPassword);
+    // }
+
+    // Only admins can update userType
+    if((data.userType && data.userType !== 'Customer') && !viewer.isAdmin()) {
+      throw new ForbiddenError("Only admins can change the user type.");
+    }
+
     if(!viewer.isAdmin() && !viewer.checkId(id)) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    const user = this.model.findById({ _id: id }).exec();
-    return user.save();
+    const user = await this.model.findById({ _id: id }).exec();
+    return user.set(data).save();
   }
 
-  remove(viewer, id) {
+  async remove(viewer, id) {
     if(!viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    const user = this.model.findById({ _id: id }).exec();
+    const user = await this.model.findById({ _id: id }).exec();
     return user.remove();
   }
 }

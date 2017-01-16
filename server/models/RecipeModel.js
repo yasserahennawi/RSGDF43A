@@ -3,6 +3,8 @@ import { checkEqualIds } from '../utils/mongo';
 import IoC from 'AppIoC';
 
 export const recipeModel = (mongoose) => {
+  const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
+
   const recipeSchema = new Schema({
     name: {type: String, required: true},
     preparationInstructions: [String],
@@ -19,6 +21,7 @@ export const recipeModel = (mongoose) => {
         height: Number,
       }],
     },
+    mealType: {type: String, enum: MEAL_TYPES},
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
     items: [{
