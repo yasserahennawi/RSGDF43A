@@ -5,6 +5,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
 export const genreModel = (mongoose) => {
+  console.log("Genre Model");
   const genreSchema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},

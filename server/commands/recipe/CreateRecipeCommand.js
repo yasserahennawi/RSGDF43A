@@ -6,12 +6,8 @@ export default class CreateRecipeCommand {
     this.recipeRepository = recipeRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.recipeRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.recipeRepository.create(viewer, attrs);
   }
 }
 

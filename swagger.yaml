@@ -1,0 +1,668 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: TasteTastic REST API
+  description: TasteTastic REST API
+  version: "1.0.0"
+# the domain of the service
+host: tasteapi.herokuapp.com
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /api/v1
+produces:
+  - application/json
+paths:
+  /user:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT {{token}}
+        required: false
+        type: string
+        format: string
+    get:
+      summary: User Type
+      description: |
+        List all users.
+      parameters:
+        - name: email
+          in: query
+          description: Search by email.
+          required: false
+          type: string
+          format: email
+      tags:
+        - User
+      responses:
+        200:
+          description: An array of users
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /user/login:
+    post:
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      summary: Login user
+      description: |
+        Login user by email and password.
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Login user succeed
+          schema:
+            type: object
+            properties:
+              result:
+                $ref: "#/definitions/User"
+              token:
+                type: string
+                description: "JWT token to identify the logged in user"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /user/viewer:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT {{token}}
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Loggedin User Type
+      description: |
+        Get logged in user.
+      tags:
+        - User
+      responses:
+        200:
+          description: Loggedin user
+          schema:
+            type: object
+            properties:
+              result:
+                $ref: "#/definitions/User"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+  /user/{param}:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT {{token}}
+        required: false
+        type: string
+        format: string
+      - name: param
+        in: path
+        description: User id
+        required: true
+        type: string
+        format: string
+    get:
+      summary: User Type
+      description: |
+        Find user by id.
+      tags:
+        - User
+      responses:
+        200:
+          description: User object
+          schema:
+            type: object
+            properties:
+              result:
+                $ref: "#/definitions/User"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /product:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Product Types
+      description: |
+        List all products (menu specials).
+      parameters:
+        - name: year
+          in: query
+          description: Search by year.
+          required: false
+          type: number
+          format: number
+        - name: month
+          in: query
+          description: Search by month.
+          required: false
+          type: number
+          format: number
+        - name: day
+          in: query
+          description: Search by day of month.
+          required: false
+          type: number
+          format: number
+        - name: creator
+          in: query
+          description: Search by creator id.
+          required: false
+          type: string
+          format: uuid
+        - name: mine
+          in: query
+          description: Search created by current authenticated user.
+          required: false
+          type: string
+          format: uuid
+      tags:
+        - Products
+      responses:
+        200:
+          description: An array of products
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Product'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /genre:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Genre Type
+      description: |
+        List all genres.
+      parameters:
+        - name: name
+          in: query
+          description: Search by name.
+          required: false
+          type: string
+          format: string
+      tags:
+        - Genre
+      responses:
+        200:
+          description: An array of genres
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Genre'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /ingredient:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Ingredient Type
+      description: |
+        List all ingredients.
+      parameters:
+        - name: name
+          in: query
+          description: Search by name.
+          required: false
+          type: string
+          format: string
+      tags:
+        - Ingredient
+      responses:
+        200:
+          description: An array of ingredients
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Ingredient'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /nutrition:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Nutrition Type
+      description: |
+        List all nutritions.
+      parameters:
+        - name: name
+          in: query
+          description: Search by name.
+          required: false
+          type: string
+          format: string
+      tags:
+        - Nutrition
+      responses:
+        200:
+          description: An array of nutritions
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Nutrition'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /orientation:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Orientation Type
+      description: |
+        List all orientations.
+      parameters:
+        - name: name
+          in: query
+          description: Search by name.
+          required: false
+          type: string
+          format: string
+      tags:
+        - Orientation
+      responses:
+        200:
+          description: An array of orientations
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Orientation'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /recipe:
+    parameters:
+      - name: Authorization
+        in: header
+        description: JWT Authorization token e.g. JWT <<token>>
+        required: false
+        type: string
+        format: string
+    get:
+      summary: Recipe Type
+      description: |
+        List all recipes.
+      parameters:
+        - name: name
+          in: query
+          description: Search by name.
+          required: false
+          type: string
+          format: string
+        - name: product
+          in: query
+          description: Search by product id.
+          required: false
+          type: string
+          format: uuid
+        - name: creator
+          in: query
+          description: Search by creator id.
+          required: false
+          type: string
+          format: uuid
+      tags:
+        - Recipes
+      responses:
+        200:
+          description: An array of recipes
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/Recipe'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier.
+      firstName:
+        type: string
+        description: User first name.
+      lastName:
+        type: string
+        description: User last name.
+      nickName:
+        type: string
+        description: User nick name.
+      email:
+        type: string
+        format: email
+        description: User email address.
+      profileImage:
+        $ref: '#/definitions/Image'
+      addressStreet:
+        type: string
+        description: User address street
+      addressStreetNumber:
+        type: string
+        description: User address street number
+      addressComplement:
+        type: string
+        description: User address complement
+      addressZip:
+        type: string
+        description: User zip code
+      addressCountry:
+        type: string
+        description: User address country
+
+  Genre:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Unique genre name
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  Ingredient:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Unique ingredient name
+      category:
+        type: string
+        description: ingredient category
+      subcategory:
+        type: string
+        description: ingredient subcategory
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  Nutrition:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Unique nutrition name
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  Orientation:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Unique orientation name
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  Product:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Unique product name
+      price:
+        $ref: '#/definitions/Price'
+      coverImage:
+        $ref: '#/definitions/Image'
+      status:
+        type: string
+        enum: ['accepted', 'rejected', 'awaiting']
+      recipes:
+        type: array
+        description: array of recipe ids
+        items:
+          format: uuid
+          type: string
+      genres:
+        type: array
+        description: array of genre ids
+        items:
+          format: uuid
+          type: string
+      nutritions:
+        type: array
+        description: array of nutrition ids
+        items:
+          format: uuid
+          type: string
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+      author:
+        format: uuid
+        type: string
+        description: User author id
+
+  Recipe:
+    type: object
+    properties:
+      name:
+        type: string
+        description: recipe name
+      preparationInstructions:
+        type: array
+        description: preparation instructions
+        items:
+          type: string
+      preparationTime:
+        type: integer
+        description: preparation time
+      calories:
+        type: string
+        description: calories
+      difficulity:
+        type: integer
+        description: difficulity
+      mainImage:
+        $ref: '#/definitions/Image'
+      nutrition:
+        type: string
+        format: uuid
+        description: Recipe nutrition id
+      orientation:
+        type: string
+        format: uuid
+        description: Recipe orientation id
+      items:
+        type: array
+        description: Recipe items
+        items:
+          $ref: '#/definitions/RecipeItem'
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  RecipeItem:
+    type: object
+    properties:
+      addition:
+        format: uuid
+        type: string
+        description: Addition Ingredient id
+      ingredient:
+        format: uuid
+        type: string
+        description: Main ingredient id
+      quantity:
+        type: integer
+        description: Quantity of this recipe item
+      unit:
+        type: string
+        description: Recipe unit
+
+  Invoice:
+    type: object
+    properties:
+      totalPrice:
+        $ref: '#/definitions/Price'
+      quantity:
+        type: integer
+        description: products quantity
+      products:
+        type: array
+        description: array of product ids
+        items:
+          format: uuid
+          type: string
+      creator:
+        format: uuid
+        type: string
+        description: User creator id
+
+  Image:
+    type: object
+    properties:
+      src:
+        type: string
+        description: Image url
+      versions:
+        type: array
+        items:
+          $ref: '#/definitions/ImageVersion'
+
+  ImageVersion:
+    type: object
+    properties:
+      src:
+        type: string
+        description: Image version url
+      width:
+        type: integer
+        description: Image version width
+      height:
+        type: integer
+        description: Image version width
+
+  Price:
+    type: object
+    properties:
+      value:
+        type: number
+        description: Price numeric value
+      currency:
+        type: string
+        description: Price currency e.g. USD
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+        description: Main descriptive error message
+      name:
+        type: string
+        enum: [ 'ValidationError', 'ForbiddenError', 'ModelNotFoundError', 'UnauthorizedError', 'UnkownError' ]
+        description: Type of the error
+      validationMessages:
+        type: array
+        items:
+          $ref: '#/definitions/ErrorValidationMessage'
+
+  ErrorValidationMessage:
+    type: object
+    properties:
+      key:
+        type: string
+        description: input key that's invalid
+      value:
+        type: string
+        description: input value that's invalid

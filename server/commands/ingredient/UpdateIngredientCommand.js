@@ -6,12 +6,8 @@ export default class UpdateIngredientCommand {
     this.ingredientRepository = ingredientRepository;
   }
 
-  async execute(viewer, ingredientId, {
-    name,
-  }) {
-    return await this.ingredientRepository.update(viewer, ingredientId, {
-      name
-    });
+  async execute(viewer, ingredientId, attrs) {
+    return await this.ingredientRepository.update(viewer, ingredientId, attrs);
   }
 }
 

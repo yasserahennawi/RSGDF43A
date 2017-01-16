@@ -20,6 +20,8 @@ export const createMutation = (commandExecuter, createIngredientCommand, ingredi
   name: 'CreateIngredient',
   inputFields: {
     name: { type: new GraphQLNonNull(GraphQLString) },
+    category: { type: new GraphQLNonNull(GraphQLString) },
+    subcategory: { type: GraphQLString },
   },
   outputFields: {
     ingredient: { type: ingredientType },

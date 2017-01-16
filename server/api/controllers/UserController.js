@@ -38,7 +38,7 @@ export default class UserController extends Controller {
   }
 
   viewer(req, res, next) {
-    this.successResponse(res, req.viewer);
+    this.successResponse(res, {result: req.viewer});
   }
 
   create(req, res, next) {

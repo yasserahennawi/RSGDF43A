@@ -6,12 +6,8 @@ export default class CreateGenreCommand {
     this.genreRepository = genreRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.genreRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.genreRepository.create(viewer, attrs);
   }
 }
 

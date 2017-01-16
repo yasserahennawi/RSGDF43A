@@ -5,7 +5,13 @@ export const apiRouter = (
   authMiddleware,
   errorMiddleware,
   userRouter,
-  genreRouter
+  genreRouter,
+  ingredientRouter,
+  invoiceRouter,
+  nutritionRouter,
+  orientationRouter,
+  productRouter,
+  recipeRouter
 ) => {
   let router = Router();
 
@@ -13,6 +19,12 @@ export const apiRouter = (
   router.use(authMiddleware.setViewer.bind(authMiddleware));
   router.use('/user', userRouter);
   router.use('/genre', genreRouter);
+  router.use('/ingredient', ingredientRouter);
+  router.use('/invoice', invoiceRouter);
+  router.use('/nutrition', nutritionRouter);
+  router.use('/orientation', orientationRouter);
+  router.use('/product', productRouter);
+  router.use('/recipe', recipeRouter);
   router.use(errorMiddleware.log.bind(errorMiddleware));
   router.use(errorMiddleware.response.bind(errorMiddleware));
 
@@ -24,4 +36,10 @@ IoC.callable('apiRouter', [
   'errorMiddleware',
   'userRouter',
   'genreRouter',
+  'ingredientRouter',
+  'invoiceRouter',
+  'nutritionRouter',
+  'orientationRouter',
+  'productRouter',
+  'recipeRouter',
 ], apiRouter);

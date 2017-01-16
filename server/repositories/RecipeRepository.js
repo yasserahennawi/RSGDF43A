@@ -11,6 +11,9 @@ export default class RecipeRepository extends Repository {
 
   find(viewer, {
     // Search criteria
+    product,
+    creator,
+
   }) {
     const query = this.model.find();
 

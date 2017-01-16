@@ -6,12 +6,8 @@ export default class CreateNutritionCommand {
     this.nutritionRepository = nutritionRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.nutritionRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.nutritionRepository.create(viewer, attrs);
   }
 }
 

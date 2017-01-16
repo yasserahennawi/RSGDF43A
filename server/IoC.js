@@ -80,18 +80,28 @@ export default class IoC {
     return new instance.classType(...args);
   }
 
+  static async resolveRegex(regex) {
+    const toResolve = [];
+    for(let key in IoC.callables) {
+      if(regex.exec(key)) {
+        toResolve.push(key);
+      }
+    }
+    return Q.all(toResolve.map(r => IoC.resolve(r)));
+  }
+
   static async resolve(name) {
     try {
       // @TODO add timeout logic
       if(!(name in IoC.resolved)) {
 
         if(name in IoC.callables) {
-          IoC.resolved[name] = await IoC.resolveCallable(name);
+          IoC.resolved[name] = IoC.resolveCallable(name);
         }
 
         else if(name in IoC.singletons) {
           // Resolve and save so we use the same instance again
-          IoC.resolved[name] = await IoC.resolveClassInstance(name);
+          IoC.resolved[name] = IoC.resolveClassInstance(name);
         }
 
         else if(name in IoC.instances) {
@@ -104,7 +114,7 @@ export default class IoC {
         }
       }
 
-      return IoC.resolved[name];
+      return await IoC.resolved[name];
     } catch(error) {
       console.log(`Error while resolving ${name}:`);
       return Q.reject(error);

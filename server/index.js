@@ -9,6 +9,7 @@ import {
   runRelayDevServer,
   runProductionServer,
 } from './server';
+import IoC from 'AppIoC';
 
 // Load dotenv env. variables
 if (fs.existsSync(path.join(process.cwd(), '.env'))) {
@@ -27,4 +28,3 @@ if (process.env.NODE_ENV === 'development') {
 else if (process.env.NODE_ENV === 'production') {
   runProductionServer();
 }
-

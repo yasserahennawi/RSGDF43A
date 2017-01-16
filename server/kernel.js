@@ -27,8 +27,6 @@ export default () => {
   // Use token authentication
   IoC.same('authManager', 'tokenAuth');
 
-  console.log(process.env.SECRET_KEY);
-
   // Register secret key
   IoC.value('secretKey', process.env.SECRET_KEY);
 }

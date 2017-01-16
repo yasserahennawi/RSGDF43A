@@ -6,12 +6,8 @@ export default class UpdateInvoiceCommand {
     this.invoiceRepository = invoiceRepository;
   }
 
-  async execute(viewer, invoiceId, {
-    name,
-  }) {
-    return await this.invoiceRepository.update(viewer, invoiceId, {
-      name
-    });
+  async execute(viewer, invoiceId, attrs) {
+    return await this.invoiceRepository.update(viewer, invoiceId, attrs);
   }
 }
 

@@ -6,12 +6,8 @@ export default class CreateOrientationCommand {
     this.orientationRepository = orientationRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.orientationRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.orientationRepository.create(viewer, attrs);
   }
 }
 

@@ -6,12 +6,8 @@ export default class CreateProductCommand {
     this.productRepository = productRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.productRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.productRepository.create(viewer, attrs);
   }
 }
 

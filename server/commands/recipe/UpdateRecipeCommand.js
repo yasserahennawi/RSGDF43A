@@ -6,12 +6,8 @@ export default class UpdateRecipeCommand {
     this.recipeRepository = recipeRepository;
   }
 
-  async execute(viewer, recipeId, {
-    name,
-  }) {
-    return await this.recipeRepository.update(viewer, recipeId, {
-      name
-    });
+  async execute(viewer, recipeId, attrs) {
+    return await this.recipeRepository.update(viewer, recipeId, attrs);
   }
 }
 

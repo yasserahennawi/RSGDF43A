@@ -6,12 +6,8 @@ export default class CreateIngredientCommand {
     this.ingredientRepository = ingredientRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.ingredientRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.ingredientRepository.create(viewer, attrs);
   }
 }
 

@@ -6,12 +6,8 @@ export default class UpdateGenreCommand {
     this.genreRepository = genreRepository;
   }
 
-  async execute(viewer, genreId, {
-    name,
-  }) {
-    return await this.genreRepository.update(viewer, genreId, {
-      name
-    });
+  async execute(viewer, genreId, attrs) {
+    return await this.genreRepository.update(viewer, genreId, attrs);
   }
 }
 

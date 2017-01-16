@@ -6,12 +6,8 @@ export default class UpdateProductCommand {
     this.productRepository = productRepository;
   }
 
-  async execute(viewer, productId, {
-    name,
-  }) {
-    return await this.productRepository.update(viewer, productId, {
-      name
-    });
+  async execute(viewer, productId, attrs) {
+    return await this.productRepository.update(viewer, productId, attrs);
   }
 }
 

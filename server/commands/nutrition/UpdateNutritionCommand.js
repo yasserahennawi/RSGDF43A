@@ -6,12 +6,8 @@ export default class UpdateNutritionCommand {
     this.nutritionRepository = nutritionRepository;
   }
 
-  async execute(viewer, nutritionId, {
-    name,
-  }) {
-    return await this.nutritionRepository.update(viewer, nutritionId, {
-      name
-    });
+  async execute(viewer, nutritionId, attrs) {
+    return await this.nutritionRepository.update(viewer, nutritionId, attrs);
   }
 }
 

@@ -6,12 +6,8 @@ export default class UpdateOrientationCommand {
     this.orientationRepository = orientationRepository;
   }
 
-  async execute(viewer, orientationId, {
-    name,
-  }) {
-    return await this.orientationRepository.update(viewer, orientationId, {
-      name
-    });
+  async execute(viewer, orientationId, attrs) {
+    return await this.orientationRepository.update(viewer, orientationId, attrs);
   }
 }
 

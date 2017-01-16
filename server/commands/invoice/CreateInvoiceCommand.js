@@ -6,12 +6,8 @@ export default class CreateInvoiceCommand {
     this.invoiceRepository = invoiceRepository;
   }
 
-  async execute(viewer, {
-    name,
-  }) {
-    return await this.invoiceRepository.create(viewer, {
-      name
-    });
+  async execute(viewer, attrs) {
+    return await this.invoiceRepository.create(viewer, attrs);
   }
 }
 
