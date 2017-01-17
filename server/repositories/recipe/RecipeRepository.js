@@ -1,19 +1,19 @@
-import Repository from './Repository';
-import ValidationError from  '../errors/ValidationError';
-import ForbiddenError from  '../errors/ForbiddenError';
+import Repository from '../Repository';
+import ValidationError from  '../../errors/ValidationError';
+import ForbiddenError from  '../../errors/ForbiddenError';
 import IoC from 'AppIoC';
 
 export default class RecipeRepository extends Repository {
-  constructor(model) {
+  constructor(model, recipeUserPreferencesSearch) {
     super();
     this.model = model;
+    this.recipeUserPreferencesSearch = recipeUserPreferencesSearch;
   }
 
   find(viewer, {
     // Search criteria
     product,
     creator,
-
   }) {
     const query = this.model.find();
 
@@ -22,6 +22,14 @@ export default class RecipeRepository extends Repository {
 
   findById(viewer, id) {
     return this.model.findById(id).exec();
+  }
+
+  async getNewOneByMealType(...args) {
+    return this.recipeUserPreferencesSearch.getNewOneByMealType(...args);
+  }
+
+  async getDailyRecipes(...args) {
+    return this.recipeUserPreferencesSearch.getDailyRecipes(...args);
   }
 
   create(viewer, data) {
@@ -49,4 +57,7 @@ export default class RecipeRepository extends Repository {
   }
 }
 
-IoC.singleton('recipeRepository', ['recipeModel'], RecipeRepository);
+IoC.singleton('recipeRepository', [
+  'recipeModel',
+  'recipeUserPreferencesSearch',
+], RecipeRepository);

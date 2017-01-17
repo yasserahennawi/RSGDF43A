@@ -1,9 +1,10 @@
 import { Schema } from 'mongoose';
-import { checkEqualIds } from '../utils/mongo';
+import { checkEqualIds } from 'utils/mongo';
 import IoC from 'AppIoC';
 
+export const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
+
 export const recipeModel = (mongoose, recipeValidator) => {
-  const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
 
   const recipeSchema = new Schema({
     name: {type: String, required: true},
@@ -22,6 +23,8 @@ export const recipeModel = (mongoose, recipeValidator) => {
       }],
     },
     mealType: {type: String, enum: MEAL_TYPES, default: 'breakfast'},
+    // Is this nutrition or genre ????/
+    // @TODO: @kareemmohamed update this with nutrition or genre
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
     items: [{
@@ -60,6 +63,14 @@ export const recipeModel = (mongoose, recipeValidator) => {
   recipeSchema.method('getOrientation', async function() {
     await this.populate('orientation').execPopulate();
     return this.orientation;
+  });
+
+  /**
+   * Sync. method to get ingredient ids
+   * @return {Array}
+   */
+  recipeSchema.method('getIngredientIds', function() {
+    return this.items.map(item => item.ingredient);
   });
 
   /**

@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { checkEqualIds } from '../utils/mongo';
+import { checkEqualIds } from 'utils/mongo';
 import IoC from 'AppIoC';
 
 export const invoiceModel = (mongoose, invoiceValidator) => {

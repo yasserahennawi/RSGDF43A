@@ -3,13 +3,14 @@ import ForbiddenError from '../../errors/ForbiddenError';
 
 export default class UserSeederCommand {
 
-  constructor(userRepository, secretKey) {
+  constructor(
+    userRepository,
+    secretKey) {
     this.userRepository = userRepository;
     this.secretKey = secretKey;
   }
 
   async execute(secretKey) {
-    console.log('secretKey', secretKey);
     if(this.secretKey !== secretKey) {
       throw new ForbiddenError("You dont have access to do this action");
     }
@@ -28,4 +29,7 @@ export default class UserSeederCommand {
   }
 }
 
-IoC.singleton('userSeederCommand', ['userRepository', 'secretKey'], UserSeederCommand);
+IoC.singleton('userSeederCommand', [
+  'userRepository',
+  'secretKey',
+], UserSeederCommand);

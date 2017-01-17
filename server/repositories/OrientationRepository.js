@@ -2,7 +2,7 @@ import Repository from './Repository';
 import ValidationError from  '../errors/ValidationError';
 import ForbiddenError from  '../errors/ForbiddenError';
 import IoC from 'AppIoC';
-import { getDocumentId } from '../utils/mongo';
+import { getDocumentId } from 'utils/mongo';
 
 export default class OrientationRepository extends Repository {
   constructor(model) {

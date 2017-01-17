@@ -1,5 +1,6 @@
 import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
+import * as Q from 'q';
 
 export default class IngredientSeederCommand {
 

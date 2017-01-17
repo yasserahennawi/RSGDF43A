@@ -2,7 +2,7 @@
   "name": "tastetastic",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon --watch server/**/*.js --exec \"babel-node server/index.js\"",
+    "start": "nodemon --watch ./server/**/*.js --exec \"babel-node server/index.js\"",
     "seed-db": "babel-node scripts/seedDatabase.js",
     "generate": "babel-node scripts/generateModel.js",
     "update": "babel-node scripts/updateSchema.js",

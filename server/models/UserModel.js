@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import passwordHash from 'password-hash-and-salt';
 import ValidationError from '../errors/ValidationError';
-import { checkEqualIds } from '../utils/mongo';
+import { checkEqualIds } from 'utils/mongo';
 import Q from 'q';
 import * as _ from 'lodash';
 import uniqueValidator from 'mongoose-unique-validator';
@@ -31,8 +31,9 @@ export const userModel = (mongoose, userValidator) => {
     },
 
     preferences: {
-      genre: {type: Schema.Types.ObjectId, ref: 'Genre'},
-      orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
+      // @TODO @kareemmohamed Add nutrition or genre
+      ingredients: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],
+      orientations: [{type: Schema.Types.ObjectId, ref: 'Orientation'}],
       balancedPercentage: Number,
       healthyPercentage: Number,
       alergies: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],
@@ -72,6 +73,47 @@ export const userModel = (mongoose, userValidator) => {
    */
   userSchema.method('hashPassword', async function(password) {
     this.password = await Q.ninvoke(passwordHash(password), 'hash');
+  });
+
+  /**
+   * Get rejected recipes ids
+   * @param {Array} array of rejected recipes ids
+   */
+  userSchema.method('getRejectedRecipeIds', function() {
+    return this.preferences.rejectedRecipes;
+  });
+
+  /**
+   * Check if user has this orientation in his preferences
+   * @param {Boolean}
+   */
+  userSchema.method('hasOrientation', function(orientation) {
+    return _.findIndex(
+      this.preferences.orientations,
+      orientationId => checkEqualIds(orientationId, orientation)
+    ) > -1;
+  });
+
+  /**
+   * Check if user has a rejected recipe
+   * @param {Boolean}
+   */
+  userSchema.method('hasRejectedRecipe', function(recipe) {
+    return _.findIndex(
+      this.getRejectedRecipeIds(),
+      rejectedRecipeId => checkEqualIds(rejectedRecipeId, recipe)
+    ) > -1;
+  });
+
+  /**
+   * Check if user has this ingredient
+   * @param {Boolean}
+   */
+  userSchema.method('hasIngredient', function(ingredient) {
+    return _.findIndex(
+      this.preferences.ingredients,
+      ingredientId => checkEqualIds(ingredientId, ingredient)
+    ) > -1;
   });
 
   /**

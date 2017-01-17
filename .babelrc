@@ -7,6 +7,8 @@
     "./scripts/babelRelayPlugin",
     ["module-alias", [
       { "src": "./server/IoC", "expose": "AppIoC" },
+      { "src": "./server/utils", "expose": "utils" },
+      { "src": "./server/models", "expose": "models" },
     ]]
   ],
   "presets": ["react", "es2015", "stage-0"],

@@ -1,5 +1,9 @@
 import Q from 'q';
 
+export function getUniqueIds(array) {
+  return _.uniqWith(getUniqueIds, checkEqualIds);
+}
+
 /**
  * Get id from mongoose relation
  * @param {Object|string} object Mongoose document or id

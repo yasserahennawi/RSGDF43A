@@ -2,6 +2,8 @@ import Repository from './Repository';
 import ValidationError from  '../errors/ValidationError';
 import ForbiddenError from  '../errors/ForbiddenError';
 import IoC from 'AppIoC';
+import * as _ from 'lodash';
+import { getUniqueIds } from 'utils/mongo';
 
 export default class UserRepository extends Repository {
   constructor(model, secretKey) {
@@ -33,7 +35,7 @@ export default class UserRepository extends Repository {
       throw new ForbiddenError("You dont have access to view users");
     }
 
-    const query = this.mdoel.find();
+    const query = this.model.find();
 
     if(email) {
       query.where('email', email);
@@ -88,6 +90,14 @@ export default class UserRepository extends Repository {
     }
     const user = await this.model.findById({ _id: id }).exec();
     return user.set(data).save();
+  }
+
+  rejectRecipe(viewer, recipeId) {
+    return this.update(viewer, viewer._id, {
+      preferences: {
+        rejectedRecipes: getUniqueIds([...viewer.preferences.rejectedRecipes, recipeId])
+      },
+    })
   }
 
   async remove(viewer, id) {

@@ -17,6 +17,7 @@ const runSeeder = async () => {
     const productSeederCommand = await IoC.resolve('productSeederCommand');
     const recipeSeederCommand = await IoC.resolve('recipeSeederCommand');
     const userSeederCommand = await IoC.resolve('userSeederCommand');
+    const userPreferencesSeederCommand = await IoC.resolve('userPreferencesSeederCommand');
 
     commandExecuter.execute(
       flushDBCommand,
@@ -43,6 +44,8 @@ const runSeeder = async () => {
     await commandExecuter.execute(productSeederCommand, superUser);
     console.log(chalk.green(`ProductSeederCommand has been executed`));
     await commandExecuter.execute(recipeSeederCommand, superUser);
+    console.log(chalk.green(`RecipeSeederCommand has been executed`));
+    await commandExecuter.execute(userPreferencesSeederCommand, superUser);
     console.log(chalk.green(`RecipeSeederCommand has been executed`));
 
 

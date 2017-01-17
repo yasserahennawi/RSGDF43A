@@ -7,6 +7,7 @@ export default class RecipeController extends Controller {
     createRecipeCommand,
     updateRecipeCommand,
     removeRecipeCommand,
+    refreshRecipeCommand,
     commandExecuter
   ) {
     super();
@@ -14,6 +15,7 @@ export default class RecipeController extends Controller {
     this.createRecipeCommand = createRecipeCommand;
     this.updateRecipeCommand = updateRecipeCommand;
     this.removeRecipeCommand = removeRecipeCommand;
+    this.refreshRecipeCommand = refreshRecipeCommand;
     this.commandExecuter = commandExecuter;
   }
 
@@ -25,6 +27,18 @@ export default class RecipeController extends Controller {
 
   findById(req, res, next) {
     this.recipeRepository.findById(req.viewer, req.params.recipeId)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  getDailyRecipes(req, res, next) {
+    this.recipeRepository.getDailyRecipes(req.viewer, req.query.noOfDays)
+      .then(result => this.successResponse(res, { result }))
+      .then(null, next);
+  }
+
+  refresh(req, res, next) {
+    this.commandExecuter.execute(this.refreshRecipeCommand, req.viewer, req.params.recipeId)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }
@@ -54,5 +68,6 @@ IoC.singleton('recipeController', [
   'createRecipeCommand',
   'updateRecipeCommand',
   'removeRecipeCommand',
+  'refreshRecipeCommand',
   'commandExecuter',
 ], RecipeController)

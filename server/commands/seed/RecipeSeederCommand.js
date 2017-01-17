@@ -7,66 +7,40 @@ export default class RecipeSeederCommand {
 
   constructor(
     recipeRepository,
-    nutritionSeederCommand,
     nutritionRepository,
-    orientationSeederCommand,
     orientationRepository,
-    ingredientSeederCommand,
-    ingredientRepository
+    ingredientRepository,
+    seedHelper
   ) {
     this.recipeRepository = recipeRepository;
-    this.nutritionSeederCommand = nutritionSeederCommand;
     this.nutritionRepository = nutritionRepository;
-    this.orientationSeederCommand = orientationSeederCommand;
     this.orientationRepository = orientationRepository;
-    this.ingredientSeederCommand = ingredientSeederCommand;
     this.ingredientRepository = ingredientRepository;
-
+    this.seedHelper = seedHelper;
   }
 
-  randomInteger(min, max) {
-    return Math.floor(Math.random() * max) + min;
+  randomInteger(...args) {
+    return this.seedHelper.randomInteger(...args);
   }
 
-  oneOf(choices) {
-    return choices[ this.randomInteger(0, choices.length - 1) ];
+  oneOf(...args) {
+    return this.seedHelper.oneOf(...args);
   }
 
   async getNutritionId(viewer) {
-    const names = _.map(this.nutritionSeederCommand.getData(), 'name');
-
-    const randomName = names[ this.randomInteger(0, names.length - 1) ];
-
-    const result = await this.nutritionRepository.find(viewer, {
-      name: randomName,
-    });
-    return result[0]._id;
+    return await this.seedHelper.getRandomId(viewer, this.nutritionRepository);
   }
 
   async getOrientationId(viewer) {
-    const names = _.map(this.orientationSeederCommand.getData(), 'name');
-
-    const randomName = names[ this.randomInteger(0, names.length - 1) ];
-
-    const result =  await this.orientationRepository.find(viewer, {
-      name: randomName,
-    });
-    return result[0]._id;
+    return await this.seedHelper.getRandomId(viewer, this.orientationRepository);
   }
 
-  async getIngredientId(viewer) {
-    const names = _.map(this.ingredientSeederCommand.getData(), 'name');
-
-    const randomName = names[ this.randomInteger(0, names.length - 1) ];
-
-    const result = await this.ingredientRepository.find(viewer, {
-      name: randomName,
-    });
-    return result[0]._id;
+  async getIngredientIds(viewer, number) {
+    return await this.seedHelper.getRandomIds(viewer, this.ingredientRepository, number);
   }
-
 
   async constructRecipe(viewer) {
+    const ingredients = await this.getIngredientIds(viewer, 6);
     return {
       name: this.oneOf([
         'Beef Stroganoff',
@@ -100,12 +74,12 @@ export default class RecipeSeederCommand {
       },
       orientation: await this.getOrientationId(),
       items: [
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await this.getIngredientId(), quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[0], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[1], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[2], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[3], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[4], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
+        { ingredient: await ingredients[5], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
       ],
       creator: viewer._id,
     };
@@ -130,10 +104,8 @@ export default class RecipeSeederCommand {
 
 IoC.singleton('recipeSeederCommand', [
   'recipeRepository',
-  'nutritionSeederCommand',
   'nutritionRepository',
-  'orientationSeederCommand',
   'orientationRepository',
-  'ingredientSeederCommand',
   'ingredientRepository',
+  'seedHelper',
 ], RecipeSeederCommand);

@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { checkEqualIds } from '../utils/mongo';
+import { checkEqualIds } from 'utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 
 import IoC from 'AppIoC';
