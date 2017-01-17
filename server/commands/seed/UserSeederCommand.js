@@ -1,6 +1,5 @@
 import IoC from 'AppIoC';
 import ForbiddenError from '../../errors/ForbiddenError';
-import Q from 'q';
 
 export default class UserSeederCommand {
 

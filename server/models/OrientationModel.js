@@ -3,7 +3,7 @@ import { checkEqualIds } from '../utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
-export const orientationModel = (mongoose) => {
+export const orientationModel = (mongoose, orientationValidator) => {
   const orientationSchema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
@@ -29,7 +29,12 @@ export const orientationModel = (mongoose) => {
 
   orientationSchema.plugin(uniqueValidator);
 
+  orientationSchema.pre("save", async function(next) {
+    await orientationValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('Orientation', orientationSchema);
 }
 
-IoC.callable('orientationModel', ['connection'], orientationModel);
+IoC.callable('orientationModel', ['connection', 'orientationValidator'], orientationModel);

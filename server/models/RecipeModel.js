@@ -2,13 +2,13 @@ import { Schema } from 'mongoose';
 import { checkEqualIds } from '../utils/mongo';
 import IoC from 'AppIoC';
 
-export const recipeModel = (mongoose) => {
+export const recipeModel = (mongoose, recipeValidator) => {
   const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
 
   const recipeSchema = new Schema({
     name: {type: String, required: true},
     preparationInstructions: [String],
-    preparationTime: Number,
+    preparationTimeMin: Number,
     calories: String,
     difficulity: Number,
     mainImage: {
@@ -21,7 +21,7 @@ export const recipeModel = (mongoose) => {
         height: Number,
       }],
     },
-    mealType: {type: String, enum: MEAL_TYPES},
+    mealType: {type: String, enum: MEAL_TYPES, default: 'breakfast'},
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
     items: [{
@@ -80,7 +80,12 @@ export const recipeModel = (mongoose) => {
     return this.creator;
   });
 
+  recipeSchema.pre("save", async function(next) {
+    await recipeValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('Recipe', recipeSchema);
 }
 
-IoC.callable('recipeModel', ['connection'], recipeModel);
+IoC.callable('recipeModel', ['connection', 'recipeValidator'], recipeModel);

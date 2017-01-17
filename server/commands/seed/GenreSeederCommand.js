@@ -7,12 +7,8 @@ export default class GenreSeederCommand {
     this.genreRepository = genreRepository;
   }
 
-  async execute(viewer) {
-    if(!viewer.isSuper()) {
-      throw new ForbiddenError("You are not authorized to do this action");
-    }
-
-    return await this.genreRepository.createAll(viewer, [
+  getData() {
+    return [
       {name: 'Vegetarisch'},
       {name: 'Vegan'},
       {name: 'Pescetarisch'},
@@ -58,7 +54,15 @@ export default class GenreSeederCommand {
       {name: 'Gebäck'},
       {name: 'Kekse'},
       {name: 'Naschereien'},
-    ]);
+    ];
+  }
+
+  async execute(viewer) {
+    if(!viewer.isSuper()) {
+      throw new ForbiddenError("You are not authorized to do this action");
+    }
+
+    return await this.genreRepository.createAll(viewer, this.getData());
   }
 }
 

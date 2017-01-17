@@ -3,7 +3,7 @@ import { checkEqualIds } from '../utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
-export const nutritionModel = (mongoose) => {
+export const nutritionModel = (mongoose, nutritionValidator) => {
   const nutritionSchema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
@@ -29,7 +29,12 @@ export const nutritionModel = (mongoose) => {
 
   nutritionSchema.plugin(uniqueValidator);
 
+  nutritionSchema.pre("save", async function(next) {
+    await nutritionValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('Nutrition', nutritionSchema);
 }
 
-IoC.callable('nutritionModel', ['connection'], nutritionModel);
+IoC.callable('nutritionModel', ['connection', 'nutritionValidator'], nutritionModel);

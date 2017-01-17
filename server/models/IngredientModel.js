@@ -3,7 +3,7 @@ import { checkEqualIds } from '../utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
-export const ingredientModel = (mongoose) => {
+export const ingredientModel = (mongoose, ingredientValidator) => {
   const ingredientSchema = new Schema({
     name: {type: String, required: true, unique: true},
     category: {type: String, required: true},
@@ -29,9 +29,14 @@ export const ingredientModel = (mongoose) => {
     return this.creator;
   });
 
+  ingredientSchema.pre("save", async function(next) {
+    await ingredientValidator.validate(this);
+    next();
+  });
+
   ingredientSchema.plugin(uniqueValidator);
 
   return mongoose.model('Ingredient', ingredientSchema);
 }
 
-IoC.callable('ingredientModel', ['connection'], ingredientModel);
+IoC.callable('ingredientModel', ['connection', 'ingredientValidator'], ingredientModel);

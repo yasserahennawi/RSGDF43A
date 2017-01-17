@@ -67,6 +67,7 @@
     "moment": "^2.17.1",
     "mongoose": "^4.7.6",
     "mongoose-unique-validator": "^1.0.3",
+    "mongoose-validator": "^1.2.5",
     "normalize.css": "^5.0.0",
     "password-hash-and-salt": "^0.1.4",
     "postcss-loader": "^1.2.1",

@@ -4,8 +4,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 
 import IoC from 'AppIoC';
 
-export const genreModel = (mongoose) => {
-  console.log("Genre Model");
+export const genreModel = (mongoose, genreValidator) => {
   const genreSchema = new Schema({
     name: {type: String, required: true, unique: true},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
@@ -29,9 +28,14 @@ export const genreModel = (mongoose) => {
     return this.creator;
   });
 
+  genreSchema.pre("save", async function(next) {
+    await genreValidator.validate(this);
+    next();
+  });
+
   genreSchema.plugin(uniqueValidator);
 
   return mongoose.model('Genre', genreSchema);
 }
 
-IoC.callable('genreModel', ['connection'], genreModel);
+IoC.callable('genreModel', ['connection', 'genreValidator'], genreModel);

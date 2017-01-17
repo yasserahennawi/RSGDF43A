@@ -26,6 +26,9 @@ const generateFile = (templateName, data, outputPath, fileName) => {
 }
 
 const getData = (modelName) => {
+  if(! modelName) {
+    throw new Error("Model name is required");
+  }
   modelName = _.lowerFirst(modelName);
   const modelsName = pluralize(modelName);
   const ModelName = _.upperFirst(modelName);
@@ -36,6 +39,7 @@ const getData = (modelName) => {
 const runGenerator = (data, filesToGenerate) => {
   const files = [
     { name: 'model'          , path: `models`                              , fileName: `${data.ModelName}Model`          },
+    { name: 'validator'      , path: `models/validators`                   , fileName: `${data.ModelName}Validator`          },
     { name: 'repository'     , path: `repositories`                        , fileName: `${data.ModelName}Repository`     },
     { name: 'seederCommand'  , path: `commands/seed`                       , fileName: `${data.ModelName}SeederCommand`  },
     { name: 'createCommand'  , path: `commands/${data.modelName}`          , fileName: `Create${data.ModelName}Command`  },
@@ -58,49 +62,42 @@ const runGenerator = (data, filesToGenerate) => {
       generateFile(file.name, data, file.path, file.fileName));
 }
 
+const allTemplates = [
+  'model',
+  'validator',
+  'repository',
+  'seederCommand',
+  'createCommand',
+  'updateCommand',
+  'removeCommand',
+  'createMutation',
+  'updateMutation',
+  'removeMutation',
+  'graphqlType',
+  'graphqlResolver',
+  'apiController',
+  'apiRouter',
+];
 
-inquirer.prompt([
-  {
-    type: 'input',
-    name: 'modelName',
-    message: 'Model name you want to generate',
-    validate: modelName => !!modelName
-  },
-  {
-    type: 'checkbox',
-    name: 'files',
-    message: 'Files you want to generate',
-    choices: [
-      'model',
-      'repository',
-      'seederCommand',
-      'createCommand',
-      'updateCommand',
-      'removeCommand',
-      'createMutation',
-      'updateMutation',
-      'removeMutation',
-      'graphqlType',
-      'graphqlResolver',
-      'apiController',
-      'apiRouter',
-    ],
-    default: [
-      'model',
-      'repository',
-      'seederCommand',
-      'createCommand',
-      'updateCommand',
-      'removeCommand',
-      'createMutation',
-      'updateMutation',
-      'removeMutation',
-      'graphqlType',
-      'graphqlResolver',
-      'apiController',
-      'apiRouter',
-    ],
-  },
-]).then(answers => {
-  runGenerator(getData(answers.modelName), answers.files);
-})
+if(process.argv[2] === 'all' && process.argv[3]) {
+  runGenerator(getData(process.argv[3]), allTemplates);
+} else {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'modelName',
+      message: 'Model name you want to generate',
+      validate: modelName => !!modelName
+    },
+    {
+      type: 'checkbox',
+      name: 'files',
+      message: 'Files you want to generate',
+      choices: allTemplates,
+      default: allTemplates,
+    },
+  ]).then(answers => {
+    runGenerator(getData(answers.modelName), answers.files);
+  });
+}
+

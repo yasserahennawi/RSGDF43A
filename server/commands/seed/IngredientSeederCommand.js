@@ -7,12 +7,8 @@ export default class IngredientSeederCommand {
     this.ingredientRepository = ingredientRepository;
   }
 
-  async execute(viewer) {
-    if(!viewer.isSuper()) {
-      throw new ForbiddenError("You are not authorized to do this action");
-    }
-
-    return await this.ingredientRepository.createAll(viewer, [
+  getData() {
+    return [
       { category: 'Fleisch', subCategory: '', name: 'Huhn'},
       { category: 'Fleisch', subCategory: '', name: 'Rind'},
       { category: 'Fleisch', subCategory: '', name: 'Schwein'},
@@ -119,7 +115,15 @@ export default class IngredientSeederCommand {
       { category: 'Sonstiges', subCategory: '', name: 'Semmel'},
       { category: 'Sonstiges', subCategory: '', name: 'Reis'},
       { category: 'Sonstiges', subCategory: '', name: 'Tofu'},
-    ]);
+    ];
+  }
+
+  async execute(viewer) {
+    if(!viewer.isSuper()) {
+      throw new ForbiddenError("You are not authorized to do this action");
+    }
+
+    return await this.ingredientRepository.createAll(viewer, this.getData());
   }
 }
 

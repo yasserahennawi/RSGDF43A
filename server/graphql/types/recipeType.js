@@ -35,7 +35,7 @@ export const recipeType = (
   nodeInterface,
   imageType,
   userType,
-  nutritionsConnectionType,
+  nutritionType,
   ingredientType,
   orientationType
 ) => {
@@ -49,20 +49,19 @@ export const recipeType = (
       id: globalIdField('Recipe'),
       name: { type: new GraphQLNonNull(GraphQLString) },
       preparationInstructions: { type: new GraphQLList(GraphQLString) },
-      preparationTime: { type: GraphQLInt },
+      preparationTimeMin: { type: GraphQLInt },
       calories: { type: GraphQLString },
       difficulity: { type: GraphQLInt },
       mainImage: { type: imageType },
       // One of dinner, breakfast, launch
       mealType: { type: GraphQLString },
-      orientation: { type: new GraphQLNonNull(orientationType) },
-      nutritions: {
-        type: nutritionsConnectionType,
-        args: connectionArgs,
-        resolve: (recipe, args) => connectionFromPromisedArray(
-          recipe.getNutritions(),
-          args
-        ),
+      orientation: {
+        type: new GraphQLNonNull(orientationType),
+        resolve: recipe => recipe.getOrientation(),
+      },
+      nutrition: {
+        type: new GraphQLNonNull(nutritionType),
+        resolve: recipe => recipe.getNutrition(),
       },
       items: {
         type: recipeItemsConnectionType,
@@ -88,7 +87,7 @@ IoC.callable('recipeType', [
   'nodeInterface',
   'imageType',
   'userType',
-  'nutritionsConnectionType',
+  'nutritionType',
   'ingredientType',
   'orientationType',
 ], recipeType);

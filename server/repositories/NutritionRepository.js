@@ -11,8 +11,13 @@ export default class NutritionRepository extends Repository {
 
   find(viewer, {
     // Search criteria
+    name
   }) {
     const query = this.model.find();
+
+    if(name) {
+      query.where('name', name);
+    }
 
     return query.exec();
   }

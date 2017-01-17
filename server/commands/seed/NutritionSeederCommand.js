@@ -7,17 +7,21 @@ export default class NutritionSeederCommand {
     this.nutritionRepository = nutritionRepository;
   }
 
+  getData() {
+    return [
+      { name: 'Mit fleisch' },
+      { name: 'Vegetarisch' },
+      { name: 'Pescetarisch' },
+      { name: 'Vegan' },
+    ];
+  }
+
   async execute(viewer) {
     if(!viewer.isSuper()) {
       throw new ForbiddenError("You are not authorized to do this action");
     }
 
-    return await this.nutritionRepository.createAll(viewer, [
-      { name: 'Mit fleisch' },
-      { name: 'Vegetarisch' },
-      { name: 'Pescetarisch' },
-      { name: 'Vegan' },
-    ]);
+    return await this.nutritionRepository.createAll(viewer, this.getData());
   }
 }
 

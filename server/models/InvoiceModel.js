@@ -2,7 +2,7 @@ import { Schema } from 'mongoose';
 import { checkEqualIds } from '../utils/mongo';
 import IoC from 'AppIoC';
 
-export const invoiceModel = (mongoose) => {
+export const invoiceModel = (mongoose, invoiceValidator) => {
   const invoiceSchema = new Schema({
     totalPrice: {
       value: {type: Number, required: true},
@@ -40,7 +40,12 @@ export const invoiceModel = (mongoose) => {
     return this.products;
   });
 
+  invoiceSchema.pre("save", async function(next) {
+    await invoiceValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('Invoice', invoiceSchema);
 }
 
-IoC.callable('invoiceModel', ['connection'], invoiceModel);
+IoC.callable('invoiceModel', ['connection', 'invoiceValidator'], invoiceModel);

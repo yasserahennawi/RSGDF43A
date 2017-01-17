@@ -3,7 +3,7 @@ import { checkEqualIds } from '../utils/mongo';
 import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
-export const productModel = (mongoose) => {
+export const productModel = (mongoose, productValidator) => {
   const PRODUCT_STATUSES = ['accepted', 'rejected', 'awaiting'];
 
   const productSchema = new Schema({
@@ -25,7 +25,7 @@ export const productModel = (mongoose) => {
     status: {type: String, enum: PRODUCT_STATUSES, default: 'awaiting'},
     recipes: [{type: Schema.Types.ObjectId, ref: 'Recipe'}],
     genres: [{type: Schema.Types.ObjectId, ref: 'Genre'}],
-    nutritions: [{type: Schema.Types.ObjectId, ref: 'Nutrition'}],
+    nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
     author: {type: Schema.Types.ObjectId, ref: 'User'},
   }, { timestamps: true, collection: 'new_products' });
@@ -82,12 +82,12 @@ export const productModel = (mongoose) => {
   });
 
   /**
-   * Get all nutritions for this product
+   * Get nutrition for this product
    * @return {Array}
    */
-  productSchema.method('getNutritions', async function() {
-    await this.populate('nutritions').execPopulate();
-    return this.nutritions;
+  productSchema.method('getNutrition', async function() {
+    await this.populate('nutrition').execPopulate();
+    return this.nutrition;
   });
 
   /**
@@ -110,7 +110,12 @@ export const productModel = (mongoose) => {
 
   productSchema.plugin(uniqueValidator);
 
+  productSchema.pre("save", async function(next) {
+    await productValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('Product', productSchema);
 }
 
-IoC.callable('productModel', ['connection'], productModel);
+IoC.callable('productModel', ['connection', 'productValidator'], productModel);

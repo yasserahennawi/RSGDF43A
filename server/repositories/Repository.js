@@ -1,3 +1,5 @@
+import * as Q from 'q';
+
 export default class Repository {
 
   constructor() {
@@ -21,7 +23,7 @@ export default class Repository {
   }
 
   async createAll(viewer, arr) {
-    return await arr.map(data => this.create(viewer, data));
+    return Q.all(arr.map(data => this.create(viewer, data)));
   }
 
 }

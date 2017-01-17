@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
-export const userModel = (mongoose) => {
+export const userModel = (mongoose, userValidator) => {
   const USER_TYPES = ['Blogger', 'Admin', 'Customer', 'Super'];
   const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
 
@@ -37,6 +37,7 @@ export const userModel = (mongoose) => {
       healthyPercentage: Number,
       alergies: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],
       mealType: {type: String, enum: MEAL_TYPES},
+      rejectedRecipes: [{type: Schema.Types.ObjectId, ref: 'Recipe'}],
     },
 
     addressStreet: String,
@@ -115,7 +116,12 @@ export const userModel = (mongoose) => {
 
   userSchema.plugin(uniqueValidator);
 
+  userSchema.pre("save", async function(next) {
+    await userValidator.validate(this);
+    next();
+  });
+
   return mongoose.model('User', userSchema);
 }
 
-IoC.callable('userModel', ['connection'], userModel);
+IoC.callable('userModel', ['connection', 'userValidator'], userModel);

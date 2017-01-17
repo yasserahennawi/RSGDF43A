@@ -30,7 +30,7 @@ export const productType = (
   priceType,
   recipesConnectionType,
   genresConnectionType,
-  nutritionsConnectionType,
+  nutritionType,
   userType
 ) => new GraphQLObjectType({
   name: 'Product',
@@ -67,13 +67,9 @@ export const productType = (
         args
       ),
     },
-    nutritions: {
-      type: nutritionsConnectionType,
-      args: connectionArgs,
-      resolve: (product, args) => connectionFromPromisedArray(
-        product.getNutritions(),
-        args
-      ),
+    nutrition: {
+      type: new GraphQLNonNull(nutritionType),
+      resolve: product => product.getNutrition(),
     },
     creator: {
       type: new GraphQLNonNull(userType),
@@ -95,6 +91,6 @@ IoC.callable('productType', [
   'priceType',
   'recipesConnectionType',
   'genresConnectionType',
-  'nutritionsConnectionType',
+  'nutritionType',
   'userType'
 ], productType);
