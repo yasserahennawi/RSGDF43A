@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   appEntry = [
     path.join(__dirname, 'client/index.js'),
-    'webpack-dev-server/client?http://localhost:3000',
+    `webpack-dev-server/client?http://localhost:${process.env.PORT}`,
     'webpack/hot/only-dev-server'
   ];
   devtool = 'eval';
@@ -62,7 +62,7 @@ if (process.env.NODE_ENV === 'production') {
 module.exports = {
   entry: {
     app: appEntry,
-    vendor: ['react', 'react-dom', 'react-mdl', 'react-relay', 'react-router', 'react-router-relay']
+    vendor: ['react', 'react-dom', 'react-relay', 'react-router', 'react-router-relay']
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -89,6 +89,10 @@ module.exports = {
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
       loader: 'url-loader?limit=10000&name=assets/[hash].[ext]'
     }]
+  },
+  resolve: {
+    context: path.join(__dirname, "/client"),
+    modules: ['client', 'node_modules']
   },
   postcss: () => [precss, autoprefixer],
   plugins

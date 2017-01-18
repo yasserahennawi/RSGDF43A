@@ -10,6 +10,10 @@
       { "src": "./server/utils", "expose": "utils" },
       { "src": "./server/models", "expose": "models" },
       { "src": "./server/errors", "expose": "errors" },
+
+      { "src": "./client/components", "expose": "components" },
+      { "src": "./client/containers", "expose": "containers" },
+      { "src": "./client/themes", "expose": "themes" }
     ]]
   ],
   "presets": ["react", "es2015", "stage-0"],

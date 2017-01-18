@@ -28,6 +28,7 @@ export async function runRelayDevServer() {
 
   // Serve static resources
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
+  relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
 
 const addGuestViewerMiddleware = async (req, res, next) => {
@@ -42,7 +43,7 @@ export async function runGraphQLDevServer() {
   const server = configureExpressServer(express());
   // Middleware to set guest viewer
   server.use('/api/v1', restApiRouter);
-  server.use('/', graphQLHTTP({
+  server.use('/graphql', graphQLHTTP({
     graphiql: true,
     pretty: true,
     schema: graphqlSchema,
@@ -67,8 +68,6 @@ export async function runProductionServer() {
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
-
-
 
 function configureExpressServer(server) {
   server.use(bodyParser.json());

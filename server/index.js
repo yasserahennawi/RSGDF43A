@@ -21,8 +21,8 @@ configureKernel();
 // Start the application
 // If it's a development env.
 if (process.env.NODE_ENV === 'development') {
-  runGraphQLDevServer();
-  // runRelayDevServer();
+  // runGraphQLDevServer();
+  runRelayDevServer();
 }
 
 else if (process.env.NODE_ENV === 'production') {
