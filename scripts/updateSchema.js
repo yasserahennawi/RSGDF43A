@@ -7,6 +7,11 @@ import { introspectionQuery, printSchema } from 'graphql/utilities';
 import IoC from '../server/IoC';
 import configureKernel from '../server/kernel';
 
+// Load dotenv env. variables
+if (fs.existsSync(path.join(process.cwd(), '.env'))) {
+  require('dotenv').config();
+}
+
 configureKernel();
 
 const jsonFile = path.join(__dirname, '../server/graphql/__generated/schema.json');

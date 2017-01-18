@@ -46,4 +46,5 @@ build-server/
 .idea
 .env
 
-server/graphql/__generated
+server/graphql/__generated/schema.json
+server/graphql/__generated/schema.graphql

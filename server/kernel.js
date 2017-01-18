@@ -5,11 +5,11 @@ import path from 'path';
 import * as Q from 'q';
 
 // Mongodb connection
-const configureDatabase = () => {
+const configureDatabase = async () => {
   // For backwards compatibility, Mongoose 4 returns mpromise promises by default.
   // Plugging in your own Promises Library (i.e.: Q.Promise)
   mongoose.Promise = Q.Promise;
-  return mongoose.createConnection(process.env.MONGODB_URI);
+  return await mongoose.createConnection(process.env.MONGODB_URI);
 }
 
 // Register connection

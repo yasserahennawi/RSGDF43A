@@ -12,7 +12,6 @@
       { "src": "./server/errors", "expose": "errors" },
 
       { "src": "./client/components", "expose": "components" },
-      { "src": "./client/containers", "expose": "containers" },
       { "src": "./client/themes", "expose": "themes" }
     ]]
   ],
