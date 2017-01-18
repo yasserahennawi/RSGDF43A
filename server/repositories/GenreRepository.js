@@ -1,7 +1,7 @@
 import Repository from './Repository';
-import ValidationError from  '../errors/ValidationError';
-import ForbiddenError from  '../errors/ForbiddenError';
-import ModelNotFoundError from  '../errors/ModelNotFoundError';
+import ValidationError from  'errors/ValidationError';
+import ForbiddenError from  'errors/ForbiddenError';
+import ModelNotFoundError from  'errors/ModelNotFoundError';
 import IoC from 'AppIoC';
 import * as Q from 'q';
 

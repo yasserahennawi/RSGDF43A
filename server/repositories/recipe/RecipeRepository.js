@@ -1,6 +1,6 @@
 import Repository from '../Repository';
-import ValidationError from  '../../errors/ValidationError';
-import ForbiddenError from  '../../errors/ForbiddenError';
+import ValidationError from  'errors/ValidationError';
+import ForbiddenError from  'errors/ForbiddenError';
 import IoC from 'AppIoC';
 
 export default class RecipeRepository extends Repository {

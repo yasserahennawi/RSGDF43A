@@ -1,7 +1,8 @@
 import Q from 'q';
+import * as _ from 'lodash';
 
 export function getUniqueIds(array) {
-  return _.uniqWith(getUniqueIds, checkEqualIds);
+  return _.uniqWith(array, checkEqualIds);
 }
 
 /**

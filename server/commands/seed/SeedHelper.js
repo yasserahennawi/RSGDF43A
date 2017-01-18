@@ -8,7 +8,7 @@ export default class SeedHelper {
   }
 
   oneOf(choices) {
-    return choices[ this.randomInteger(0, choices.length - 1) ];
+    return choices[ this.randomInteger(0, choices.length) ];
   }
 
   getRandomNumbers(no, generator) {

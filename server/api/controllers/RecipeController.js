@@ -38,7 +38,7 @@ export default class RecipeController extends Controller {
   }
 
   refresh(req, res, next) {
-    this.commandExecuter.execute(this.refreshRecipeCommand, req.viewer, req.params.recipeId)
+    this.commandExecuter.execute(this.refreshRecipeCommand, req.viewer, req.query.recipeId)
       .then(result => this.successResponse(res, { result }))
       .then(null, next);
   }

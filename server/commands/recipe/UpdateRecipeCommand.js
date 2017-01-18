@@ -1,5 +1,5 @@
 import IoC from 'AppIoC';
-import ForbiddenError from '../../errors/ForbiddenError';
+import ForbiddenError from 'errors/ForbiddenError';
 
 export default class UpdateRecipeCommand {
   constructor(recipeRepository) {

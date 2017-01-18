@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 import passwordHash from 'password-hash-and-salt';
-import ValidationError from '../errors/ValidationError';
+import ValidationError from 'errors/ValidationError';
 import { checkEqualIds } from 'utils/mongo';
 import Q from 'q';
 import * as _ from 'lodash';

@@ -1,4 +1,4 @@
-import ValidationError from '../../errors/ValidationError';
+import ValidationError from 'errors/ValidationError';
 import * as Q from 'q';
 import * as _ from 'lodash';
 

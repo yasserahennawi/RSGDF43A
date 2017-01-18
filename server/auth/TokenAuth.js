@@ -1,5 +1,5 @@
 import IoC from 'AppIoC';
-import ValidationError from '../errors/ValidationError';
+import ValidationError from 'errors/ValidationError';
 
 export default class TokenAuth {
 

@@ -6,7 +6,7 @@ export const recipeRouter = (recipeController) => {
 
   // Custom routes
   router.get('/daily', recipeController.getDailyRecipes.bind(recipeController));
-  router.get('/refresh/:recipeId', recipeController.refresh.bind(recipeController));
+  router.get('/refresh', recipeController.refresh.bind(recipeController));
 
   router.get('/', recipeController.find.bind(recipeController));
   router.get('/:recipeId', recipeController.findById.bind(recipeController));

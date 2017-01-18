@@ -1,5 +1,5 @@
 import IoC from 'AppIoC';
-import ForbiddenError from '../../errors/ForbiddenError';
+import ForbiddenError from 'errors/ForbiddenError';
 import * as _ from 'lodash';
 import * as Q from 'q';
 
@@ -40,7 +40,7 @@ export default class RecipeSeederCommand {
   }
 
   async constructRecipe(viewer) {
-    const ingredients = await this.getIngredientIds(viewer, 6);
+    const ingredients = await this.getIngredientIds(viewer, this.randomInteger(3, 10));
     return {
       name: this.oneOf([
         'Beef Stroganoff',
@@ -73,14 +73,11 @@ export default class RecipeSeederCommand {
         ]),
       },
       orientation: await this.getOrientationId(),
-      items: [
-        { ingredient: await ingredients[0], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await ingredients[1], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await ingredients[2], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await ingredients[3], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await ingredients[4], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-        { ingredient: await ingredients[5], quantity: this.randomInteger(1, 4), unit: this.oneOf(['g', 'ml']) },
-      ],
+      items: ingredients.map(ingredient => ({
+        ingredient,
+        quantity: this.randomInteger(1, 9),
+        unit: this.oneOf([ 'g', 'ml' ]),
+      })),
       creator: viewer._id,
     };
   }
@@ -98,7 +95,7 @@ export default class RecipeSeederCommand {
 
     // console.log(await this.constructRecipes(viewer, 50));
 
-    return await this.recipeRepository.createAll(viewer, await this.constructRecipes(viewer, 50));
+    return await this.recipeRepository.createAll(viewer, await this.constructRecipes(viewer, 300));
   }
 }
 

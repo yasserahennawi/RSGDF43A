@@ -74,5 +74,22 @@ function configureExpressServer(server) {
   server.use(bodyParser.json());
   server.use(cors());
   server.use(addGuestViewerMiddleware);
+  addSeedRoute(server);
   return server;
+}
+
+function addSeedRoute(server) {
+  // Must remove this in production
+  server.get('/seed/:secretKey', (req, res, next) => {
+    console.log("here");
+    if(req.params.secretKey === process.env.SECRET_KEY) {
+      console.log("Seeding database please wait");
+      const seedDatabase = require('../scripts/seedDatabase').default;
+      seedDatabase()
+        .then(result => res.send('Hey!'))
+        .then(null, next);
+    } else {
+      throw new Error("Not Found!");
+    }
+  });
 }
