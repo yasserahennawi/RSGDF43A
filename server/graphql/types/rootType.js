@@ -23,7 +23,7 @@ import {
 
 import IoC from 'AppIoC';
 
-export const viewerType = (
+export const rootType = (
   userType,
   genreResolver,
   ingredientResolver,
@@ -34,15 +34,15 @@ export const viewerType = (
   recipeResolver,
   userResolver
 ) => new GraphQLObjectType({
-  name: 'Viewer',
-  description: 'A person who uses our app',
+  name: 'Root',
+  description: 'Root query that holds our viewer',
   fields: () => ({
-    id: globalIdField('Viewer'),
-    me: {
+    id: globalIdField('Root'),
+    viewer: {
       type: new GraphQLNonNull(userType),
-      resolve: viewer => viewer,
+      resolve: ({ viewer }) => viewer,
     },
-    // All queries available to resolve from the viewer
+    // All queries available to resolve
     genres: genreResolver,
     ingredients: ingredientResolver,
     invoices: invoiceResolver,
@@ -54,7 +54,7 @@ export const viewerType = (
   }),
 });
 
-IoC.callable('viewerType', [
+IoC.callable('rootType', [
   'userType',
   'genreResolver',
   'ingredientResolver',
@@ -64,4 +64,4 @@ IoC.callable('viewerType', [
   'productResolver',
   'recipeResolver',
   'userResolver',
-], viewerType);
+], rootType);

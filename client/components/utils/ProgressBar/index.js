@@ -26,7 +26,7 @@ const styles = {
     backgroundSize: '30px 16px',
     borderRadius: 5,
     transitionProperty: 'width',
-    transitionDuration: '1s',
+    transitionDuration: '0.5s',
   },
   progress: {
     color: '#4FE2C2',

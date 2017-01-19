@@ -12,7 +12,9 @@
       { "src": "./server/errors", "expose": "errors" },
 
       { "src": "./client/components", "expose": "components" },
-      { "src": "./client/themes", "expose": "themes" }
+      { "src": "./client/themes", "expose": "themes" },
+      { "src": "./client/mutations", "expose": "mutations" },
+      { "src": "./client/helpers", "expose": "helpers" }
     ]]
   ],
   "presets": ["react", "es2015", "stage-0"],

@@ -8,7 +8,7 @@ import * as Q from 'q';
 const configureDatabase = async () => {
   // For backwards compatibility, Mongoose 4 returns mpromise promises by default.
   // Plugging in your own Promises Library (i.e.: Q.Promise)
-  mongoose.Promise = Q.Promise;
+  // mongoose.Promise = Q.Promise;
   return await mongoose.createConnection(process.env.MONGODB_URI);
 }
 
@@ -20,7 +20,7 @@ glob.sync( path.join(__dirname, './@(models|api|repositories|auth|commands|graph
   require( path.resolve( file ) );
 });
 
-export default () => {
+export default async () => {
   // Use Jwt encoder decoder
   IoC.same('encoderDecoder', 'jwtEncoderDecoder');
 

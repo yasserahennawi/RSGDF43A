@@ -9,7 +9,7 @@ import IoC from 'AppIoC';
 
 export const graphqlSchema = (
   nodeField,
-  viewerResolver,
+  rootResolver,
   setViewerMutation,
   loginMutation,
   registerMutation,
@@ -49,8 +49,12 @@ export const graphqlSchema = (
       name: 'Query',
       fields: () => ({
         node: nodeField,
-        // the only root value is the viewer
-        viewer: viewerResolver,
+        // root to resolve rest from it
+        //
+        // This is better than putting everything in the root
+        // which will force us to use a different authentication
+        // method than graphql args which...
+        root: rootResolver,
       })
     }),
     mutation: new GraphQLObjectType({
@@ -98,7 +102,7 @@ export const graphqlSchema = (
 
 IoC.callable('graphqlSchema', [
   'nodeField',
-  'viewerResolver',
+  'rootResolver',
 
   // Authentication mutations
   'setViewerMutation',

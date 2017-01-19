@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from 'components/common/Icon';
-import ICONS from 'components/common/Icons';
+import Icon from 'components/utils/Icon';
+import ICONS from 'components/utils/Icons';
 import { css, style } from 'glamor';
 
 import IconButton from 'material-ui/IconButton';
@@ -9,7 +9,7 @@ const Dashboard = ({ toggleSidebar, isAdmin }) => (
   <div {...css({display: 'flex', marginLeft: '20'})}>
     <div className={`${link}`}>
       <h3 className={`${title}`}>Dashboard</h3>
-      <small className={`${small}`}>tastetastic { isAdmin ? 'blogger' : 'admin' }</small>
+      <small className={`${small}`}>tastetastic { isAdmin ? 'admin' : 'blogger' }</small>
     </div>
     <IconButton
       style={styles.iconButton}

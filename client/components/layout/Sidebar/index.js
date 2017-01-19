@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
+import Relay from 'react-relay';
 import { withRouter } from 'react-router';
 
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import { style } from 'glamor';
 
 import colors from 'themes/colors';
-import Icon from 'components/common/Icon';
-import ICONS from 'components/common/Icons';
+import Icon from 'components/utils/Icon';
+import ICONS from 'components/utils/Icons';
 
 import Drawer from 'material-ui/Drawer';
 import { spacing } from 'material-ui/styles';
-
-import Profile from 'components/app/SidebarProfile';
+import { removeUserToken } from 'helpers/storage';
+import SidebarProfile from 'components/layout/SidebarProfile';
 
 const SelectableList = makeSelectable(List);
 
-const renderAdminMenus = ( props, handler ) => (
-  <SelectableList value={props.pathname} onChange={ handler }>
+const renderAdminMenus = ( { location }, handler ) => (
+  <SelectableList value={location.pathname} onChange={ handler }>
     <ListItem
       primaryText="FREIGABE"
       value="/release"
@@ -39,15 +40,15 @@ const renderAdminMenus = ( props, handler ) => (
       primaryText="STORE-VERWALTUNG"
       value="/store"
       leftIcon={
-          <Icon icon={ICONS.CLICK} color="#fff" noTransform />
+        <Icon icon={ICONS.GEAR} color="#fff" noTransform />
       }
       style={styles.listItem}
     />
 
   </SelectableList>
 )
-const renderUserMenus = ( props, handler ) => (
-  <SelectableList value={props.pathname} onChange={ handler }>
+const renderUserMenus = ( { location }, handler ) => (
+  <SelectableList value={location.pathname} onChange={ handler }>
 
     <ListItem
       primaryText="MEINE SPECIALS"
@@ -80,11 +81,16 @@ const renderUserMenus = ( props, handler ) => (
 
 export class Sidebar extends Component {
   handleRequestChangeLink = (event, value) => {
-    this.props.changeLocation(value);
+    this.props.router.push(value);
   };
 
+  logout = () => {
+    removeUserToken();
+    window.location.href = '/';
+  }
+
   render() {
-    const { logout, sidebarOpened } = this.props;
+    const { sidebarOpened } = this.props;
 
     return (
       <Drawer
@@ -92,9 +98,9 @@ export class Sidebar extends Component {
         containerStyle={styles.container}
         zDepth={0}
       >
-        <Profile />
+        <SidebarProfile />
 
-        { this.props.isAdmin ?
+        { this.props.viewer.isAdmin ?
           renderAdminMenus( this.props, this.handleRequestChangeLink ) :
           renderUserMenus( this.props, this.handleRequestChangeLink )
         }
@@ -103,7 +109,7 @@ export class Sidebar extends Component {
 
         <ListItem
           primaryText="LOGOUT"
-          onClick={logout}
+          onClick={this.logout}
           value=""
           leftIcon={
               <Icon icon={ICONS.SHUTDOWN} color="#4C8C7E" />
@@ -139,4 +145,12 @@ const styles = {
   },
 };
 
-export default withRouter(Sidebar);
+export default Relay.createContainer(withRouter(Sidebar), {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on User {
+        isAdmin
+      }
+    `
+  }
+});

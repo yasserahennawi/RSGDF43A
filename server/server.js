@@ -47,7 +47,9 @@ export async function runGraphQLDevServer() {
     graphiql: true,
     pretty: true,
     schema: graphqlSchema,
-    // formatError: formatError,
+    formatError: (error) => ({
+      ...error.toObject(),
+    }),
   }));
   server.listen(process.env.GRAPHQL_PORT, () => console.log(chalk.green(`GraphQL is listening on port ${process.env.GRAPHQL_PORT}`)));
 }

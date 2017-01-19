@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { css, placeholder, style } from 'glamor';
 
-import ProgressBar from 'components/common/ProgressBar';
-import Logo from 'components/app/Logo';
+import ProgressBar from 'components/utils/ProgressBar';
+import Logo from 'components/layout/Logo';
+
+import styles from './styles';
 
 class Loading extends Component {
   render() {

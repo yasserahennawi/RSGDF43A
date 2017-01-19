@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import Icon from 'components/common/Icon';
-import ICONS from 'components/common/Icons';
+import Icon from 'components/utils/Icon';
+import ICONS from 'components/utils/Icons';
 import muiTheme from 'themes/main';
 import { FormattedMessage } from 'react-intl';
 

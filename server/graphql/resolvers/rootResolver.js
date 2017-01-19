@@ -12,13 +12,13 @@ import {
 
 import IoC from 'AppIoC';
 
-export const viewerResolver = (
+export const rootResolver = (
   commandExecuter,
   loginUserCommand,
   authManager,
-  viewerType
+  rootType
 ) => ({
-  type: viewerType,
+  type: rootType,
   args: {
     // Our custom search criteria goes here
     token: {type: GraphQLString},
@@ -31,16 +31,16 @@ export const viewerResolver = (
     try {
       if(email && password) {
         const { viewer } = await commandExecuter.execute(loginUserCommand, guestUser, email, password);
-        return viewer;
+        return { viewer };
       } else {
         const viewer = await authManager.getViewer(token);
-        return viewer;
+        return { viewer };
       }
     } catch(error) {
       // Dont fail if authentication failed, instead return a guest user.
-      return guestUser;
+      return { viewer: guestUser };
     }
   },
 });
 
-IoC.callable('viewerResolver', ['commandExecuter', 'loginUserCommand', 'authManager', 'viewerType'], viewerResolver);
+IoC.callable('rootResolver', ['commandExecuter', 'loginUserCommand', 'authManager', 'rootType'], rootResolver);

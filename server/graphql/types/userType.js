@@ -26,7 +26,8 @@ import IoC from 'AppIoC';
 export const userType = (
   userModel,
   nodeInterface,
-  imageType
+  imageType,
+  authManager
 ) => new GraphQLObjectType({
   name: 'User',
   description: 'A person who uses our app',
@@ -37,9 +38,30 @@ export const userType = (
     nickName: { type: GraphQLString },
     email: { type: GraphQLString },
     profileImage: { type: imageType },
+    isGuest: {
+      type: GraphQLBoolean,
+      resolve: user => user.isGuest()
+    },
+    isAdmin: {
+      type: GraphQLBoolean,
+      resolve: user => user.isAdmin()
+    },
+    isBlogger: {
+      type: GraphQLBoolean,
+      resolve: user => user.isBlogger()
+    },
+    token: {
+      type: GraphQLString,
+      resolve: (user, _, { viewer }) => {
+        if(user.checkId(viewer)) {
+          return authManager.constructToken(user);
+        }
+        return null;
+      }
+    }
   }),
   interfaces: [nodeInterface],
   isTypeOf: obj => obj instanceof userModel || !!obj.isGuest,
 });
 
-IoC.callable('userType', ['userModel', 'nodeInterface', 'imageType'], userType);
+IoC.callable('userType', ['userModel', 'nodeInterface', 'imageType', 'authManager'], userType);

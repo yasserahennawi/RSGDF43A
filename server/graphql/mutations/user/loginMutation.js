@@ -28,13 +28,13 @@ export const loginMutation = (commandExecuter, command, userType, errorType) => 
     error: { type: errorType },
   },
   mutateAndGetPayload: async ({ email, password }, context) => {
-    try {
+    // try {
       const { token, viewer } = await commandExecuter.execute(command, context.viewer, email, password);
       context.viewer = viewer;
       return { token, viewer };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    // } catch(e) {
+    //   return { error: e.toObject(), viewer: context.viewer };
+    // }
   }
 });
 

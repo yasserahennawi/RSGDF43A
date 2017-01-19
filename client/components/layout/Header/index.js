@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
+import Relay from 'react-relay';
 import { Link, withRouter } from 'react-router';
 
 import colors from 'themes/colors';
 
 import AppBar from 'material-ui/AppBar';
 
-import Dashboard from 'components/app/Dashboard';
-
-import { Toolbar } from 'components/app/Toolbar'
-
+import Dashboard from './Dashboard';
+import { Toolbar } from 'components/layout/Toolbar';
 
 class Header extends Component {
   render() {
-    const { toggleSidebar, isAdmin } = this.props;
+    const { toggleSidebar } = this.props;
 
     return (
       <AppBar
-        title={<Dashboard toggleSidebar={toggleSidebar} isAdmin={ isAdmin } />}
+        title={<Dashboard toggleSidebar={toggleSidebar} isAdmin={ this.props.viewer.isAdmin } />}
         titleStyle={styles.title}
         showMenuIconButton={false}
         style={styles.appBar}
@@ -44,4 +43,12 @@ const styles = {
   },
 };
 
-export default withRouter(Header);
+export default Relay.createContainer(withRouter(Header), {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on User {
+        isAdmin
+      }
+    `
+  }
+});

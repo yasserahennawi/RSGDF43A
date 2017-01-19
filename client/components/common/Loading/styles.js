@@ -15,6 +15,6 @@ export default {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
-    background: Colors.gradient,
+    background: colors.gradient,
   },
 };
