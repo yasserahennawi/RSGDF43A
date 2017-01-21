@@ -46,7 +46,6 @@ export async function runGraphQLDevServer() {
     pretty: true,
     schema: graphqlSchema,
     formatError: (error) => {
-      console.log("heeeeeeeeeeere", error);
       return error.originalError ? error.originalError.toObject() : error.toObject();
     },
   }));
@@ -67,11 +66,14 @@ export async function runProductionServer() {
     graphiql: true,
     pretty: true,
     schema: graphqlSchema,
-    formatError: (error) => ({
-      ...error.toObject(),
-    }),
+    formatError: (error) => {
+      return error.originalError ? error.originalError.toObject() : error.toObject();
+    },
   }));
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
+  relayServer.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'));;
+  });
   await addErrorMiddleware(relayServer);
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
