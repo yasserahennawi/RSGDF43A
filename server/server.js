@@ -59,8 +59,8 @@ export async function runProductionServer() {
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch Relay by creating a normal express server
   const relayServer = configureExpressServer(express());
-  await addAuthMiddleware(server);
-  addSeedRoute(server);
+  await addAuthMiddleware(relayServer);
+  addSeedRoute(relayServer);
   // Middleware to set guest viewer
   relayServer.use('/api/v1', restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({
@@ -72,7 +72,7 @@ export async function runProductionServer() {
     }),
   }));
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
-  await addErrorMiddleware(server);
+  await addErrorMiddleware(relayServer);
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
 
