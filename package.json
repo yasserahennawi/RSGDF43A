@@ -12,7 +12,7 @@
     "deploy": "npm run clean && cross-env NODE_ENV=production webpack --config webpack.config.js && npm run update && npm run build-server && cross-env NODE_ENV=production node ./build-server/index.js",
     "build-server": "cross-env NODE_ENV=production ./node_modules/.bin/babel ./server --out-dir ./build-server",
     "lint": "eslint --ignore-path .gitignore client server",
-    "heroku-postbuild": "cross-env NODE_ENV=production webpack --config webpack.config.js && cross-env NODE_ENV=production ./node_modules/.bin/babel ./server --out-dir ./build-server",
+    "heroku-postbuild": "npm run update && cross-env NODE_ENV=production webpack --config webpack.config.js && cross-env NODE_ENV=production ./node_modules/.bin/babel ./server --out-dir ./build-server",
     "clean": "rm -rf build && mkdir build && rm -rf build-server && mkdir build-server"
   },
   "engines": {
