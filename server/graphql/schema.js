@@ -9,10 +9,9 @@ import IoC from 'AppIoC';
 
 export const graphqlSchema = (
   nodeField,
-  rootResolver,
-  setViewerMutation,
   loginMutation,
   registerMutation,
+  createUserMutation,
   updateUserMutation,
   removeUserMutation,
   createGenreMutation,
@@ -35,7 +34,16 @@ export const graphqlSchema = (
   removeProductMutation,
   createRecipeMutation,
   updateRecipeMutation,
-  removeRecipeMutation
+  removeRecipeMutation,
+  genreResolver,
+  ingredientResolver,
+  invoiceResolver,
+  nutritionResolver,
+  orientationResolver,
+  productResolver,
+  recipeResolver,
+  userResolver,
+  userType
 ) => {
 
   /**
@@ -49,22 +57,29 @@ export const graphqlSchema = (
       name: 'Query',
       fields: () => ({
         node: nodeField,
-        // root to resolve rest from it
-        //
-        // This is better than putting everything in the root
-        // which will force us to use a different authentication
-        // method than graphql args which...
-        root: rootResolver,
+        viewer: {
+          type: new GraphQLNonNull(userType),
+          resolve: (parent, args, { viewer }) => viewer,
+        },
+        // All queries available to resolve
+        genres: genreResolver,
+        ingredients: ingredientResolver,
+        invoices: invoiceResolver,
+        nutritions: nutritionResolver,
+        orientations: orientationResolver,
+        products: productResolver,
+        recipes: recipeResolver,
+        users: userResolver,
       })
     }),
     mutation: new GraphQLObjectType({
       name: 'Mutation',
       fields: () => ({
         // Authentication mutations
-        setViewer: setViewerMutation,
         login: loginMutation,
         register: registerMutation,
         // User mutations
+        createUser: createUserMutation,
         updateUser: updateUserMutation,
         removeUser: removeUserMutation,
         // Genre mutations
@@ -102,14 +117,13 @@ export const graphqlSchema = (
 
 IoC.callable('graphqlSchema', [
   'nodeField',
-  'rootResolver',
 
   // Authentication mutations
-  'setViewerMutation',
   'loginMutation',
   'registerMutation',
 
   // User mutations
+  'createUserMutation',
   'updateUserMutation',
   'removeUserMutation',
 
@@ -147,4 +161,16 @@ IoC.callable('graphqlSchema', [
   'createRecipeMutation',
   'updateRecipeMutation',
   'removeRecipeMutation',
+
+
+  // Resolvers
+  'genreResolver',
+  'ingredientResolver',
+  'invoiceResolver',
+  'nutritionResolver',
+  'orientationResolver',
+  'productResolver',
+  'recipeResolver',
+  'userResolver',
+  'userType',
 ], graphqlSchema);

@@ -32,16 +32,11 @@ export const registerMutation = (commandExecuter, command, userType, errorType) 
   },
   outputFields: {
     user: { type: userType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const user = await commandExecuter.execute(command, viewer, attrs);
+    const user = await commandExecuter.execute(command, viewer, attrs);
 
-      return { user };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    return { user };
   }
 });
 

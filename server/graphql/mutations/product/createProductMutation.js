@@ -23,15 +23,10 @@ export const createMutation = (commandExecuter, createProductCommand, productTyp
   },
   outputFields: {
     product: { type: productType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const product = await commandExecuter.execute(createProductCommand, viewer, attrs);
-      return { product };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const product = await commandExecuter.execute(createProductCommand, viewer, attrs);
+    return { product };
   }
 });
 

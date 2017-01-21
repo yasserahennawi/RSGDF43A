@@ -8,7 +8,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import IoC from 'AppIoC';
 
 export const userModel = (mongoose, userValidator) => {
-  const USER_TYPES = ['Blogger', 'Admin', 'Customer', 'Super'];
+  const USER_TYPES = ['blogger', 'publisher', 'admin', 'customer', 'super'];
   const MEAL_TYPES = ['dinner', 'launch', 'breakfast'];
 
   const userSchema = new Schema({
@@ -41,22 +41,31 @@ export const userModel = (mongoose, userValidator) => {
       rejectedRecipes: [{type: Schema.Types.ObjectId, ref: 'Recipe'}],
     },
 
+    // Used for publisher type only
+    company: String,
+
     addressStreet: String,
     addressStreetNumber: String,
     addressComplement:String,
     addressZip: String,
     addressCountry: String,
+    addressCity: String,
 
     userType: {type: String, enum: USER_TYPES, required: true, default: 'Customer'},
 
     onlineAt: {type: Date, default: Date.now},
   }, { timestamps: true, collection: 'new_users' });
 
-  userSchema.method('isAdmin', function() { return this.userType === 'Admin' || this.isSuper(); });
-  userSchema.method('isSuper', function() { return this.userType === 'Super'; });
+  userSchema.method('checkUserType', function(type) {
+    return this.userType.toLowerCase() === type.toLowerCase();
+  });
+
+  userSchema.method('isAdmin', function() { return this.checkUserType('admin') || this.isSuper(); });
+  userSchema.method('isSuper', function() { return this.checkUserType('super'); });
   userSchema.method('isGuest', function() { return false; });
-  userSchema.method('isBlogger', function() { return this.userType === 'Blogger'; });
-  userSchema.method('isCustomer', function() { return this.userType === 'Customer'; });
+  userSchema.method('isPublisher', function() { return this.checkUserType('publisher'); });
+  userSchema.method('isBlogger', function() { return this.checkUserType('blogger'); });
+  userSchema.method('isCustomer', function() { return this.checkUserType('customer'); });
 
   /**
    * Check if id is the same
@@ -139,6 +148,8 @@ export const userModel = (mongoose, userValidator) => {
     if(! this.nickName && this.firstName && this.lastName) {
       this.nickName = this.firstName.charAt(0).toLowerCase() + _.upperFirst(this.lastName);
     }
+
+    this.userType = this.userType.toLowerCase();
 
     next();
   });

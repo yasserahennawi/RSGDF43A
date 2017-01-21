@@ -24,15 +24,10 @@ export const removeMutation = (commandExecuter, removeNutritionCommand, errorTyp
   outputFields: {
     deleted: { type: GraphQLBoolean },
     id: { type: GraphQLString },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async ({ id }, { viewer }) => {
-    try {
-      const result = await commandExecuter.execute(removeNutritionCommand, viewer, id);
-      return { id: result._id, deleted: true };
-    } catch(e) {
-      return { error: e.toObject(), deleted: false };
-    }
+    const result = await commandExecuter.execute(removeNutritionCommand, viewer, id);
+    return { id: result._id, deleted: true };
   }
 });
 

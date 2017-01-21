@@ -14,7 +14,8 @@
       { "src": "./client/components", "expose": "components" },
       { "src": "./client/themes", "expose": "themes" },
       { "src": "./client/mutations", "expose": "mutations" },
-      { "src": "./client/helpers", "expose": "helpers" }
+      { "src": "./client/helpers", "expose": "helpers" },
+      { "src": "./client/locales", "expose": "locales" }
     ]]
   ],
   "presets": ["react", "es2015", "stage-0"],

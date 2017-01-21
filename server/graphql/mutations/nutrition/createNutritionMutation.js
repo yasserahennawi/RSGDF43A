@@ -23,15 +23,10 @@ export const createMutation = (commandExecuter, createNutritionCommand, nutritio
   },
   outputFields: {
     nutrition: { type: nutritionType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const nutrition = await commandExecuter.execute(createNutritionCommand, viewer, attrs);
-      return { nutrition };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const nutrition = await commandExecuter.execute(createNutritionCommand, viewer, attrs);
+    return { nutrition };
   }
 });
 

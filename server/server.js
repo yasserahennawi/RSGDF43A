@@ -20,7 +20,8 @@ export async function runRelayDevServer() {
       '/graphql': `http://localhost:${process.env.GRAPHQL_PORT}`
     },
     stats: {
-      colors: true
+      colors: true,
+      chunks:false
     },
     hot: true,
     historyApiFallback: true
@@ -31,26 +32,25 @@ export async function runRelayDevServer() {
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
 
-const addGuestViewerMiddleware = async (req, res, next) => {
-  req.viewer = await IoC.resolve('guestUser');
-  next();
-}
-
 export async function runGraphQLDevServer() {
   const graphqlSchema = await IoC.resolve('graphqlSchema');
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch GraphQL
   const server = configureExpressServer(express());
+  await addAuthMiddleware(server);
+  addSeedRoute(server);
   // Middleware to set guest viewer
   server.use('/api/v1', restApiRouter);
   server.use('/graphql', graphQLHTTP({
     graphiql: true,
     pretty: true,
     schema: graphqlSchema,
-    formatError: (error) => ({
-      ...error.toObject(),
-    }),
+    formatError: (error) => {
+      console.log("heeeeeeeeeeere", error);
+      return error.originalError ? error.originalError.toObject() : error.toObject();
+    },
   }));
+  await addErrorMiddleware(server);
   server.listen(process.env.GRAPHQL_PORT, () => console.log(chalk.green(`GraphQL is listening on port ${process.env.GRAPHQL_PORT}`)));
 }
 
@@ -59,24 +59,38 @@ export async function runProductionServer() {
   const restApiRouter = await IoC.resolve('apiRouter');
   // Launch Relay by creating a normal express server
   const relayServer = configureExpressServer(express());
+  await addAuthMiddleware(server);
+  addSeedRoute(server);
   // Middleware to set guest viewer
   relayServer.use('/api/v1', restApiRouter);
   relayServer.use('/graphql', graphQLHTTP({
     graphiql: true,
     pretty: true,
     schema: graphqlSchema,
-    // formatError: formatError,
+    formatError: (error) => ({
+      ...error.toObject(),
+    }),
   }));
   relayServer.use('/', express.static(path.join(__dirname, '../build')));
+  await addErrorMiddleware(server);
   relayServer.listen(process.env.PORT, () => console.log(chalk.green(`Relay is listening on port ${process.env.PORT}`)));
 }
 
 function configureExpressServer(server) {
   server.use(bodyParser.json());
   server.use(cors());
-  server.use(addGuestViewerMiddleware);
-  addSeedRoute(server);
   return server;
+}
+
+async function addAuthMiddleware(server) {
+  const authMiddleware = await IoC.resolve('authMiddleware');
+  server.use(authMiddleware.setViewer.bind(authMiddleware));
+}
+
+async function addErrorMiddleware(server) {
+  const errorMiddleware = await IoC.resolve('errorMiddleware');
+  server.use(errorMiddleware.log.bind(errorMiddleware));
+  server.use(errorMiddleware.response.bind(errorMiddleware));
 }
 
 function addSeedRoute(server) {

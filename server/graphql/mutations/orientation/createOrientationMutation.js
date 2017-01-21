@@ -23,15 +23,10 @@ export const createMutation = (commandExecuter, createOrientationCommand, orient
   },
   outputFields: {
     orientation: { type: orientationType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const orientation = await commandExecuter.execute(createOrientationCommand, viewer, attrs);
-      return { orientation };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const orientation = await commandExecuter.execute(createOrientationCommand, viewer, attrs);
+    return { orientation };
   }
 });
 

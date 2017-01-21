@@ -24,15 +24,10 @@ export const updateMutation = (commandExecuter, updateOrientationCommand, orient
   },
   outputFields: {
     orientation: { type: orientationType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async ({id, ...attrs}, { viewer }) => {
-    try {
-      const orientation = await commandExecuter.execute(updateOrientationCommand, viewer, id, attrs);
-      return { orientation };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const orientation = await commandExecuter.execute(updateOrientationCommand, viewer, id, attrs);
+    return { orientation };
   }
 });
 

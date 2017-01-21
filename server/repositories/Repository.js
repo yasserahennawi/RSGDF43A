@@ -1,4 +1,5 @@
 import * as Q from 'q';
+import * as _ from 'lodash';
 
 export default class Repository {
 
@@ -20,6 +21,10 @@ export default class Repository {
         throw new TypeError("Must override method");
       }
     }
+  }
+
+  omitEmptyData(data) {
+    return _.omitBy(data, attr => _.isString(attr) && attr === '');
   }
 
   async createAll(viewer, arr) {

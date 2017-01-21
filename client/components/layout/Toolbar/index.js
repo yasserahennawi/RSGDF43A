@@ -8,65 +8,25 @@ import theme from 'themes/main'
 import { FormattedMessage } from 'react-intl'
 
 
-const contentDefault = { left: [], right: [] }
-const handler = { updateContent: () => void(0) }
-
 const toolbarItem = ( item, i ) => (
   <Link onClick={ item.onClick } style={ styles.link } key={ i } >
     <Icon icon={ ICONS[item.icon.toUpperCase()] } style={ styles.icons } />
-    <FormattedMessage id={ item.message } />
+    {item.message}
   </Link>
 )
 
-const _Toolbar = ({ content, updateContent }) => {
-  handler.updateContent = updateContent
-
+const Toolbar = ({ left = [], right = [] }) => {
   return (
     <div style={ styles.root }>
-      { content.left.map(toolbarItem) }
-      { content.right.map(toolbarItem) }
+      { left.map(toolbarItem) }
+      { right.map(toolbarItem) }
     </div>
   )
 }
 
-_Toolbar.propTypes = {
-  content: PropTypes.object,
-  updateContent: PropTypes.func,
-}
-
-export const hoc = withState( 'content', 'updateContent', contentDefault )
-
-export const Toolbar = hoc(_Toolbar)
-
-class ToolbarItems extends Component {
-  render() {
-    return this.props.children? Children.only(this.props.children) : null
-  }
-}
-
-ToolbarItems.propTypes = {
-  children: PropTypes.node,
-  left: PropTypes.arrayOf(PropTypes.object),
-  right: PropTypes.arrayOf(PropTypes.object),
-}
-
-const reverseList = ( fw ) => ( propList ) => fw(propList.reverse())
-
-const notUndefOrDef = ( def ) => ( filter ) =>
-  ( list ) => (list.filter( filter )[0] || {}).left || def
-const getLastItem = ( name ) => notUndefOrDef( contentDefault[name] )(
-  (prop) => prop[name] !=  undefined
-)
-const getLeft = getLastItem( 'left' )
-const getRight = getLastItem( 'right' )
-
-const reducePropsToState = reverseList((propsList) => (
-  { left: getLeft(propsList) , right: getRight(propsList) }
-) )
-
-function handleStateChangeOnClient({ left, right }) {
-
-  handler.updateContent({ left, right })
+Toolbar.propTypes = {
+  left: PropTypes.array,
+  right: PropTypes.array,
 }
 
 const styles = {
@@ -93,7 +53,4 @@ const styles = {
   },
 }
 
-export default withSideEffect(
-  reducePropsToState,
-  handleStateChangeOnClient
-)( ToolbarItems );
+export default Toolbar;

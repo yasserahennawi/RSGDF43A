@@ -25,15 +25,10 @@ export const createMutation = (commandExecuter, createIngredientCommand, ingredi
   },
   outputFields: {
     ingredient: { type: ingredientType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const ingredient = await commandExecuter.execute(createIngredientCommand, viewer, attrs);
-      return { ingredient };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const ingredient = await commandExecuter.execute(createIngredientCommand, viewer, attrs);
+    return { ingredient };
   }
 });
 

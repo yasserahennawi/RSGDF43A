@@ -52,7 +52,7 @@ const runSeeder = async () => {
 
 // Run the function directly, if it's called from the command line
 if (!module.parent) {
-  runSeeder().then(null, err => console.log(er));
+  runSeeder().then(null, err => console.log(err));
 }
 
 //

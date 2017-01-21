@@ -31,6 +31,7 @@ export default class UserRepository extends Repository {
   find(viewer, {
     // All queries available for users
     email,
+    userTypes,
   }) {
     if(viewer.isGuest()) {
       throw new UnauthorizedError();
@@ -40,6 +41,10 @@ export default class UserRepository extends Repository {
 
     if(email) {
       query.where('email', email);
+    }
+
+    if(userTypes) {
+      query.where({'userType': {$in: userTypes}});
     }
 
     return query.exec();
@@ -67,7 +72,7 @@ export default class UserRepository extends Repository {
 
   create(viewer, data) {
     // Only admins can create different types of users
-    if((data.userType && data.userType !== 'Customer') && !viewer.isAdmin()) {
+    if((data.userType && data.userType !== 'customer') && !viewer.isAdmin()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
     return this.model.create(data);
@@ -75,21 +80,30 @@ export default class UserRepository extends Repository {
 
   async update(viewer, id, data) {
 
-    // Check for old password here
-    // If the user is trying to update his password then we have to check his old password
-    // if(password) {
-    //   await this.verifyPassword(oldPassword);
-    // }
+    // Remove keys that are empty ???
+    data = this.omitEmptyData(data);
 
     // Only admins can update userType
-    if((data.userType && data.userType !== 'Customer') && !viewer.isAdmin()) {
+    if((data.userType && data.userType !== 'customer') && !viewer.isAdmin()) {
       throw new ForbiddenError("Only admins can change the user type.");
     }
 
     if(!viewer.isAdmin() && !viewer.checkId(id)) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
+
     const user = await this.model.findById({ _id: id }).exec();
+
+    // Check for old password here
+    // If the user is trying to update his password then we have to check his old password
+    if(data.password) {
+      const verified = await user.verifyPassword(data.oldPassword);
+
+      if(! verified) {
+        throw new ValidationError({ oldPassword: "Old password is incorrect" });
+      }
+    }
+
     return user.set(data).save();
   }
 

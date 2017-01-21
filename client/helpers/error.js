@@ -37,7 +37,16 @@ export function checkErrorValidationKey(error, key) {
 }
 
 export function getErrorValidationMessage(error, key) {
-  const vlaidationMessage = getErrorValidationMessages(error)
+  const validationMessage = getErrorValidationMessages(error)
     .find(validationMessage => validationMessage.key === key);
   return validationMessage ? validationMessage.value : '';
+}
+
+export function getErrorValidationObject(error) {
+  const validationMessages = getErrorValidationMessages(error);
+  const object = {};
+  for(let validationMessage of validationMessages) {
+    object[ validationMessage.key ] = validationMessage.value;
+  }
+  return object;
 }

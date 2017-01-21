@@ -1,66 +1,63 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, withRouter } from 'react-router';
+import RouterBreadcrumbs from 'react-breadcrumbs';
+
 import Icon from 'components/utils/Icon';
 import ICONS from 'components/utils/Icons';
-import muiTheme from 'themes/main';
-import { FormattedMessage } from 'react-intl';
 
+import { css } from 'glamor';
 
-const defaultItem = {
-  first: true,
-  to: '/',
-  icon: ICONS.HOME,
-  caption: null,
-}
+const Breadcrumbs = ({ routes, params, isAdmin }) => {
+  const depth = routes.length;
 
-const breadcrumb = (item, i) => (
-  <li style={ styles.li } key={ i }>
-    { item.first ? null : <div style={ styles.separator }>{ '/' }</div> }
-    <Link to={ item.to } style={ styles.link }>
-      { item.icon ? <Icon icon={item.icon} style={ styles.icons } /> : null }
-      { item.caption? <FormattedMessage id={ item.caption } /> : item.plain }
-    </Link>
-  </li>
-)
-
-const Breadcrumbs = ({ path }) => {
   return (
-    <ol className='breadcrumbs' style={ styles.root }>
-      { breadcrumb(defaultItem) }
-      { path.map(breadcrumb) }
-    </ol>
-  )
-}
+    <div className={ breadcrumbsStr }>
+      <Icon
+        icon={ICONS.HOME}
+        color="#4ba3e1"
+      />
 
-const styles = {
-  root: {
-    padding: '35px 50px',
-    fontFamily: 'Roboto, sans-serif',
-  },
-  li: {
-    display: 'inline-block',
-    position: 'relative',
-  },
-  link: {
-    color: 'gray',
-    textDecoration: 'none',
-    fontSize: 14,
-    color: muiTheme().baseTheme.palette.primary2Color,
-  },
-  separator: {
-    display: 'inline-block',
-    fontSize: 16,
-    margin: '2px 12px 0 12px',
-    color: muiTheme().baseTheme.palette.primary3Color,
-  },
-  icons: {
-    height: 24,
-    width: 24,
-    display: 'block',
-    position: 'absolute',
-    top: 0,
-    margin: '-17px 0 0 -30px',
-    color: muiTheme().listItem.leftIconColor,
-  },
-}
-export default Breadcrumbs
+      <span className={ itemListStr }>/</span>
+
+      <span className={ breadcrumbsStr }>
+        {isAdmin ? 'Admin-Bereich' : 'Blogger-Bereich' }
+      </span>
+
+      <span className={ itemListStr }>/</span>
+
+      <RouterBreadcrumbs
+        routes={routes}
+        params={params}
+        excludes={['App']}
+        separator=" / "
+        itemClass={ itemListStr }
+        displayMissing={false}
+      />
+    </div>
+  );
+};
+
+const breadcrumbs = css({
+  listStyle: 'none',
+  padding: 0,
+  margin: '0 15px 0 0',
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const breadcrumbsStr = breadcrumbs.toString()
+
+const itemList = css({
+  margin: '0 10px',
+  color: '#D9D8D8',
+  textDecoration: 'none',
+});
+
+const itemListStr = itemList.toString()
+
+const breadcrumb = css({
+  margin: '0 10px',
+  color: '#4ba3e1',
+});
+
+export default Breadcrumbs;

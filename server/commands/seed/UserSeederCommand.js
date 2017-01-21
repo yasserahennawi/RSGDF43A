@@ -18,14 +18,20 @@ export default class UserSeederCommand {
     const superUser = await this.userRepository.createSuperUser();
     const adminUser = await this.userRepository.create(superUser, {
       email: "kareem3d.a@gmail.com",
-      // It's very important to create a strong password here that no one can figure out
       password: 'kareem123',
       firstName: "Kareem",
       lastName: "Mohamed",
       userType: 'Admin',
     });
+    const adminUser2 = await this.userRepository.create(superUser, {
+      email: "admin@pimentagroup.de",
+      password: 'tastetastic',
+      firstName: "Pimenta",
+      lastName: "Group",
+      userType: 'Admin',
+    });
 
-    return [ superUser, adminUser ];
+    return [ superUser, adminUser, adminUser2 ];
   }
 }
 

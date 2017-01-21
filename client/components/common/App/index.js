@@ -11,6 +11,13 @@ import {
   setInStorage,
   getFromStorage,
 } from 'helpers/storage';
+import { IntlProvider, addLocaleData } from 'react-intl';
+import en from 'react-intl/locale-data/en';
+import de from 'react-intl/locale-data/de';
+
+import localeData from 'locales/data.json';
+
+addLocaleData([...en, ...de]);
 
 class App extends React.Component {
 
@@ -43,7 +50,7 @@ class App extends React.Component {
   render() {
     const {
       viewer
-    } = this.props.root;
+    } = this.props;
 
     let children;
     // @TODO @deploy uncomment this
@@ -65,11 +72,6 @@ class App extends React.Component {
             sidebarOpened={this.state.sidebarOpened}
           />
           <div style={this.state.sidebarOpened ? styles.content : { ...styles.content, ...styles.sidebarClosed }}>
-            <Breadcrumbs
-              path={
-                ['1', '2', '3']
-              }
-            />
             {this.props.children}
           </div>
         </div>
@@ -77,9 +79,11 @@ class App extends React.Component {
     }
 
     return (
-      <MuiThemeProvider muiTheme={theme()}>
-        {children}
-      </MuiThemeProvider>
+      <IntlProvider locale={'en'} messages={localeData['en']}>
+        <MuiThemeProvider muiTheme={theme()}>
+          {children}
+        </MuiThemeProvider>
+      </IntlProvider>
     );
   }
 }
@@ -90,7 +94,7 @@ const styles = {
     minHeight: 400,
     margin: 34,
     paddingLeft: 300,
-    //fontFamily: 'Montserrat',
+    fontFamily: 'Montserrat',
   },
   sidebarClosed: {
     paddingLeft: 25,
@@ -99,14 +103,12 @@ const styles = {
 
 export default Relay.createContainer(App, {
   fragments: {
-    root: () => Relay.QL`
-      fragment on Root {
-        viewer {
-          isGuest
-          ${Login.getFragment('viewer')}
-          ${Sidebar.getFragment('viewer')}
-          ${Header.getFragment('viewer')}
-        }
+    viewer: () => Relay.QL`
+      fragment on User {
+        isGuest
+        ${Login.getFragment('viewer')}
+        ${Sidebar.getFragment('viewer')}
+        ${Header.getFragment('viewer')}
       }
     `
   }

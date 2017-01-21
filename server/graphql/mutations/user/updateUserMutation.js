@@ -12,6 +12,8 @@ import {
 
 import {
   mutationWithClientMutationId,
+  globalIdField,
+  fromGlobalId,
 } from 'graphql-relay';
 
 import IoC from 'AppIoC';
@@ -19,27 +21,29 @@ import IoC from 'AppIoC';
 export const updateUserMutation = (commandExecuter, command, userType, errorType) => mutationWithClientMutationId({
   name: 'UpdateUser',
   inputFields: {
-    email: { type: new GraphQLNonNull(GraphQLString) },
-    firstName: { type: new GraphQLNonNull(GraphQLString) },
-    lastName: { type: new GraphQLNonNull(GraphQLString) },
+    id: { type: GraphQLString },
+    email: { type: GraphQLString },
+    company: { type: GraphQLString },
+    userType: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
     nickName: { type: GraphQLString },
+    password: { type: GraphQLString },
+    oldPassword: { type: GraphQLString },
     addressStreet: { type: GraphQLString },
     addressStreetNumber: { type: GraphQLString },
     addressComplement: { type: GraphQLString },
-    addressZipcode: { type: GraphQLString },
+    addressZip: { type: GraphQLString },
     addressCountry: { type: GraphQLString },
+    addressCity: { type: GraphQLString },
   },
   outputFields: {
     user: { type: userType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const user = await commandExecuter.execute(command, viewer, attrs);
-      return { user };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const { id } = fromGlobalId(attrs.id);
+    const user = await commandExecuter.execute(command, viewer, id, attrs);
+    return { user };
   }
 });
 

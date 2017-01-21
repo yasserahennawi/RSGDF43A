@@ -23,15 +23,10 @@ export const createMutation = (commandExecuter, createGenreCommand, genreType, e
   },
   outputFields: {
     genre: { type: genreType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
-    try {
-      const genre = await commandExecuter.execute(createGenreCommand, viewer, attrs);
-      return { genre };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const genre = await commandExecuter.execute(createGenreCommand, viewer, attrs);
+    return { genre };
   }
 });
 

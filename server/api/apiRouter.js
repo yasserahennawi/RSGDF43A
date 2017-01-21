@@ -2,8 +2,6 @@ import { Router } from 'express';
 import IoC from 'AppIoC';
 
 export const apiRouter = (
-  authMiddleware,
-  errorMiddleware,
   userRouter,
   genreRouter,
   ingredientRouter,
@@ -16,7 +14,6 @@ export const apiRouter = (
   let router = Router();
 
   // Authenticate user
-  router.use(authMiddleware.setViewer.bind(authMiddleware));
   router.use('/user', userRouter);
   router.use('/genre', genreRouter);
   router.use('/ingredient', ingredientRouter);
@@ -25,15 +22,11 @@ export const apiRouter = (
   router.use('/orientation', orientationRouter);
   router.use('/product', productRouter);
   router.use('/recipe', recipeRouter);
-  router.use(errorMiddleware.log.bind(errorMiddleware));
-  router.use(errorMiddleware.response.bind(errorMiddleware));
 
   return router;
 }
 
 IoC.callable('apiRouter', [
-  'authMiddleware',
-  'errorMiddleware',
   'userRouter',
   'genreRouter',
   'ingredientRouter',

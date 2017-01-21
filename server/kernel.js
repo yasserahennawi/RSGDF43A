@@ -8,7 +8,7 @@ import * as Q from 'q';
 const configureDatabase = async () => {
   // For backwards compatibility, Mongoose 4 returns mpromise promises by default.
   // Plugging in your own Promises Library (i.e.: Q.Promise)
-  // mongoose.Promise = Q.Promise;
+  mongoose.Promise = Q.Promise;
   return await mongoose.createConnection(process.env.MONGODB_URI);
 }
 
@@ -16,7 +16,7 @@ const configureDatabase = async () => {
 IoC.callable('connection', [], configureDatabase);
 
 // Require all files to register themselves
-glob.sync( path.join(__dirname, './@(models|api|repositories|auth|commands|graphql|errors)/**/*.js') ).forEach( function( file ) {
+glob.sync( path.join(__dirname, './@(models|api|middlewares|repositories|auth|commands|graphql|errors)/**/*.js') ).forEach( function( file ) {
   require( path.resolve( file ) );
 });
 

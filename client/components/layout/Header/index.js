@@ -7,11 +7,11 @@ import colors from 'themes/colors';
 import AppBar from 'material-ui/AppBar';
 
 import Dashboard from './Dashboard';
-import { Toolbar } from 'components/layout/Toolbar';
+import Toolbar from 'components/layout/Toolbar';
 
 class Header extends Component {
   render() {
-    const { toggleSidebar } = this.props;
+    const { toggleSidebar, router } = this.props;
 
     return (
       <AppBar
@@ -20,11 +20,19 @@ class Header extends Component {
         showMenuIconButton={false}
         style={styles.appBar}
         zDepth={2}
-        iconElementRight={ <Toolbar /> }
+        iconElementRight={ <Toolbar right={toolbarActions( router.push, this.props.viewer )} /> }
       />
     );
   }
 }
+
+export const toolbarActions = ( navigate, viewer ) => {
+  const actions = [];
+  if(viewer.isAdmin) {
+    actions.push({ icon: 'CIRCLEPLUS', message: 'New Member', onClick: ( e ) => navigate( 'members/new' ) });
+  }
+  return actions;
+};
 
 const styles = {
   appBar: {

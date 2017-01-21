@@ -25,16 +25,11 @@ export const loginMutation = (commandExecuter, command, userType, errorType) => 
   outputFields: {
     token: { type: GraphQLString },
     viewer: { type: userType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async ({ email, password }, context) => {
-    // try {
-      const { token, viewer } = await commandExecuter.execute(command, context.viewer, email, password);
-      context.viewer = viewer;
-      return { token, viewer };
-    // } catch(e) {
-    //   return { error: e.toObject(), viewer: context.viewer };
-    // }
+    const { token, viewer } = await commandExecuter.execute(command, context.viewer, email, password);
+    context.viewer = viewer;
+    return { token, viewer };
   }
 });
 

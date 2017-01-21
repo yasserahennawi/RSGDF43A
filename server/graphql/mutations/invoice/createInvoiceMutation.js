@@ -23,7 +23,6 @@ export const createMutation = (commandExecuter, createInvoiceCommand, invoiceTyp
   },
   outputFields: {
     invoice: { type: invoiceType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async (attrs, { viewer }) => {
     try {

@@ -1,22 +1,33 @@
 import React from 'react';
 import Relay from 'react-relay';
+import Breadcrumbs from 'components/utils/Breadcrumbs';
 
 class HomeRoute extends React.Component {
   render() {
+    const {
+      routes,
+      params
+    } = this.props;
     return (
-      <div>Welome { this.props.root.viewer.firstName }!</div>
+      <div>
+        <Breadcrumbs
+          routes={routes}
+          params={params}
+          isAdmin={this.props.viewer.isAdmin}
+        />
+        <div>Welome { this.props.viewer.firstName }!</div>
+      </div>
     );
   }
 }
 
 export default Relay.createContainer(HomeRoute, {
   fragments: {
-    root: () => Relay.QL`
-      fragment on Root {
-        viewer {
-          firstName
-          lastName
-        }
+    viewer: () => Relay.QL`
+      fragment on User {
+        firstName
+        lastName
+        isAdmin
       }
     `
   }

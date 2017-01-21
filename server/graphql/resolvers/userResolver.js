@@ -25,12 +25,17 @@ export const userResolver = (userRepository, usersConnectionType) => {
       // Relay search args
       ...connectionArgs,
       // Our custom search criteria goes here
-      name: {type: GraphQLInt},
+      email: {type: GraphQLString},
+      // @TODO return this to a GraphQLList once this issue is resolved
+      // https://github.com/relay-tools/react-router-relay/issues/218
+      userTypes: {type: GraphQLString},
     },
-    resolve: (viewer, { name, ...args }) => connectionFromPromisedArray(
-      userRepository.find(viewer, { name }),
-      args
-    ),
+    resolve: (parent, { name, userTypes, ...args }, { viewer }) => {
+      return connectionFromPromisedArray(
+        userRepository.find(viewer, { name, userTypes: userTypes.split(',') }),
+        args
+      )
+    },
   }
 }
 

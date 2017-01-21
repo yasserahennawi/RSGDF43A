@@ -24,15 +24,10 @@ export const updateMutation = (commandExecuter, updateInvoiceCommand, invoiceTyp
   },
   outputFields: {
     invoice: { type: invoiceType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async ({id, ...attrs}, { viewer }) => {
-    try {
-      const invoice = await commandExecuter.execute(updateInvoiceCommand, viewer, id, attrs);
-      return { invoice };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const invoice = await commandExecuter.execute(updateInvoiceCommand, viewer, id, attrs);
+    return { invoice };
   }
 });
 

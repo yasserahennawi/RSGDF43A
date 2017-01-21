@@ -36,8 +36,23 @@ export const userType = (
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
     nickName: { type: GraphQLString },
+    fullName: { type: GraphQLString, resolve: user => `${user.firstName} ${user.lastName}` },
+
     email: { type: GraphQLString },
+    company: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+
+    addressStreet: {type: GraphQLString},
+    addressStreetNumber: {type: GraphQLString},
+    addressComplement: {type: GraphQLString},
+    addressZip: {type: GraphQLString},
+    addressCity: {type: GraphQLString},
+    addressCountry: {type: GraphQLString},
+
     profileImage: { type: imageType },
+    userType: {
+      type: GraphQLString,
+    },
     isGuest: {
       type: GraphQLBoolean,
       resolve: user => user.isGuest()
@@ -50,6 +65,10 @@ export const userType = (
       type: GraphQLBoolean,
       resolve: user => user.isBlogger()
     },
+    isPublisher: {
+      type: GraphQLBoolean,
+      resolve: user => user.isPublisher()
+    },
     token: {
       type: GraphQLString,
       resolve: (user, _, { viewer }) => {
@@ -58,6 +77,13 @@ export const userType = (
         }
         return null;
       }
+    },
+
+
+    totalProducts: {
+      type: GraphQLInt,
+      // @TODO
+      resolve: () => 0,
     }
   }),
   interfaces: [nodeInterface],

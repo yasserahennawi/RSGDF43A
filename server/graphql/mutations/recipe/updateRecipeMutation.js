@@ -24,15 +24,10 @@ export const updateMutation = (commandExecuter, updateRecipeCommand, recipeType,
   },
   outputFields: {
     recipe: { type: recipeType },
-    error: { type: errorType },
   },
   mutateAndGetPayload: async ({id, ...attrs}, { viewer }) => {
-    try {
-      const recipe = await commandExecuter.execute(updateRecipeCommand, viewer, id, attrs);
-      return { recipe };
-    } catch(e) {
-      return { error: e.toObject() };
-    }
+    const recipe = await commandExecuter.execute(updateRecipeCommand, viewer, id, attrs);
+    return { recipe };
   }
 });
 
