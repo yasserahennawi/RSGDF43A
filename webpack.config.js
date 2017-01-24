@@ -17,6 +17,9 @@ function getProcessEnv() {
   let data = {};
   if (!fs.existsSync(envFile)) {
     data = process.env;
+    const jsonVars = {};
+    for (const key in data) jsonVars[key] = JSON.stringify(data[key]);
+    return jsonVars;
   }
 
   var lines = fs.readFileSync(envFile).toString().split(/\r?\n/), keyValue;
