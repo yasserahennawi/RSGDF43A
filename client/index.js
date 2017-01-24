@@ -27,7 +27,7 @@ Relay.injectNetworkLayer(
 
 setUploaderConfig({
   bucket: 'tastetastic',
-  endpoint: process.env.IMAGE_MIDDLEWARE_ENDPOINT,
+  endpoint: 'http://taste-image-middleware.herokuapp.com',
 });
 
 console.log(process.env.IMAGE_MIDDLEWARE_ENDPOINT);
