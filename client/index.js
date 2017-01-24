@@ -30,6 +30,8 @@ setUploaderConfig({
   endpoint: process.env.IMAGE_MIDDLEWARE_ENDPOINT,
 });
 
+console.log(process.env.IMAGE_MIDDLEWARE_ENDPOINT);
+
 ReactDOM.render(
   <Router history={browserHistory} routes={Route} render={applyRouterMiddleware(useRelay)} environment={Relay.Store} />,
   rootNode

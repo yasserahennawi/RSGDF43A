@@ -16,10 +16,9 @@ function getProcessEnv() {
   const envFile = path.join(__dirname, '.env');
   let data = {};
   if (!fs.existsSync(envFile)) {
-    data = process.env;
-    const jsonVars = {};
-    for (const key in data) jsonVars[key] = JSON.stringify(data[key]);
-    return jsonVars;
+    return {
+      'IMAGE_MIDDLEWARE_ENDPOINT': JSON.stringify(process.env.IMAGE_MIDDLEWARE_ENDPOINT),
+    };
   }
 
   var lines = fs.readFileSync(envFile).toString().split(/\r?\n/), keyValue;
