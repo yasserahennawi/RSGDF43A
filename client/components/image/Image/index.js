@@ -80,24 +80,26 @@ export default class Image extends React.Component {
   }
 
   selectAndLoadImage(props, state) {
-    let image = this.getNearestVersion(
-      state.width,
-      state.height,
-      props.image,
-      props.resolutionMargin
-    );
-    if(LOADED_IMAGE_SRCS.indexOf(image.src) > -1) {
-      this.setState({ image });
-      this.callOnLoadListener();
-    } else {
-      let img = new Image();
-      img.src = image.src;
-      img.onload = () => {
-        LOADED_IMAGE_SRCS.push(image.src);
-        this.callOnLoadListener();
-        this.setState({ image });
-      };
-    }
+    this.setState({ image: props.image });
+    this.callOnLoadListener();
+    // let image = this.getNearestVersion(
+    //   state.width,
+    //   state.height,
+    //   props.image,
+    //   props.resolutionMargin
+    // );
+    // if(LOADED_IMAGE_SRCS.indexOf(image.src) > -1) {
+    //   this.setState({ image });
+    //   this.callOnLoadListener();
+    // } else {
+    //   let img = new Image();
+    //   img.src = image.src;
+    //   img.onload = () => {
+    //     LOADED_IMAGE_SRCS.push(image.src);
+    //     this.callOnLoadListener();
+    //     this.setState({ image });
+    //   };
+    // }
   }
 
   componentWillUpdate(nextProps, nextState) {
