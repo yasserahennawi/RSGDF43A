@@ -28,7 +28,7 @@ export default class Repository {
   }
 
   async createAll(viewer, arr) {
-    return Q.all(arr.map(data => this.create(viewer, data)));
+    return await arr.map(data => this.create(viewer, data));
   }
 
 }

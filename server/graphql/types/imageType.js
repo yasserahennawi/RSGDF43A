@@ -64,6 +64,7 @@ export const imageType = () => new GraphQLObjectType({
   description: 'Image object',
   fields: () => ({
     src: {type: GraphQLString},
+    versions: {type: new GraphQLList(versionType)},
     // Image version
     version: {
       type: versionType,

@@ -23,6 +23,7 @@ export const recipeModel = (mongoose, recipeValidator) => {
       }],
     },
     mealType: {type: String, enum: MEAL_TYPES, default: 'breakfast'},
+    product: {type: Schema.Types.ObjectId, ref: 'Product'},
     // Is this nutrition or genre ????/
     // @TODO: @kareemmohamed update this with nutrition or genre
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
@@ -63,6 +64,15 @@ export const recipeModel = (mongoose, recipeValidator) => {
   recipeSchema.method('getOrientation', async function() {
     await this.populate('orientation').execPopulate();
     return this.orientation;
+  });
+
+  /**
+   * Get product for this recipe
+   * @return {Object}
+   */
+  recipeSchema.method('getProduct', async function() {
+    await this.populate('product').execPopulate();
+    return this.product;
   });
 
   /**

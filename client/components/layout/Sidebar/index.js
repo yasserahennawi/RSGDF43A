@@ -61,7 +61,7 @@ const renderUserMenus = ( { location }, handler ) => (
 
     <ListItem
       primaryText="NEUES SPECIAL"
-      value="/books"
+      value="/products"
       leftIcon={
         <Icon icon={ICONS.CIRCLEPLUS} color="#fff"/>
       }

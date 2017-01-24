@@ -22,8 +22,9 @@ export const productModel = (mongoose, productValidator) => {
         height: Number,
       }],
     },
+    orderDescription: String,
+    noOfRecipes: Number,
     status: {type: String, enum: PRODUCT_STATUSES, default: 'awaiting'},
-    recipes: [{type: Schema.Types.ObjectId, ref: 'Recipe'}],
     genres: [{type: Schema.Types.ObjectId, ref: 'Genre'}],
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
@@ -70,15 +71,6 @@ export const productModel = (mongoose, productValidator) => {
   productSchema.method('getGenres', async function() {
     await this.populate('genres').execPopulate();
     return this.genres;
-  });
-
-  /**
-   * Get all recipes for this product
-   * @return {Array}
-   */
-  productSchema.method('getRecipes', async function() {
-    await this.populate('recipes').execPopulate();
-    return this.recipes;
   });
 
   /**

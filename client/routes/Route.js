@@ -17,6 +17,12 @@ import CreateBloggerQuery from 'components/routes/CreateBloggerRoute/Query';
 import EditBloggerDetailsRoute from 'components/routes/EditBloggerDetailsRoute';
 import EditBloggerDetailsQuery from 'components/routes/EditBloggerDetailsRoute/Query';
 
+import EditProductRoute from 'components/routes/EditProductRoute/test';
+import EditProductQuery, { prepareEditProductParams } from 'components/routes/EditProductRoute/Query';
+
+import EditRecipeRoute from 'components/routes/EditRecipeRoute';
+import EditRecipeQuery from 'components/routes/EditRecipeRoute/Query';
+
 export default (
   <Route
     path='/'
@@ -28,13 +34,29 @@ export default (
       queries={HomeQuery}/>
 
     <Route
+      name="Neues Special"
+      path="/books">
+      <Route
+        name="Erstellen"
+        path="(:productId)"
+        component={EditProductRoute}
+        queries={EditProductQuery}
+        prepareParams={prepareEditProductParams} />
+      <Route
+        name="Rezepte kreieren"
+        path=":productId/recipe(/:recipeId)"
+        component={EditRecipeRoute}
+        queries={EditRecipeQuery} />
+    </Route>
+
+
+    <Route
       name="Mitglieder"
       path="/members">
-
       <IndexRoute
         component={ListBloggersRoute}
         queries={ListBloggersQuery}
-        prepareParams={prepareBloggersRouteParams}/>
+        prepareParams={prepareBloggersRouteParams} />
 
       <Route
         name="Neue Mitglieder"

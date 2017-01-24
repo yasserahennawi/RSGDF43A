@@ -5,6 +5,7 @@ import { browserHistory, applyRouterMiddleware, Router } from 'react-router';
 import useRelay from 'react-router-relay';
 import Route from './routes/Route';
 import { getUserToken } from 'helpers/storage';
+import { setConfig as setUploaderConfig } from 'helpers/uploader';
 
 import 'themes/main.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -23,6 +24,11 @@ Relay.injectNetworkLayer(
     },
   })
 );
+
+setUploaderConfig({
+  bucket: 'tastetastic',
+  endpoint: process.env.IMAGE_MIDDLEWARE_ENDPOINT,
+});
 
 ReactDOM.render(
   <Router history={browserHistory} routes={Route} render={applyRouterMiddleware(useRelay)} environment={Relay.Store} />,

@@ -5,22 +5,29 @@ import {
   Stepper,
   StepLabel,
 } from 'material-ui/Stepper';
-
+import { css, style } from 'glamor';
 import Button from 'components/utils/Button';
-import BookList from 'components/books/BookList';
 import Box from 'components/utils/Box';
+import Product from 'components/products/Product';
+
+const productContainer = style({
+  //marginTop: 50,
+  marginBottom: 20,
+  display: 'flex',
+  flexWrap: 'wrap',
+});
 
 class ProductList extends Component {
   renderCoverChildren = () => {
     return (
-      <div style={styles.bookLabel}>
+      <div style={styles.productLabel}>
         <span>
           Pipilangstrumbfhose Beispiel Text
-          <small style={styles.bookLabelSmall}>
+          <small style={styles.productLabelSmall}>
             Benjamin Combos
           </small>
         </span>
-        <div style={styles.bookButtons}>
+        <div style={styles.productButtons}>
           <Box
             style={styles.box}
             boxes={[{
@@ -42,7 +49,7 @@ class ProductList extends Component {
   render() {
     const { handleChangeStep } = this.props;
 
-    const books = [
+    const products = [
       {
         coverImage: 'http://gbbdf.org/wp-content/uploads/2015/07/Pippi-Longstocking.jpg',
         children: this.renderCoverChildren(),
@@ -71,7 +78,16 @@ class ProductList extends Component {
 
     return (
       <div style={styles.container}>
-        <BookList books={books} />
+        <div className={`${productContainer}`}>
+          {products.map((product, key) => (
+            <Product
+              cover={product.coverImage}
+              key={`${product.coverImage}-${key}`}
+            >
+              {product.children}
+            </Product>
+          ))}
+        </div>
 
         {/*<div style={styles.footer}>
           <div style={styles.formActions}>
@@ -108,11 +124,11 @@ const styles = {
   },
   button: {
   },
-  bookLabel: {
+  productLabel: {
     display: 'flex',
     flexDirection: 'column',
   },
-  bookLabelSmall: {
+  productLabelSmall: {
     marginTop: 2,
     fontSize: 12,
   },

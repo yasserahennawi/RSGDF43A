@@ -1,25 +1,34 @@
+export function isApiError(error) {
+  return error
+    && error.getError
+    && error.getError()
+    && error.getError().source
+    && error.getError().source.errors
+    && error.getError().source.errors[0];
+}
+
 export function getErrorMessage(error) {
-  return error.getError().source.errors[0].message;
+  return isApiError(error) && error.getError().source.errors[0].message;
 }
 
 export function isValidationError(error) {
-  return error.getError().source.errors[0].name === 'ValidationError';
+  return isApiError(error) && error.getError().source.errors[0].name === 'ValidationError';
 }
 
 export function isForbiddenError(error) {
-  return error.getError().source.errors[0].name === 'ForbiddenError';
+  return isApiError(error) && error.getError().source.errors[0].name === 'ForbiddenError';
 }
 
 export function isUnauthorizedError(error) {
-  return error.getError().source.errors[0].name === 'UnauthorizedError';
+  return isApiError(error) && error.getError().source.errors[0].name === 'UnauthorizedError';
 }
 
 export function isModelNotFoundError(error) {
-  return error.getError().source.errors[0].name === 'ModelNotFoundError';
+  return isApiError(error) && error.getError().source.errors[0].name === 'ModelNotFoundError';
 }
 
 export function isUnkownError(error) {
-  return error.getError().source.errors[0].name === 'UnkownError';
+  return isApiError(error) && error.getError().source.errors[0].name === 'UnkownError';
 }
 
 /**
@@ -28,7 +37,7 @@ export function isUnkownError(error) {
  * { key: string, value: string }
  */
 export function getErrorValidationMessages(error) {
-  return error.getError().source.errors[0].validationMessages || [];
+  return isApiError(error) ? error.getError().source.errors[0].validationMessages || [] : [];
 }
 
 export function checkErrorValidationKey(error, key) {

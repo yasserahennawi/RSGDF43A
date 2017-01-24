@@ -1,7 +1,7 @@
 import React from 'react';
 import { style } from 'glamor';
 
-const Book = ({ children, cover }) => {
+const Product = ({ children, cover }) => {
   return (
     <div className={`${container}`}>
       <img src={cover} className={`${imageCover}`} />
@@ -25,4 +25,4 @@ const imageCover = style({
   marginBottom: 20,
 });
 
-export default Book;
+export default Product;

@@ -7,7 +7,7 @@ import {
 export default ({ error, onDismiss }) => (
   <Snackbar
     open={!!error}
-    message={error ? getErrorMessage(error): ''}
+    message={getErrorMessage(error) || error || ''}
     action="Dismiss"
     autoHideDuration={7000}
     onActionTouchTap={onDismiss}

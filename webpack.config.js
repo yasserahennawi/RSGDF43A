@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
@@ -10,6 +11,24 @@ const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 let appEntry;
 let devtool;
 let plugins;
+
+function getProcessEnv() {
+  const envFile = path.join(__dirname, '.env');
+  let data = {};
+  if (!fs.existsSync(envFile)) {
+    data = process.env;
+  }
+
+  var lines = fs.readFileSync(envFile).toString().split(/\r?\n/), keyValue;
+  for (var i = 0; i < lines.length; i++) {
+    if (! lines[i]) {
+      continue;
+    }
+    keyValue = lines[i].split('=');
+    data['process.env.' + keyValue[0]] = JSON.stringify(keyValue[1]);
+  }
+  return data;
+}
 
 const htmlTemplate = new HtmlWebpackPlugin({
   title: 'TasteTastic',
@@ -26,11 +45,7 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    }),
+    new webpack.DefinePlugin(getProcessEnv()),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
@@ -51,9 +66,7 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
     new webpack.NoErrorsPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.DefinePlugin({
-      __DEV__: true
-    }),
+    new webpack.DefinePlugin(getProcessEnv()),
     htmlTemplate,
     favIcon
   ];

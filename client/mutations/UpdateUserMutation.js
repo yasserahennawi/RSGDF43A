@@ -10,10 +10,6 @@ class UpdateUserMutation extends Relay.Mutation {
     `
   }
 
-  constructor(data) {
-    super(data);
-  }
-
   getMutation() {
     return Relay.QL`
       mutation {

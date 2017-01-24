@@ -2,6 +2,7 @@ import Repository from '../Repository';
 import ValidationError from  'errors/ValidationError';
 import ForbiddenError from  'errors/ForbiddenError';
 import IoC from 'AppIoC';
+import { getDocumentId } from 'utils/mongo';
 
 export default class RecipeRepository extends Repository {
   constructor(model, recipeUserPreferencesSearch) {
@@ -20,6 +21,10 @@ export default class RecipeRepository extends Repository {
     return query.exec();
   }
 
+  countByProduct(viewer, product) {
+    return this.model.find({ product: getDocumentId(product) }).count();
+  }
+
   findById(viewer, id) {
     return this.model.findById(id).exec();
   }
@@ -33,7 +38,7 @@ export default class RecipeRepository extends Repository {
   }
 
   create(viewer, data) {
-    if(!viewer.isAdmin()) {
+    if(!viewer.isAdmin() && !viewer.isBlogger() && !viewer.isPublisher()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
     return this.model.create({
@@ -42,11 +47,14 @@ export default class RecipeRepository extends Repository {
     });
   }
 
-  update(viewer, id, data) {
-    if(!viewer.isAdmin()) {
+  async update(viewer, id, data) {
+    if(!viewer.isAdmin() && !viewer.isBlogger() && !viewer.isPublisher()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
-    return this.model.update({ _id: id }, data).exec();
+
+    const recipe = await this.model.findById(id).exec();
+
+    return recipe.set(data).save();
   }
 
   remove(viewer, id) {

@@ -25,20 +25,26 @@ import IoC from 'AppIoC';
 
 export const productType = (
   productModel,
+  recipeRepository,
   nodeInterface,
   imageType,
   priceType,
-  recipesConnectionType,
   genresConnectionType,
   nutritionType,
   userType
 ) => new GraphQLObjectType({
   name: 'Product',
   fields: () => ({
-    id: globalIdField('User'),
+    id: globalIdField('Product'),
     name: { type: GraphQLString },
+    orderDescription: { type: GraphQLString },
+    noOfRecipes: { type: GraphQLInt },
     price: { type: priceType },
     coverImage: { type: imageType },
+    createdRecipesCount: {
+      type: GraphQLInt,
+      resolve: (product, _, { viewer }) => recipeRepository.countByProduct(viewer, product),
+    },
     isAccepted: {
       type: GraphQLBoolean,
       resolve: product => product.isAccepted(),
@@ -50,14 +56,6 @@ export const productType = (
     isAwaiting: {
       type: GraphQLBoolean,
       resolve: product => product.isAwaiting(),
-    },
-    recipes: {
-      type: recipesConnectionType,
-      args: connectionArgs,
-      resolve: (product, args) => connectionFromPromisedArray(
-        product.getRecipes(),
-        args
-      ),
     },
     genres: {
       type: genresConnectionType,
@@ -86,10 +84,10 @@ export const productType = (
 
 IoC.callable('productType', [
   'productModel',
+  'recipeRepository',
   'nodeInterface',
   'imageType',
   'priceType',
-  'recipesConnectionType',
   'genresConnectionType',
   'nutritionType',
   'userType'

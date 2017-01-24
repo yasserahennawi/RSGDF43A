@@ -1,7 +1,7 @@
 import React from 'react';
 import Relay from 'react-relay';
 import Breadcrumbs from 'components/utils/Breadcrumbs';
-import CreateUser from 'components/auth/CreateUser';
+import CreateAccount from 'components/auth/CreateAccount';
 import styles from './styles';
 import {
   Step,
@@ -25,7 +25,7 @@ class CreateBloggerRoute extends React.Component {
 
   getUserDetails() {
     return (
-      <CreateUser
+      <CreateAccount
         isShortCreationMode={true}
         user={null}
         viewer={this.props.viewer}
@@ -65,7 +65,7 @@ export default Relay.createContainer(CreateBloggerRoute, {
       fragment on User {
         firstName
         lastName
-        ${CreateUser.getFragment('viewer')}
+        ${CreateAccount.getFragment('viewer')}
       }
     `
   }

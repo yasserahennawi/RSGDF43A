@@ -35,6 +35,7 @@ export const recipeType = (
   nodeInterface,
   imageType,
   userType,
+  productType,
   nutritionType,
   ingredientType,
   orientationType
@@ -63,6 +64,10 @@ export const recipeType = (
         type: new GraphQLNonNull(nutritionType),
         resolve: recipe => recipe.getNutrition(),
       },
+      product: {
+        type: new GraphQLNonNull(productType),
+        resolve: recipe => recipe.getProduct(),
+      },
       items: {
         type: recipeItemsConnectionType,
         args: connectionArgs,
@@ -87,6 +92,7 @@ IoC.callable('recipeType', [
   'nodeInterface',
   'imageType',
   'userType',
+  'productType',
   'nutritionType',
   'ingredientType',
   'orientationType',

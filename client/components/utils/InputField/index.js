@@ -2,28 +2,85 @@ import React from 'react';
 
 import TextField from 'material-ui/TextField';
 import { FormsyText } from 'formsy-material-ui/lib';
+import { isValidationError, getErrorValidationMessage } from 'helpers/error';
 
-const InputField = ({ formsy, style, inputStyle, floatingLabelStyle, hintStyle, ...props }) => (
-  formsy ?
-    <FormsyText
-      underlineShow={false}
-      floatingLabelFixed={true}
-      floatingLabelStyle={{ ...styles.floatingLabel, ...floatingLabelStyle }}
-      hintStyle={{ ...styles.hint, ...hintStyle }}
-      style={{ ...styles.textField, ...style }}
-      inputStyle={{ ...styles.inputStyle, ...inputStyle }}
-      {...props}
-    /> :
-    <TextField
-      underlineShow={false}
-      floatingLabelFixed={true}
-      floatingLabelStyle={{ ...styles.floatingLabel, ...floatingLabelStyle }}
-      hintStyle={{ ...styles.hint, ...hintStyle }}
-      style={{ ...styles.textField, ...style }}
-      inputStyle={{ ...styles.inputStyle, ...inputStyle }}
-      {...props}
-    />
-);
+class InputField extends React.Component {
+  componentWillMount() {
+    this.setState({
+      isDirty: false,
+    });
+  }
+
+  getError(validator, validatorMessage, value) {
+    if(this.state.isDirty && (!value || !validator(value))) {
+      return validatorMessage;
+    }
+  }
+
+  render() {
+    const {
+      name,
+      validator,
+      validatorMessage,
+      apiError,
+      formsy,
+      style,
+      inputStyle,
+      floatingLabelStyle,
+      hintStyle,
+      value,
+      ...props,
+    } = this.props;
+
+    if(validatorMessage) {
+      return (
+        <TextField
+          name={name}
+          onBlur={() => this.setState({ isDirty: true })}
+          errorText={this.getError(validator, validatorMessage, value)}
+          underlineShow={false}
+          floatingLabelFixed={true}
+          floatingLabelStyle={{ ...styles.floatingLabel, ...floatingLabelStyle }}
+          hintStyle={{ ...styles.hint, ...hintStyle }}
+          style={{ ...styles.textField, ...style }}
+          inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+          value={value}
+          {...props}
+        />
+      );
+    }
+
+    if(formsy) {
+      return (
+        <FormsyText
+          name={name}
+          underlineShow={false}
+          floatingLabelFixed={true}
+          floatingLabelStyle={{ ...styles.floatingLabel, ...floatingLabelStyle }}
+          hintStyle={{ ...styles.hint, ...hintStyle }}
+          style={{ ...styles.textField, ...style }}
+          inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+          value={value}
+          {...props}
+        />
+      );
+    }
+
+    return (
+      <TextField
+        name={name}
+        underlineShow={false}
+        floatingLabelFixed={true}
+        floatingLabelStyle={{ ...styles.floatingLabel, ...floatingLabelStyle }}
+        hintStyle={{ ...styles.hint, ...hintStyle }}
+        style={{ ...styles.textField, ...style }}
+        inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+        value={value}
+        {...props}
+      />
+    );
+  }
+}
 
 const styles = {
   textField: {
