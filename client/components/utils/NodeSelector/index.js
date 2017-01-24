@@ -63,7 +63,7 @@ export class NodeSelector extends React.Component {
     if(node) {
       this.props.onSelect(node);
     } else if(this.props.mustExist) {
-      this.props.onSelect({ name: '' });
+      this.props.onSelect(null);
     } else {
       // New node...
       this.props.onSelect({ name: value });

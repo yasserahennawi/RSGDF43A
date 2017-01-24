@@ -34,7 +34,7 @@ const styles = {
     border: '1px solid #EEEEEE',
     borderRadius: 5,
     backgroundColor: 'white',
-    width: '100%',
+    width: '94%',
     paddingLeft: 10,
     height: 40,
     margin: 20,
@@ -54,7 +54,7 @@ const styles = {
     fill: '#525251',
     top: 8,
     //right: 1,
-    marginTop: 12,
+    marginTop: 5,
   },
   menu: {
     marginLeft: -10,

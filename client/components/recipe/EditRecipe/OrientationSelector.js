@@ -15,8 +15,8 @@ export class OrientationSelector extends React.Component {
       <NodeSelector
         nodes={orientations}
         selectedNode={selectedOrientation}
-        floatingLabelText="Ernährungsart"
-        hintText="Alle Arten"
+        floatingLabelText="Hauptrichtung"
+        hintText="Hauptrichtung"
         mustExist={true}
         {...props}
       />

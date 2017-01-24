@@ -27,6 +27,9 @@ const muiTheme = () => getMuiTheme({
     desktopSubheaderHeight: 48,
     desktopToolbarHeight: 56,
   },
+  drawer: {
+    width: 300,
+  },
   fontFamily: 'Montserrat',
   palette: {
     primary1Color: '#50E3C2',

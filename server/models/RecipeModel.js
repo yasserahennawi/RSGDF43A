@@ -8,6 +8,7 @@ export const recipeModel = (mongoose, recipeValidator) => {
 
   const recipeSchema = new Schema({
     name: {type: String, required: true},
+    number: Number,
     preparationInstructions: [String],
     preparationTimeMin: Number,
     calories: String,

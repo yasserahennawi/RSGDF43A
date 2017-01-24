@@ -7,6 +7,8 @@ import {
 } from 'material-ui/Stepper';
 import styles from './styles';
 import SvgIcon from 'material-ui/SvgIcon';
+import SelectField from 'components/utils/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 export default class StepperLayout extends React.Component {
   renderIcon(value, isAfter) {
@@ -60,8 +62,13 @@ export default class StepperLayout extends React.Component {
           params={[]}
         />
         <div style={styles.header}>
-          <h1 style={styles.title}>{this.props.title}</h1>
-          <h4 style={styles.subtitle}>{this.props.subtitle}</h4>
+          <div style={styles.leftPanel}>
+            <h1 style={styles.title}>{this.props.title}</h1>
+            <h4 style={styles.subtitle}>{this.props.subtitle}</h4>
+          </div>
+          <div style={styles.rightPanel}>
+            {this.props.rightPanel}
+          </div>
         </div>
         <Stepper
           linear={false}

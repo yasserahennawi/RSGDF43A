@@ -11,7 +11,7 @@ import AutoComplete from 'material-ui/AutoComplete'
 import GenreSelector from './GenreSelector';
 import NutritionSelector from './NutritionSelector';
 import CoverUpload from 'components/image/CoverUpload';
-import SnackbarError from 'components/utils/SnackbarError';
+import Snackbar from 'material-ui/Snackbar';
 import * as _ from 'lodash';
 import validator from 'validator';
 import CreateProductMutation from 'mutations/CreateProductMutation';
@@ -29,7 +29,9 @@ export class EditProduct extends React.Component {
       nutrition: {
         name: '',
       },
-      coverImage: {},
+      coverImage: {
+        versions: [],
+      },
       genres: {
         edges: []
       },
@@ -59,13 +61,14 @@ export class EditProduct extends React.Component {
       && this.validators.nutrition(this.state.product.nutrition.name)
       && this.validators.orderDescription(this.state.product.orderDescription)
       && this.validators.noOfRecipes(this.state.product.noOfRecipes)
-      && this.validators.price(this.state.product.price.value);
+      && this.validators.price(this.state.product.price.value)
+      && this.state.product.genres.edges.length > 0;
   }
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.product !== this.props.product) {
       this.setState({
-        product: nextProps.product,
+        product: nextProps.product || this.getNewProduct(),
       });
     }
   }
@@ -89,6 +92,7 @@ export class EditProduct extends React.Component {
 
   updateProductSuccess({ updateProduct }) {
     this.props.onProductUpdateSuccess(updateProduct);
+    this.setState({ successMessage: "Book has been updated successfully" });
   }
 
   updateProductFailure(error) {
@@ -129,6 +133,7 @@ export class EditProduct extends React.Component {
   }
 
   changePriceValue(value) {
+    if(! value) return;
     this.setState({
       product: {
         ...this.state.product,
@@ -141,6 +146,7 @@ export class EditProduct extends React.Component {
   }
 
   addGenre(genre) {
+    if(! genre) return;
     this.setState({
       product: {
         ...this.state.product,
@@ -240,6 +246,7 @@ export class EditProduct extends React.Component {
                   floatingLabelText="REZEPTANZAHL"
                   name="noOfRecipes"
                   value={this.state.product.noOfRecipes}
+                  disabled={this.props.product}
                   onChange={(e, key, value) => this.onProductChange({ noOfRecipes: parseInt(value) })}>
                   {_.range(15).map(i => (
                     <MenuItem key={i} value={i+1} primaryText={i+1} />
@@ -274,6 +281,10 @@ export class EditProduct extends React.Component {
               disabled={ !this.isValid() }
             />
           </div>
+          <Snackbar
+            open={!!this.state.successMessage}
+            message={this.state.successMessage}
+            onRequestClose={() => this.setState({ successMessage: '' })}/>
           <ErrorDetails
             error={this.state.apiError}
             onDismiss={() => this.setState({ apiError: null })}

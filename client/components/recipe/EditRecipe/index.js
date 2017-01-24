@@ -7,6 +7,7 @@ import Button from 'components/utils/Button';
 import MenuItem from 'material-ui/MenuItem';
 import OrientationSelector from './OrientationSelector';
 import NutritionSelector from './NutritionSelector';
+import Snackbar from 'material-ui/Snackbar';
 import * as _ from 'lodash';
 import validator from 'validator';
 import CreateRecipeMutation from 'mutations/CreateRecipeMutation';
@@ -51,14 +52,15 @@ export class EditRecipe extends React.Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.recipe !== this.props.recipe) {
       this.setState({
-        recipe: nextProps.recipe,
+        recipe: nextProps.recipe || this.getNewRecipe(),
         preparationInstruction: '',
       });
     }
   }
 
   isValid() {
-    return this.validators.name(this.state.recipe.name)
+    return this.state.isDirty
+      && this.validators.name(this.state.recipe.name)
       && this.validators.difficulity(this.state.recipe.difficulity)
       && this.validators.calories(this.state.recipe.calories)
       && this.validators.preparationTimeMin(this.state.recipe.preparationTimeMin)
@@ -87,6 +89,10 @@ export class EditRecipe extends React.Component {
 
   updateRecipeSuccess({ updateRecipe }) {
     this.props.onRecipeUpdateSuccess(updateRecipe);
+    this.setState({
+      isDirty: false,
+      successMessage: "Recipe has been updated successfully"
+    });
   }
 
   updateRecipeFailure(error) {
@@ -100,6 +106,9 @@ export class EditRecipe extends React.Component {
 
     // Recipe already exist then execute the update mutation
     if(this.state.recipe.id) {
+
+      console.log(this.props.recipe);
+
       const mutation = new UpdateRecipeMutation({
         ...this.state.recipe,
         recipe: this.props.recipe,
@@ -123,6 +132,7 @@ export class EditRecipe extends React.Component {
 
   onRecipeChange(changes) {
     this.setState({
+      isDirty: true,
       recipe: {
         ...this.state.recipe,
         ...changes,
@@ -131,7 +141,12 @@ export class EditRecipe extends React.Component {
   }
 
   addPreparationInstruction() {
+    if(!this.state.preparationInstruction) {
+      return;
+    }
+
     this.setState({
+      isDirty: true,
       preparationInstruction: "",
       recipe: {
         ...this.state.recipe,
@@ -161,7 +176,7 @@ export class EditRecipe extends React.Component {
             />
           </div>
 
-          <div className={`${formDivisor}`}>
+          <div className={`${formDivisor}`} style={{ maxWidth: '800px' }}>
             <SelectField
               name="difficulity"
               validator={this.validators.difficulity}
@@ -197,7 +212,7 @@ export class EditRecipe extends React.Component {
             </SelectField>
           </div>
 
-          <div className={`${formDivisor}`}>
+          <div className={`${formDivisor}`} style={{ maxWidth: '800px', justifyContent: 'flex-start' }}>
             <NutritionSelector
               name="nutrition"
               nutritions={this.props.nutritions}
@@ -225,7 +240,7 @@ export class EditRecipe extends React.Component {
               multiLine={true}
               rows={4}
               floatingLabelText="ZUBEREITUNGSANLEITUNG"
-              style={{ ...styles.textField, height: 100 }}
+              style={{ ...styles.textField, height: 'auto' }}
             />
             <Button
               primary={true}
@@ -246,7 +261,7 @@ export class EditRecipe extends React.Component {
           <div style={styles.footer}>
             {this.props.recipe ? null :
               <div style={styles.receiptNumber}>
-                Recipe {this.props.product.createdRecipesCount + 1} of {this.props.product.noOfRecipes}
+                Recipe {this.props.recipe ? this.props.recipe.number : this.props.product.createdRecipesCount + 1} of {this.props.product.noOfRecipes}
               </div>}
 
             <div style={styles.formActions}>
@@ -259,7 +274,7 @@ export class EditRecipe extends React.Component {
               <Button
                 primary={true}
                 type="submit"
-                label="Continue"
+                label={ this.props.recipe ? "Update" : "Continue" }
                 disabled={!this.isValid()}
               />
             </div>
@@ -268,6 +283,10 @@ export class EditRecipe extends React.Component {
             error={this.state.apiError}
             onDismiss={() => this.setState({ apiError: null })}
           />
+          <Snackbar
+            open={!!this.state.successMessage}
+            message={this.state.successMessage}
+            onRequestClose={() => this.setState({ successMessage: '' })}/>
         </form>
       </div>
     );
@@ -278,27 +297,32 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: 50,
   },
   textField: {
     width: '100%',
   },
-  textarea: {
-    height: 'auto',
-  },
   select: {
-    //marginLeft: 30,
-    width: '100%',
+    marginLeft: 30,
+  },
+  footer: {
+    marginTop: 10,
+  },
+  receiptNumber: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    paddingLeft: 20,
   },
   formActions: {
     marginTop: 12,
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  autocompletes: {
-    height: 76,
-    margin: 21,
-  }
+  button: {
+    height: 48,
+  },
+  instructions: {
+    fontSize: 14,
+  },
 };
 
 const tArea = css({
@@ -351,14 +375,17 @@ export default Relay.createContainer(EditRecipe, {
     recipe: () => Relay.QL`
       fragment on Recipe {
         id
+        number
         name
         difficulity
         calories
         preparationTimeMin
         nutrition {
+          id
           name
         }
         orientation {
+          id
           name
         }
         preparationInstructions

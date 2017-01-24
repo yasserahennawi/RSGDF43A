@@ -30,6 +30,7 @@ export const productType = (
   imageType,
   priceType,
   genresConnectionType,
+  recipesConnectionType,
   nutritionType,
   userType
 ) => new GraphQLObjectType({
@@ -44,6 +45,14 @@ export const productType = (
     createdRecipesCount: {
       type: GraphQLInt,
       resolve: (product, _, { viewer }) => recipeRepository.countByProduct(viewer, product),
+    },
+    recipes: {
+      type: recipesConnectionType,
+      args: connectionArgs,
+      resolve: (product, args, { viewer }) => connectionFromPromisedArray(
+        recipeRepository.find(viewer, { product }),
+        args
+      ),
     },
     isAccepted: {
       type: GraphQLBoolean,
@@ -89,6 +98,7 @@ IoC.callable('productType', [
   'imageType',
   'priceType',
   'genresConnectionType',
+  'recipesConnectionType',
   'nutritionType',
   'userType'
 ], productType);

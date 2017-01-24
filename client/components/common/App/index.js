@@ -53,10 +53,9 @@ class App extends React.Component {
     } = this.props;
 
     let children;
-    // @TODO @deploy uncomment this
-    // if(this.state.loadingProgress < 100 || !viewer) {
-    //   children = <Loading loadingProgress={this.state.loadingProgress} />
-    // }
+    if(this.state.loadingProgress < 100 || !viewer) {
+      children = <Loading loadingProgress={this.state.loadingProgress} />
+    }
 
     if(viewer.isGuest) {
       children = <Login viewer={viewer} />;
@@ -97,7 +96,7 @@ const styles = {
     fontFamily: 'Montserrat',
   },
   sidebarClosed: {
-    paddingLeft: 25,
+    paddingLeft: 0,
   },
 };
 

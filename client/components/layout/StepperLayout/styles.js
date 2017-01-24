@@ -4,6 +4,11 @@ export default {
   },
   header: {
     marginBottom: 0,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  rightPanel: {
+
   },
   title: {
     marginBottom: 0,

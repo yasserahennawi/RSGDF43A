@@ -47,7 +47,7 @@ const renderAdminMenus = ( { location }, handler ) => (
 
   </SelectableList>
 )
-const renderUserMenus = ( { location }, handler ) => (
+const renderUserMenus = ( { location, viewer }, handler ) => (
   <SelectableList value={location.pathname} onChange={ handler }>
 
     <ListItem
@@ -61,7 +61,7 @@ const renderUserMenus = ( { location }, handler ) => (
 
     <ListItem
       primaryText="NEUES SPECIAL"
-      value="/products"
+      value="/books/new"
       leftIcon={
         <Icon icon={ICONS.CIRCLEPLUS} color="#fff"/>
       }
@@ -70,7 +70,7 @@ const renderUserMenus = ( { location }, handler ) => (
 
     <ListItem
       primaryText="KONTOVERWALTUNG"
-      value="/"
+      value={`/members/edit/${viewer.id}`}
       leftIcon={
         <Icon icon={ICONS.GEAR} color="#fff"/>
       }
@@ -126,7 +126,6 @@ const styles = {
     top: 90, // Because of header
     backgroundColor: '#0092ee',
     background: colors.gradient,
-    width: 300,
   },
   listItem: {
     color: 'white',
@@ -149,6 +148,7 @@ export default Relay.createContainer(withRouter(Sidebar), {
   fragments: {
     viewer: () => Relay.QL`
       fragment on User {
+        id
         isAdmin
       }
     `

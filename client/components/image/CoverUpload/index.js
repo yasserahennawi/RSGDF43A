@@ -41,7 +41,7 @@ export class CoverUpload extends React.Component {
               alignItems: 'center',
               cursor: 'grab',
             })}>
-            {this.props.image ?
+            {this.props.image && this.props.image.src ?
               <Image image={this.props.image} /> : <Camera />}
           </div>
         </Dropzone>

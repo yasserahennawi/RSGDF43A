@@ -20,7 +20,6 @@ class EditProductRoute extends React.Component {
   }
 
   onStepChange() {
-    // @TODO show an error message that he must complete this step first
     if(! this.props.product) {
       this.setState({ errorMessage: "Complete this step first" });
     } else {
@@ -45,8 +44,8 @@ class EditProductRoute extends React.Component {
           nutritions={this.props.nutritions}
           genres={this.props.genres}
           product={this.props.product}
-          onProductCreateSuccess={({ product }) => this.props.router.push(`/books/${product.id}`)}
-          onProductUpdateSuccess={({ product }) => this.props.router.push(`/books/${product.id}/recipe/new`)}
+          onProductCreateSuccess={({ product }) => this.props.router.push(`/books/${product.id}/recipe/new`)}
+          onProductUpdateSuccess={({ product }) => this.props.router.push(`/books/${product.id}`)}
         />
         <SnackbarError
           error={this.state.errorMessage}

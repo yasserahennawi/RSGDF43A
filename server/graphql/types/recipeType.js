@@ -35,7 +35,6 @@ export const recipeType = (
   nodeInterface,
   imageType,
   userType,
-  productType,
   nutritionType,
   ingredientType,
   orientationType
@@ -49,6 +48,7 @@ export const recipeType = (
     fields: () => ({
       id: globalIdField('Recipe'),
       name: { type: new GraphQLNonNull(GraphQLString) },
+      number: { type: new GraphQLNonNull(GraphQLInt) },
       preparationInstructions: { type: new GraphQLList(GraphQLString) },
       preparationTimeMin: { type: GraphQLInt },
       calories: { type: GraphQLString },
@@ -64,10 +64,12 @@ export const recipeType = (
         type: new GraphQLNonNull(nutritionType),
         resolve: recipe => recipe.getNutrition(),
       },
-      product: {
-        type: new GraphQLNonNull(productType),
-        resolve: recipe => recipe.getProduct(),
-      },
+
+      // We cant here depent on the product type because the product already depends on us...
+      // product: {
+      //   type: new GraphQLNonNull(productType),
+      //   resolve: recipe => recipe.getProduct(),
+      // },
       items: {
         type: recipeItemsConnectionType,
         args: connectionArgs,
@@ -92,7 +94,6 @@ IoC.callable('recipeType', [
   'nodeInterface',
   'imageType',
   'userType',
-  'productType',
   'nutritionType',
   'ingredientType',
   'orientationType',

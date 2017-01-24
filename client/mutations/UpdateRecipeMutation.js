@@ -27,6 +27,7 @@ class UpdateRecipeMutation extends Relay.Mutation {
       preparationTimeMin: this.props.preparationTimeMin,
       preparationInstructions: this.props.preparationInstructions,
       calories: this.props.calories,
+      product: this.props.product.id,
     };
   }
 

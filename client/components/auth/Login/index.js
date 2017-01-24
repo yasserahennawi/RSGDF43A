@@ -17,7 +17,11 @@ import Button from 'components/utils/Button';
 import Checkbox from 'components/utils/Checkbox';
 
 import LoginUserMutation from 'mutations/LoginUserMutation';
-import { setUserToken } from 'helpers/storage';
+import {
+  setUserToken,
+  getFromStorage,
+  setInStorage,
+} from 'helpers/storage';
 
 class Login extends Component {
   componentWillMount() {
@@ -44,6 +48,7 @@ class Login extends Component {
 
   loginSuccess({ login }) {
     setUserToken(login.viewer.token);
+    setInStorage('notFirstTime', 'yes');
     window.location.href = '/';
   }
 
@@ -54,7 +59,7 @@ class Login extends Component {
   }
 
   handleLogin({ email, password }) {
-    if(! this.state.termsAcceptance) {
+    if(!getFromStorage('notFirstTime') && ! this.state.termsAcceptance) {
       this.setState({
         errorMessage: "You have to accept terms",
       });
@@ -112,7 +117,6 @@ class Login extends Component {
                   formsy
                   required={true}
                   validations="isEmail"
-                  validationError="This is not a valid email"
                 />
                 <a href="#" style={styles.link}>Passwort vergessen?</a>
                 <InputField

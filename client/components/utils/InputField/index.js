@@ -29,6 +29,7 @@ class InputField extends React.Component {
       floatingLabelStyle,
       hintStyle,
       value,
+      textareaStyle,
       ...props,
     } = this.props;
 
@@ -44,7 +45,9 @@ class InputField extends React.Component {
           hintStyle={{ ...styles.hint, ...hintStyle }}
           style={{ ...styles.textField, ...style }}
           inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+          textareaStyle={{ ...styles.textareaStyle, ...textareaStyle }}
           value={value}
+          errorStyle={styles.errorStyle}
           {...props}
         />
       );
@@ -60,7 +63,9 @@ class InputField extends React.Component {
           hintStyle={{ ...styles.hint, ...hintStyle }}
           style={{ ...styles.textField, ...style }}
           inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+          textareaStyle={{ ...styles.textareaStyle, ...textareaStyle }}
           value={value}
+          errorStyle={styles.errorStyle}
           {...props}
         />
       );
@@ -75,7 +80,9 @@ class InputField extends React.Component {
         hintStyle={{ ...styles.hint, ...hintStyle }}
         style={{ ...styles.textField, ...style }}
         inputStyle={{ ...styles.inputStyle, ...inputStyle }}
+        textareaStyle={{ ...styles.textareaStyle, ...textareaStyle }}
         value={value}
+        errorStyle={styles.errorStyle}
         {...props}
       />
     );
@@ -114,6 +121,12 @@ const styles = {
   inputStyle: {
     marginTop: 0,
   },
+  textareaStyle: {
+    marginTop: 5,
+  },
+  errorStyle: {
+    marginTop: 20
+  }
 };
 
 export default InputField;

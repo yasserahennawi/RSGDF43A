@@ -5,6 +5,9 @@ import ListUser from 'components/auth/ListUser';
 
 class ListBloggersRoute extends React.Component {
   render() {
+    if(! this.props.viewer.isAdmin) {
+      this.props.router.push(`/`);
+    }
     const {
       routes,
       params

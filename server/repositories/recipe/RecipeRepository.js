@@ -18,6 +18,10 @@ export default class RecipeRepository extends Repository {
   }) {
     const query = this.model.find();
 
+    if(product) {
+      query.where('product', getDocumentId(product));
+    }
+
     return query.exec();
   }
 
@@ -37,12 +41,14 @@ export default class RecipeRepository extends Repository {
     return this.recipeUserPreferencesSearch.getDailyRecipes(...args);
   }
 
-  create(viewer, data) {
+  async create(viewer, data) {
     if(!viewer.isAdmin() && !viewer.isBlogger() && !viewer.isPublisher()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
+    const count = await this.countByProduct(viewer, data.product);
     return this.model.create({
       ...data,
+      number: (count || 0) + 1,
       creator: viewer._id,
     });
   }
