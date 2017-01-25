@@ -16,7 +16,8 @@ import IoC from 'AppIoC';
 const recipeItemInput = new GraphQLInputObjectType({
   name: 'recipeItemInput',
   fields: () => ({
-    ingredient: {type: new GraphQLNonNull(GraphQLString)},
+    newIngredientName: {type: GraphQLString},
+    ingredient: {type: GraphQLString},
     quantity: {type: GraphQLInt},
     unit: {type: new GraphQLNonNull(GraphQLString)},
   })

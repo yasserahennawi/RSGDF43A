@@ -21,12 +21,15 @@ import {
   getActualIds,
 } from 'utils/graphql';
 
+import * as Q from 'q';
+
 import IoC from 'AppIoC';
 
 export const createMutation = (
   commandExecuter,
   createRecipeCommand,
   imageInput,
+  ingredientRepository,
   recipeItemInput,
   recipeType
 ) => mutationWithClientMutationId({
@@ -61,12 +64,17 @@ export const createMutation = (
       difficulity: input.difficulity,
       calories: input.calories,
       // mealType: input.mealType,
-      items: input.items.map(item => ({
-        ingredient: getActualId(item.ingredient),
+      items: await Q.all(input.items.map(async (item) => ({
+        ingredient: item.ingredient ? getAcutalId(item.ingredient) : (await ingredientRepository.findByNameOrCreate(viewer, {
+          name: item.newIngredientName,
+        })).id,
+        // ingredient: getActualId(item.ingredient),
         quantity: item.quantity,
         unit: item.unit,
-      })),
+      }))),
     };
+
+    console.log(attrs);
 
     const recipe = await commandExecuter.execute(createRecipeCommand, viewer, attrs);
     return { recipe };
@@ -77,6 +85,7 @@ IoC.callable('createRecipeMutation', [
   'commandExecuter',
   'createRecipeCommand',
   'imageInput',
+  'ingredientRepository',
   'recipeItemInput',
   'recipeType',
 ], createMutation);

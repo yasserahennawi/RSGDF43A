@@ -23,10 +23,13 @@ import {
 
 import IoC from 'AppIoC';
 
+import * as Q from 'q';
+
 export const updateMutation = (
   commandExecuter,
   updateRecipeCommand,
   imageInput,
+  ingredientRepository,
   recipeItemInput,
   recipeType
 ) => mutationWithClientMutationId({
@@ -62,10 +65,22 @@ export const updateMutation = (
       difficulity: input.difficulity,
       calories: input.calories,
       // mealType: input.mealType,
-      items: input.items.map(item => ({
-        ingredient: getActualId(item.ingredient),
-        quantity: item.quantity,
-        unit: item.unit,
+      items: await Q.all(input.items.map(async (item) => {
+        let ingredient;
+        if(item.ingredient) {
+          ingredient = getActualId(item.ingredient);
+        } else if(item.newIngredientName) {
+          ingredient = (await ingredientRepository.findByNameOrCreate(viewer, {
+            name: item.newIngredientName,
+          })).id;
+        }
+
+        return {
+          ingredient,
+          // ingredient: getActualId(item.ingredient),
+          quantity: item.quantity,
+          unit: item.unit,
+        }
       })),
     };
 
@@ -80,6 +95,7 @@ IoC.callable('updateRecipeMutation', [
   'commandExecuter',
   'updateRecipeCommand',
   'imageInput',
+  'ingredientRepository',
   'recipeItemInput',
   'recipeType',
 ], updateMutation);

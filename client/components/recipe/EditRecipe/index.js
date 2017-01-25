@@ -173,10 +173,11 @@ export class EditRecipe extends React.Component {
     const {
       ingredientQuantity,
       ingredientUnit,
-      ingredient,
+      // ingredient,
+      newIngredientName
     } = this.state;
 
-    if(! ingredientQuantity || !ingredientUnit || !ingredient || !ingredient.id) {
+    if(! ingredientQuantity || !ingredientUnit || !newIngredientName) {
       return;
     }
 
@@ -184,6 +185,7 @@ export class EditRecipe extends React.Component {
       ingredientQuantity: null,
       ingredientUnit: null,
       ingredient: null,
+      newIngredientName: null,
       isDirty: true,
       recipe: {
         ...this.state.recipe,
@@ -194,10 +196,11 @@ export class EditRecipe extends React.Component {
               node: {
                 quantity: ingredientQuantity,
                 unit: ingredientUnit,
-                ingredient: {
-                  id: ingredient.id,
-                  name: ingredient.name,
-                },
+                newIngredientName,
+                // ingredient: {
+                //   id: ingredient.id,
+                //   name: ingredient.name,
+                // },
               }
             },
           ],
@@ -326,19 +329,25 @@ export class EditRecipe extends React.Component {
                 <MenuItem value={'tl'} primaryText={'TL'} />
                 <MenuItem value={'ml'} primaryText={'ml'} />
               </SelectField>
-              <IngredientSelector
+              <InputField
+                onChange={e => this.setState({ newIngredientName: e.target.value })}
+                value={this.state.newIngredientName || ''}
+                floatingLabelText="ZUTAT"
+                style={styles.textField}
+              />
+              {/*<IngredientSelector
                 ingredients={this.props.ingredients}
                 selectedIngredient={this.state.ingredient}
                 validator={(value) => true}
                 validatorMessage={"You must select ingredient"}
                 onSelect={ingredient => this.setState({ ingredient })}
                 style={{ margin: 0, marginRight: 21 }}
-              />
+              />*/}
               <Button
                 primary={true}
                 label="Add"
                 onClick={() => this.addRecipeItem()}
-                style={{ marginTop: 8, height: 48 }}
+                style={{ marginTop: 20, height: 30 }}
               />
             </div>
 
@@ -357,19 +366,19 @@ export class EditRecipe extends React.Component {
                         <TableRow key={index}>
                           <TableRowColumn>{node.quantity}</TableRowColumn>
                           <TableRowColumn>{node.unit}</TableRowColumn>
-                          <TableRowColumn>{node.ingredient.name}</TableRowColumn>
+                          <TableRowColumn>{node.newIngredientName || (node.ingredient && node.ingredient.name)}</TableRowColumn>
                         </TableRow>
                       ))}
                   </TableBody>
                 </Table>
               </div> : null}
-              {validator.isInt(String(this.state.selectedRecipeItemIndex)) ?
-                <Button
-                  secondary={true}
-                  label="Remove"
-                  onClick={this.removeSelectedRecipeItem.bind(this)}
-                  style={{ marginTop: 20, height: 48 }}
-                /> : null}
+            {validator.isInt(String(this.state.selectedRecipeItemIndex)) ?
+              <Button
+                secondary={true}
+                label="Remove"
+                onClick={this.removeSelectedRecipeItem.bind(this)}
+                style={{ marginTop: 20, height: 48 }}
+              /> : null}
           </div>
 
           <div className={`${formDivisor}`} style={{ paddingRight: 20 }}>

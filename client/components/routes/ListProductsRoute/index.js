@@ -8,7 +8,6 @@ class ListProductsRoute extends React.Component {
       routes,
       params
     } = this.props;
-    console.log(this.props.products);
     return (
       <div>
         <Breadcrumbs

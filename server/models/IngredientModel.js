@@ -6,7 +6,7 @@ import IoC from 'AppIoC';
 export const ingredientModel = (mongoose, ingredientValidator) => {
   const ingredientSchema = new Schema({
     name: {type: String, required: true, unique: true},
-    category: {type: String, required: true},
+    category: {type: String},
     subCategory: {type: String},
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
   }, { timestamps: true, collection: 'new_ingredients' });

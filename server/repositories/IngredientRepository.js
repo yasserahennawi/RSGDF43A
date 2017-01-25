@@ -27,13 +27,21 @@ export default class IngredientRepository extends Repository {
   }
 
   create(viewer, data) {
-    if(!viewer.isAdmin()) {
+    if(viewer.isGuest()) {
       throw new ForbiddenError("You are not authorized to make this action.");
     }
     return this.model.create({
       ...data,
       creator: viewer._id,
     });
+  }
+
+  async findByNameOrCreate(viewer, { name }) {
+    const ingredient = await this.model.findOne({ name }).exec();
+    if(ingredient) {
+      return ingredient;
+    }
+    return await this.create(viewer, { name });
   }
 
   update(viewer, id, data) {
