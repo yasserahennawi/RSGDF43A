@@ -43,6 +43,7 @@ class EditRecipeRoute extends React.Component {
     return (
       <EditRecipe
         viewer={this.props.viewer}
+        ingredients={this.props.ingredients}
         nutritions={this.props.nutritions}
         orientations={this.props.orientations}
         recipe={this.props.recipe}
@@ -51,6 +52,14 @@ class EditRecipeRoute extends React.Component {
         onRecipeUpdateSuccess={({ recipe }) => console.log("Recipe has been updated", recipe)}
       />
     );
+  }
+
+  hasCreatedAllRecipes() {
+    return this.getNumberOfUncreatedRecipes() <= 0;
+  }
+
+  getNumberOfUncreatedRecipes() {
+    return parseInt(this.props.product.noOfRecipes) - parseInt(this.props.product.createdRecipesCount);
   }
 
   getRecipeSelector() {
@@ -67,18 +76,12 @@ class EditRecipeRoute extends React.Component {
     let newMenuItems;
 
     if(createdRecipesCount < noOfRecipes) {
-      newMenuItems = _.range(noOfRecipes - createdRecipesCount).map((i) => (
+      newMenuItems = _.range(this.getNumberOfUncreatedRecipes()).map((i) => (
         <MenuItem key={`new${i}`} value={`new${i}`} primaryText={`Rezepte ${i + createdRecipesCount + 1}`} />
       ));
     }
 
-    let selectedValue = 'new0';
-
-    if(this.props.recipe) {
-      selectedValue = this.props.recipe.id;
-    } else if(this.props.product.createdRecipesCount < this.props.product.noOfRecipes) {
-      selectedValue = 'new0';
-    }
+    let selectedValue = this.props.recipe ? this.props.recipe.id : 'new0';
 
     return (
       <SelectField
@@ -95,6 +98,14 @@ class EditRecipeRoute extends React.Component {
     );
   }
 
+  isNew() {
+    return !this.props.recipe;
+  }
+
+  getCurrentRecipeNumber() {
+    return this.isNew() ? this.props.product.createdRecipesCount + 1 : this.props.recipe.number;
+  }
+
   render() {
     const breadcrumbs = [
       { path: '/new', name: 'Neues Special' },
@@ -102,8 +113,8 @@ class EditRecipeRoute extends React.Component {
 
     let title = 'NEUES SPECIAL';
 
-    if(this.props.product.createdRecipesCount < this.props.product.noOfRecipes) {
-      title += ` / REZEPTE NR. ${this.props.recipe ? this.props.recipe.number : (this.props.product.createdRecipesCount + 1)}`;
+    if(! this.hasCreatedAllRecipes()) {
+      title += ` / REZEPTE NR. ${this.getCurrentRecipeNumber()}`;
     }
 
     return (
@@ -115,7 +126,7 @@ class EditRecipeRoute extends React.Component {
         stepIndex={1}
         onStepChange={this.onStepChange.bind(this)}
         steps={['COVER KREIERE', 'REZEPTE HINZUFUGEN', 'AKZEPTIERUNG WARTEN', 'VERKAUFEN']}>
-        {!this.props.recipe && this.props.product.createdRecipesCount >= this.props.product.noOfRecipes ?
+        {this.isNew() && this.hasCreatedAllRecipes() ?
           this.renderSuccessMessage() : this.renderEditRecipe()}
         <SnackbarError
           error={this.state.errorMessage}
@@ -164,6 +175,11 @@ export default Relay.createContainer(EditRecipeRoute, {
     nutritions: () => Relay.QL`
       fragment on NutritionConnection {
         ${EditRecipe.getFragment('nutritions')}
+      }
+    `,
+    ingredients: () => Relay.QL`
+      fragment on IngredientConnection {
+        ${EditRecipe.getFragment('ingredients')}
       }
     `,
   }

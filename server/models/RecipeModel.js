@@ -33,7 +33,7 @@ export const recipeModel = (mongoose, recipeValidator) => {
       addition: {type: Schema.Types.ObjectId, ref: 'Ingredient'},
       ingredient: {type: Schema.Types.ObjectId, ref: 'Ingredient', required: true},
       quantity: {type: Number, required: true},
-      unit: {type: String, required: true},
+      unit: {type: String, enum: [ 'mg' ,'g', 'el', 'tl', 'ml' ], default: 'mg'},
     }],
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
   }, { timestamps: true, collection: 'new_recipes' });

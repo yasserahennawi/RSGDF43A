@@ -65,7 +65,7 @@ export const recipeType = (
         resolve: recipe => recipe.getNutrition(),
       },
 
-      // We cant here depent on the product type because the product already depends on us...
+      // We cant here depend on the product type because the product already depends on us...
       // product: {
       //   type: new GraphQLNonNull(productType),
       //   resolve: recipe => recipe.getProduct(),

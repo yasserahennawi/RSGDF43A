@@ -28,6 +28,11 @@ class UpdateRecipeMutation extends Relay.Mutation {
       preparationInstructions: this.props.preparationInstructions,
       calories: this.props.calories,
       product: this.props.product.id,
+      items: this.props.items.edges.map(({node}) => ({
+        ingredient: node.ingredient.id,
+        quantity: node.quantity,
+        unit: node.unit,
+      }))
     };
   }
 

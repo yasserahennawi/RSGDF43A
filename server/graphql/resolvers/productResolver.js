@@ -16,6 +16,11 @@ import {
   connectionFromPromisedArray,
 } from 'graphql-relay';
 
+import {
+  getActualId,
+  getActualIds,
+} from 'utils/graphql';
+
 import IoC from 'AppIoC';
 
 export const productResolver = (productRepository, productsConnectionType) => {
@@ -28,10 +33,10 @@ export const productResolver = (productRepository, productsConnectionType) => {
       year: {type: GraphQLInt},
       month: {type: GraphQLInt},
       day: {type: GraphQLInt},
-      creator: {type: GraphQLInt},
+      creator: {type: GraphQLString},
       mine: {type: GraphQLBoolean},
     },
-    resolve: (viewer, { year, month, day, creator, mine, ...args }) => connectionFromPromisedArray(
+    resolve: (_, { year, month, day, creator, mine, ...args }, { viewer }) => connectionFromPromisedArray(
       productRepository.find(viewer, { year, month, day, creator, mine }),
       args
     ),

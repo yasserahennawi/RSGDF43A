@@ -1,11 +1,23 @@
 import Relay from 'react-relay';
 
+export const prepareProductsRouteParams = (params, { location }) => {
+  return {
+  };
+}
+
 export default {
-  root: Component => Relay.QL`
+  viewer: Component => Relay.QL`
     query {
-      root(token: $userToken) {
-        ${Component.getFragment('root')}
+      viewer {
+        ${Component.getFragment('viewer')}
       }
     }
-  `
+  `,
+  products: Component => Relay.QL`
+    query {
+      products(mine: true) {
+        ${Component.getFragment('products')}
+      }
+    }
+  `,
 };

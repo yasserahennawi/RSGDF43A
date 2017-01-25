@@ -23,19 +23,11 @@ import {
 
 import IoC from 'AppIoC';
 
-const recipeItemInput = new GraphQLInputObjectType({
-  name: 'recipeItemInput',
-  fields: () => ({
-    ingredient: {type: new GraphQLNonNull(GraphQLString)},
-    quantity: {type: GraphQLInt},
-    unit: {type: new GraphQLNonNull(GraphQLString)},
-  })
-});
-
 export const updateMutation = (
   commandExecuter,
   updateRecipeCommand,
   imageInput,
+  recipeItemInput,
   recipeType
 ) => mutationWithClientMutationId({
   name: 'UpdateRecipe',
@@ -54,7 +46,7 @@ export const updateMutation = (
     product: { type: new GraphQLNonNull(GraphQLString) },
 
     // mealType: { type: new GraphQLNonNull(GraphQLString) },
-    // items: { type: recipeItemInput },
+    items: { type: new GraphQLList(recipeItemInput) },
   },
   outputFields: {
     recipe: { type: recipeType },
@@ -70,7 +62,11 @@ export const updateMutation = (
       difficulity: input.difficulity,
       calories: input.calories,
       // mealType: input.mealType,
-      // items: input.items,
+      items: input.items.map(item => ({
+        ingredient: getActualId(item.ingredient),
+        quantity: item.quantity,
+        unit: item.unit,
+      })),
     };
 
     console.log("update recipe mutation", attrs);
@@ -84,5 +80,6 @@ IoC.callable('updateRecipeMutation', [
   'commandExecuter',
   'updateRecipeCommand',
   'imageInput',
+  'recipeItemInput',
   'recipeType',
 ], updateMutation);

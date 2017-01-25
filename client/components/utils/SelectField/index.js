@@ -3,7 +3,7 @@ import React from 'react';
 import SelectField from 'material-ui/SelectField';
 import { FormsySelect } from 'formsy-material-ui/lib';
 
-const InputField = ({ formsy, style, ...props }) => (
+const InputField = ({ formsy, style, validator, validatorMessage, ...props }) => (
   formsy ?
     <FormsySelect
       floatingLabelFixed={true}

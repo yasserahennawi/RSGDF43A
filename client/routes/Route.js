@@ -17,6 +17,9 @@ import CreateBloggerQuery from 'components/routes/CreateBloggerRoute/Query';
 import EditBloggerDetailsRoute from 'components/routes/EditBloggerDetailsRoute';
 import EditBloggerDetailsQuery from 'components/routes/EditBloggerDetailsRoute/Query';
 
+import ListProductsRoute from 'components/routes/ListProductsRoute';
+import ListProductsQuery, { prepareProductsRouteParams } from 'components/routes/ListProductsRoute/Query';
+
 import EditProductRoute from 'components/routes/EditProductRoute/test';
 import EditProductQuery, { prepareEditProductParams } from 'components/routes/EditProductRoute/Query';
 
@@ -36,6 +39,9 @@ export default (
     <Route
       name="Neues Special"
       path="/books">
+      <IndexRoute
+        component={ListProductsRoute}
+        queries={ListProductsQuery} />
       <Route
         name="Erstellen"
         path="(:productId)"

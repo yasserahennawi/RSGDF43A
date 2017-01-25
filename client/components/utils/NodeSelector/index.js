@@ -2,6 +2,8 @@ import React from 'react';
 import Relay from 'react-relay';
 import AutoComplete from 'material-ui/AutoComplete'
 import { isValidationError, getErrorValidationMessage } from 'helpers/error';
+import SelectField from 'components/utils/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 const dataSourceConfig = {
   text: 'name',
@@ -26,21 +28,16 @@ export class NodeSelector extends React.Component {
     validatorMessage: React.PropTypes.string,
     openOnFocus: React.PropTypes.bool,
     mustExist: React.PropTypes.bool,
+    resetOnSelect: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
   };
-
 
   static defaultProps = {
     disabled: false,
     mustExist: false,
     openOnFocus: true,
-  }
-
-  componentWillMount() {
-    this.setState({
-      isDirty: false,
-    });
-  }
+    resetOnSelect: false,
+  };
 
   getNodes() {
     if(this.props.nodes.edges) {
@@ -49,31 +46,8 @@ export class NodeSelector extends React.Component {
     return [];
   }
 
-  getNodeByName(name) {
-    return this.getNodes().find(node => node.name.toLowerCase() === name.toLowerCase());
-  }
-
   getNodeById(id) {
     return this.getNodes().find(node => node.id === id);
-  }
-
-  handleSelectNode(value) {
-    const node = typeof value === "string" ? this.getNodeByName(value) : this.getNodeById(value.id);
-
-    if(node) {
-      this.props.onSelect(node);
-    } else if(this.props.mustExist) {
-      this.props.onSelect(null);
-    } else {
-      // New node...
-      this.props.onSelect({ name: value });
-    }
-  }
-
-  getError(validator, validatorMessage, node) {
-    if(this.state.isDirty && (!node || !validator(node.name))) {
-      return validatorMessage;
-    }
   }
 
   render() {
@@ -85,24 +59,29 @@ export class NodeSelector extends React.Component {
       floatingLabelText,
       hintText,
       disabled,
+      style,
+      resetOnSelect,
+      nodes,
+      mustExist,
+      relay,
+      onSelect,
+      ...props
     } = this.props;
 
     return (
-      <AutoComplete
-        onBlur={() => this.setState({ isDirty: true })}
-        searchText={selectedNode ? selectedNode.name : ''}
-        dataSource={this.getNodes()}
-        errorText={this.getError(validator, validatorMessage, this.props.selectedNode)}
+      <SelectField
+        validator={validator}
+        validatorMessage={validatorMessage}
         floatingLabelText={floatingLabelText}
-        hintText={hintText}
-        dataSourceConfig={dataSourceConfig}
-        openOnFocus={openOnFocus}
-        filter={AutoComplete.fuzzyFilter}
-        onUpdateInput={ this.handleSelectNode.bind(this) }
-        onNewRequest={ this.handleSelectNode.bind(this) }
-        style={styles.autocomplete}
+        value={selectedNode ? selectedNode.id : null}
+        onChange={(e, key, value) => onSelect(this.getNodeById(value))}
         disabled={disabled}
-      />
+        {...props}
+      >
+      {nodes.edges.map(({node}) => (
+        <MenuItem value={node.id} primaryText={node.name} />
+      ))}
+      </SelectField>
     );
   }
 }

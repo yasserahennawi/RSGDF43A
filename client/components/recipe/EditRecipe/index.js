@@ -7,6 +7,7 @@ import Button from 'components/utils/Button';
 import MenuItem from 'material-ui/MenuItem';
 import OrientationSelector from './OrientationSelector';
 import NutritionSelector from './NutritionSelector';
+import IngredientSelector from './IngredientSelector';
 import Snackbar from 'material-ui/Snackbar';
 import * as _ from 'lodash';
 import validator from 'validator';
@@ -14,6 +15,14 @@ import CreateRecipeMutation from 'mutations/CreateRecipeMutation';
 import UpdateRecipeMutation from 'mutations/UpdateRecipeMutation';
 import ErrorDetails from 'components/utils/ErrorDetails';
 import { isValidationError } from 'helpers/error';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderColumn,
+  TableBody,
+  TableRowColumn,
+} from 'material-ui';
 
 export class EditRecipe extends React.Component {
   getNewRecipe() {
@@ -22,6 +31,9 @@ export class EditRecipe extends React.Component {
       difficulity: 1,
       calories: 0,
       preparationTimeMin: 1,
+      items: {
+        edges: [],
+      },
       nutrition: {
         name: '',
       },
@@ -44,8 +56,8 @@ export class EditRecipe extends React.Component {
       difficulity: value => validator.isInt(value.toString()),
       calories: value => validator.isFloat(value.toString()),
       preparationTimeMin: value => validator.isInt(value.toString()),
-      nutrition: value => !validator.isEmpty(value),
-      orientation: value => !validator.isEmpty(value),
+      nutrition: value => !validator.isEmpty(String(value)),
+      orientation: value => !validator.isEmpty(String(value)),
     };
   }
 
@@ -107,8 +119,6 @@ export class EditRecipe extends React.Component {
     // Recipe already exist then execute the update mutation
     if(this.state.recipe.id) {
 
-      console.log(this.props.recipe);
-
       const mutation = new UpdateRecipeMutation({
         ...this.state.recipe,
         recipe: this.props.recipe,
@@ -158,6 +168,62 @@ export class EditRecipe extends React.Component {
     });
   }
 
+
+  addRecipeItem() {
+    const {
+      ingredientQuantity,
+      ingredientUnit,
+      ingredient,
+    } = this.state;
+
+    if(! ingredientQuantity || !ingredientUnit || !ingredient || !ingredient.id) {
+      return;
+    }
+
+    this.setState({
+      ingredientQuantity: null,
+      ingredientUnit: null,
+      ingredient: null,
+      isDirty: true,
+      recipe: {
+        ...this.state.recipe,
+        items: {
+          edges: [
+            ...this.state.recipe.items.edges,
+            {
+              node: {
+                quantity: ingredientQuantity,
+                unit: ingredientUnit,
+                ingredient: {
+                  id: ingredient.id,
+                  name: ingredient.name,
+                },
+              }
+            },
+          ],
+        },
+      },
+    });
+  }
+
+
+  removeSelectedRecipeItem() {
+    const index = this.state.selectedRecipeItemIndex;
+    this.setState({
+      selectedRecipeItemIndex: null,
+      isDirty: true,
+      recipe: {
+        ...this.state.recipe,
+        items: {
+          edges: [
+            ...this.state.recipe.items.edges.slice(0, index),
+            ...this.state.recipe.items.edges.slice(index + 1),
+          ],
+        },
+      },
+    })
+  }
+
   render() {
     const { apiError } = this.state;
     return (
@@ -176,7 +242,7 @@ export class EditRecipe extends React.Component {
             />
           </div>
 
-          <div className={`${formDivisor}`} style={{ maxWidth: '800px' }}>
+          <div className={`${formDivisor}`} style={{ maxWidth: '450px', justifyContent: 'flex-start' }}>
             <SelectField
               name="difficulity"
               validator={this.validators.difficulity}
@@ -190,7 +256,6 @@ export class EditRecipe extends React.Component {
             </SelectField>
             <InputField
               name="calories"
-              type="number"
               validator={this.validators.calories}
               validatorMessage={"You must input the calories"}
               onChange={e => this.onRecipeChange({ calories: e.target.value })}
@@ -212,7 +277,7 @@ export class EditRecipe extends React.Component {
             </SelectField>
           </div>
 
-          <div className={`${formDivisor}`} style={{ maxWidth: '800px', justifyContent: 'flex-start' }}>
+          <div className={`${formDivisor}`} style={{ maxWidth: '450px', justifyContent: 'flex-start' }}>
             <NutritionSelector
               name="nutrition"
               nutritions={this.props.nutritions}
@@ -230,6 +295,81 @@ export class EditRecipe extends React.Component {
               validatorMessage={"You must select orientation"}
               onSelect={orientation => this.onRecipeChange({ orientation })}
             />
+          </div>
+
+          <div className={recipeItemContainer}>
+
+            <div className={inlineForm}>
+              <SelectField
+                style={{ margin: 0, marginTop: 21, marginRight: 21 }}
+                validator={(value) => true}
+                validatorMessage={"Select"}
+                floatingLabelText="MENGE"
+                value={this.state.ingredientQuantity}
+                onChange={(e, key, value) => this.setState({ ingredientQuantity: value })}
+              >
+                {_.range(5).map(i => (
+                  <MenuItem key={i} value={i + 1} primaryText={i + 1} />
+                ))}
+              </SelectField>
+              <SelectField
+                style={{ margin: 0, marginTop: 21, marginRight: 21 }}
+                validator={(value) => true}
+                validatorMessage={"You must select the unit"}
+                floatingLabelText="EINHEIT"
+                value={this.state.ingredientUnit}
+                onChange={(e, key, value) => this.setState({ ingredientUnit: value })}
+              >
+                <MenuItem value={'mg'} primaryText={'mg'} />
+                <MenuItem value={'g'} primaryText={'g'} />
+                <MenuItem value={'el'} primaryText={'EL'} />
+                <MenuItem value={'tl'} primaryText={'TL'} />
+                <MenuItem value={'ml'} primaryText={'ml'} />
+              </SelectField>
+              <IngredientSelector
+                ingredients={this.props.ingredients}
+                selectedIngredient={this.state.ingredient}
+                validator={(value) => true}
+                validatorMessage={"You must select ingredient"}
+                onSelect={ingredient => this.setState({ ingredient })}
+                style={{ margin: 0, marginRight: 21 }}
+              />
+              <Button
+                primary={true}
+                label="Add"
+                onClick={() => this.addRecipeItem()}
+                style={{ marginTop: 8, height: 48 }}
+              />
+            </div>
+
+            {this.state.recipe.items.edges.length > 0 ?
+              <div className={`${tableContainer}`}>
+                <Table onRowSelection={(rows) => setTimeout(() => this.setState({ selectedRecipeItemIndex: rows[0] }), 100)}>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHeaderColumn>MENGE</TableHeaderColumn>
+                      <TableHeaderColumn>EINHEIT</TableHeaderColumn>
+                      <TableHeaderColumn>ZUTAT</TableHeaderColumn>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                      {this.state.recipe.items.edges.map(({ node }, index) => (
+                        <TableRow key={index}>
+                          <TableRowColumn>{node.quantity}</TableRowColumn>
+                          <TableRowColumn>{node.unit}</TableRowColumn>
+                          <TableRowColumn>{node.ingredient.name}</TableRowColumn>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div> : null}
+              {validator.isInt(String(this.state.selectedRecipeItemIndex)) ?
+                <Button
+                  secondary={true}
+                  label="Remove"
+                  onClick={this.removeSelectedRecipeItem.bind(this)}
+                  style={{ marginTop: 20, height: 48 }}
+                /> : null}
           </div>
 
           <div className={`${formDivisor}`} style={{ paddingRight: 20 }}>
@@ -253,7 +393,7 @@ export class EditRecipe extends React.Component {
           <div style={styles.instructions}>
             <ol>
               {this.state.recipe.preparationInstructions.map((instruction, index) => (
-                <li key={index}>{instruction}</li>
+                <li style={styles.instruction} key={index}>{instruction}</li>
               ))}
             </ol>
           </div>
@@ -323,6 +463,9 @@ const styles = {
   instructions: {
     fontSize: 14,
   },
+  instruction: {
+    paddingBottom: 15,
+  },
 };
 
 const tArea = css({
@@ -345,6 +488,24 @@ const small = css({
 const formDivisor = style({
   display: 'flex',
   justifyContent: 'space-between'
+});
+
+const tableContainer = style({
+  padding: 0,
+  marginTop: 40
+});
+
+const inlineForm = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
+
+const recipeItemContainer = style({
+  marginRight: 25,
+  border: '1px solid #EEE',
+  padding: 40,
+  margin: 20,
+  marginBottom: 50,
 });
 
 const foto = style({
@@ -389,6 +550,18 @@ export default Relay.createContainer(EditRecipe, {
           name
         }
         preparationInstructions
+        items(first: 10) {
+          edges {
+            node {
+              ingredient {
+                id
+                name
+              }
+              quantity
+              unit
+            }
+          }
+        }
         ${UpdateRecipeMutation.getFragment('recipe')}
       }
     `,
@@ -400,6 +573,11 @@ export default Relay.createContainer(EditRecipe, {
     nutritions: () => Relay.QL`
       fragment on NutritionConnection {
         ${NutritionSelector.getFragment('nutritions')}
+      }
+    `,
+    ingredients: () => Relay.QL`
+      fragment on IngredientConnection {
+        ${IngredientSelector.getFragment('ingredients')}
       }
     `,
   }

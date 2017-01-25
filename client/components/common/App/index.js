@@ -22,6 +22,7 @@ addLocaleData([...en, ...de]);
 class App extends React.Component {
 
   componentWillMount() {
+    console.log(getFromStorage('sidebarOpened'));
     this.setState({
       loadingProgress: 0,
       sidebarOpened: Boolean(getFromStorage('sidebarOpened')) || true,
@@ -53,7 +54,7 @@ class App extends React.Component {
     } = this.props;
 
     let children;
-    if(this.state.loadingProgress < 100 || !viewer) {
+    if(!viewer || (viewer.isGuest && this.state.loadingProgress < 100)) {
       children = <Loading loadingProgress={this.state.loadingProgress} />
     }
 

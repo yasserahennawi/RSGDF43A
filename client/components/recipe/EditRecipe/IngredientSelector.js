@@ -2,32 +2,32 @@ import React from 'react';
 import Relay from 'react-relay';
 import NodeSelector from 'components/utils/NodeSelector';
 
-export class GenreSelector extends React.Component {
+export class IngredientSelector extends React.Component {
 
   render() {
     const {
-      genres,
-      selectedGenre,
+      ingredients,
+      selectedIngredient,
       ...props,
     } = this.props;
 
     return (
       <NodeSelector
-        nodes={genres}
-        selectedNode={selectedGenre}
-        floatingLabelText="Genre hinzufugen"
+        nodes={ingredients}
+        selectedNode={selectedIngredient}
+        floatingLabelText="ZUTAT"
+        hintText="Zutat hinzufugen"
         mustExist={true}
-        resetOnSelect={true}
         {...props}
       />
     );
   }
 }
 
-export default Relay.createContainer(GenreSelector, {
+export default Relay.createContainer(IngredientSelector, {
   fragments: {
-    genres: () => Relay.QL`
-      fragment on GenreConnection {
+    ingredients: () => Relay.QL`
+      fragment on IngredientConnection {
         edges {
           node {
             id

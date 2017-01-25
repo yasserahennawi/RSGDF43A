@@ -18,6 +18,7 @@ export default class ProductRepository extends Repository {
     creator = null,
     mine = false,
   }) {
+    console.log(viewer);
     if(viewer.isGuest()) {
       throw new ForbiddenError("You are not authorized to view products");
     }

@@ -43,4 +43,11 @@ export default {
       }
     }
   `,
+  ingredients: Component => Relay.QL`
+    query {
+      ingredients {
+        ${Component.getFragment('ingredients')}
+      }
+    }
+  `,
 };

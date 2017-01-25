@@ -52,7 +52,7 @@ const renderUserMenus = ( { location, viewer }, handler ) => (
 
     <ListItem
       primaryText="MEINE SPECIALS"
-      value="/specials"
+      value="/books"
       leftIcon={
         <Icon icon={ICONS.LIST} color="#fff" />
       }

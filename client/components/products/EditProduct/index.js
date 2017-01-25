@@ -48,7 +48,7 @@ export class EditProduct extends React.Component {
     this.validators = {
       name: value => !validator.isEmpty(value),
       author: value => !validator.isEmpty(value),
-      nutrition: value => !validator.isEmpty(value),
+      nutrition: value => !validator.isEmpty(String(value)),
       orderDescription: value => !validator.isEmpty(value),
       noOfRecipes: value => !validator.isEmpty(value.toString()),
       price: value => validator.isFloat(value.toString()),
@@ -133,20 +133,20 @@ export class EditProduct extends React.Component {
   }
 
   changePriceValue(value) {
-    if(! value) return;
     this.setState({
       product: {
         ...this.state.product,
         price: {
           ...this.state.product.price,
-          value: parseFloat(value),
+          value: value,
         },
       },
     });
   }
 
   addGenre(genre) {
-    if(! genre) return;
+    console.log(genre);
+    if(! genre || !genre.id) return;
     this.setState({
       product: {
         ...this.state.product,
@@ -254,9 +254,8 @@ export class EditProduct extends React.Component {
                 </SelectField>
                 <InputField
                   name="price"
-                  type="number"
                   validator={this.validators.price}
-                  validatorMessage={"You must enter the price"}
+                  validatorMessage={"You must enter a valid price"}
                   value={this.state.product.price.value}
                   onChange={(e) => this.changePriceValue(e.target.value)}
                   hintText="Preis in Euro Inkl Mwst."
