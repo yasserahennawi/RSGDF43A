@@ -1,6 +1,7 @@
 import React from 'react';
 import Relay from 'react-relay';
 import Breadcrumbs from 'components/utils/Breadcrumbs';
+import ProductList from 'components/products/ProductList';
 
 class ListProductsRoute extends React.Component {
   render() {
@@ -15,14 +16,10 @@ class ListProductsRoute extends React.Component {
           params={params}
           isAdmin={this.props.viewer.isAdmin}
         />
-        <ul>
-        {this.props.products.edges.map(({ node }, index) => (
-          <li key={index}>
-            {node.name}
-             <a href={`/books/${node.id}`}>Edit</a>
-          </li>
-        ))}
-        </ul>
+        <ProductList
+          products={this.props.products}
+          viewer={this.props.viewer}
+        />
       </div>
     );
   }
@@ -35,19 +32,12 @@ export default Relay.createContainer(ListProductsRoute, {
         firstName
         lastName
         isAdmin
+        ${ProductList.getFragment('viewer')}
       }
     `,
     products: () => Relay.QL`
       fragment on ProductConnection {
-        edges {
-          node {
-            id
-            name
-            creator {
-              firstName
-            }
-          }
-        }
+        ${ProductList.getFragment('products')}
       }
     `,
   }

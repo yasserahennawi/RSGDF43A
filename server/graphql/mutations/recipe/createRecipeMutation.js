@@ -44,7 +44,7 @@ export const createMutation = (
     preparationTimeMin: { type: GraphQLInt },
     preparationInstructions: { type: new GraphQLList(GraphQLString) },
     difficulity: { type: new GraphQLNonNull(GraphQLInt) },
-    calories: { type: new GraphQLNonNull(GraphQLFloat) },
+    calories: { type: GraphQLFloat },
     product: { type: new GraphQLNonNull(GraphQLString) },
 
     // mealType: { type: new GraphQLNonNull(GraphQLString) },
@@ -65,16 +65,15 @@ export const createMutation = (
       calories: input.calories,
       // mealType: input.mealType,
       items: await Q.all(input.items.map(async (item) => ({
-        ingredient: item.ingredient ? getAcutalId(item.ingredient) : (await ingredientRepository.findByNameOrCreate(viewer, {
+        ingredient: item.ingredient ? getActualId(item.ingredient) : (await ingredientRepository.findByNameOrCreate(viewer, {
           name: item.newIngredientName,
         })).id,
         // ingredient: getActualId(item.ingredient),
         quantity: item.quantity,
         unit: item.unit,
+        addition: item.addition,
       }))),
     };
-
-    console.log(attrs);
 
     const recipe = await commandExecuter.execute(createRecipeCommand, viewer, attrs);
     return { recipe };

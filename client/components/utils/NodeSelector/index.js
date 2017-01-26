@@ -24,7 +24,7 @@ export class NodeSelector extends React.Component {
     selectedNode: React.PropTypes.shape({
       name: React.PropTypes.string,
     }),
-    validator: React.PropTypes.func.isRequired,
+    validator: React.PropTypes.func,
     validatorMessage: React.PropTypes.string,
     openOnFocus: React.PropTypes.bool,
     mustExist: React.PropTypes.bool,

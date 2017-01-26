@@ -29,7 +29,7 @@
     "fields.createdAt": "Created At",
     "grid.header.actions": "Details",
     "actions.update": "Update",
-    "actions.next": "Next",
+    "actions.next": "WEITER",
     "actions.create": "Create",
     "search_terms": "Search",
     "members.messages.afterAdd": "The new book has been successfully created."

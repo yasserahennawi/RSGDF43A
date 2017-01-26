@@ -72,7 +72,7 @@ class EditUserPayment extends Component {
           {/*<div style={styles.footer}>
             <div style={styles.formActions}>
               <Button
-                label="Back"
+                label="ZURÜCK"
                 style={{ ...styles.button, marginRight: 10 }}
                 onTouchTap={handleChangeStep('prev')}
               />
@@ -80,7 +80,7 @@ class EditUserPayment extends Component {
               <Button
                 primary={true}
                 type="submit"
-                label="Continue"
+                label="WEITER"
               />
             </div>
           </div>*/}

@@ -23,9 +23,9 @@ import IoC from 'AppIoC';
 const getRecipeItemType = (ingredientType) => new GraphQLObjectType({
   name: 'RecipeItem',
   fields: () => ({
-    addition: { type: ingredientType },
+    addition: { type: GraphQLString },
     ingredient: { type: new GraphQLNonNull(ingredientType) },
-    quantity: { type: new GraphQLNonNull(GraphQLInt) },
+    quantity: { type: new GraphQLNonNull(GraphQLFloat) },
     unit: { type: new GraphQLNonNull(GraphQLString) },
   })
 });
@@ -51,7 +51,7 @@ export const recipeType = (
       number: { type: new GraphQLNonNull(GraphQLInt) },
       preparationInstructions: { type: new GraphQLList(GraphQLString) },
       preparationTimeMin: { type: GraphQLInt },
-      calories: { type: GraphQLString },
+      calories: { type: GraphQLFloat },
       difficulity: { type: GraphQLInt },
       mainImage: { type: imageType },
       // One of dinner, breakfast, launch

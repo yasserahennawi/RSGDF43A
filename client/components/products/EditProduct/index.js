@@ -2,6 +2,7 @@ import React from 'react';
 import Relay from 'react-relay';
 import { css, style } from 'glamor';
 import InputField from 'components/utils/InputField';
+import PriceInputField from './PriceInputField';
 import SelectField from 'components/utils/SelectField';
 import Button from 'components/utils/Button';
 import Chip from 'components/utils/Chip';
@@ -25,6 +26,7 @@ export class EditProduct extends React.Component {
       name: '',
       orderDescription: '',
       noOfRecipes: 1,
+      createdRecipesCount: 1,
       author: this.props.viewer,
       nutrition: {
         name: '',
@@ -73,12 +75,16 @@ export class EditProduct extends React.Component {
     }
   }
 
+  onUploadStart(images) {
+    this.setState({ imageIsUploading: true });
+  }
+
   onUploadImageSuccess(images) {
-    this.onProductChange({ coverImage: images[0] });
+    this.onProductChange({ coverImage: images[0] }, { imageIsUploading: false });
   }
 
   onUploadImageError(error) {
-    this.setState({ apiError: error })
+    this.setState({ apiError: error, imageIsUploading: false })
   }
 
   createProductSuccess({ createProduct }) {
@@ -92,7 +98,7 @@ export class EditProduct extends React.Component {
 
   updateProductSuccess({ updateProduct }) {
     this.props.onProductUpdateSuccess(updateProduct);
-    this.setState({ successMessage: "Book has been updated successfully" });
+    this.setState({ infoMessage: "Book has been updated successfully" });
   }
 
   updateProductFailure(error) {
@@ -104,8 +110,12 @@ export class EditProduct extends React.Component {
     e.preventDefault();
     console.log('going to submit with ', this.state.product, this.props.product);
 
+    if(this.state.imageIsUploading) {
+      this.setState({ infoMessage: "Please wait... image is uploading" });
+    }
+
     // Product already exist then execute the update mutation
-    if(this.state.product.id) {
+    else if(this.state.product.id) {
       const mutation = new UpdateProductMutation({
         ...this.state.product,
         product: this.props.product,
@@ -123,8 +133,9 @@ export class EditProduct extends React.Component {
     }
   }
 
-  onProductChange(changes) {
+  onProductChange(changes, otherState = {}) {
     this.setState({
+      ...otherState,
       product: {
         ...this.state.product,
         ...changes,
@@ -168,6 +179,10 @@ export class EditProduct extends React.Component {
     });
   }
 
+  getMinimumNoOfRecipes() {
+    return this.state.product.createdRecipesCount < 5 ? 5 : this.state.product.createdRecipesCount;
+  }
+
   render() {
     const { apiError } = this.state;
     return (
@@ -175,7 +190,7 @@ export class EditProduct extends React.Component {
         <form onSubmit={this.submitForm.bind(this)}>
           <div className={`${formDivisor}`}>
             <div {...style({ flex: 2 })}>
-              <small className={small}>UBERSCHRIFT</small>
+              <small className={small}>ÜBERSCHRIFT</small>
 
               <InputField
                 name="name"
@@ -229,7 +244,7 @@ export class EditProduct extends React.Component {
               <InputField
                 name="orderDescription"
                 validator={this.validators.orderDescription}
-                validatorMessage={"You must enter the description"}
+                validatorMessage={"Bitte füge eine Beschreibung ein"}
                 onChange={e => this.onProductChange({ orderDescription: e.target.value })}
                 value={this.state.product.orderDescription}
                 rows={5}
@@ -246,19 +261,17 @@ export class EditProduct extends React.Component {
                   floatingLabelText="REZEPTANZAHL"
                   name="noOfRecipes"
                   value={this.state.product.noOfRecipes}
-                  disabled={this.props.product}
                   onChange={(e, key, value) => this.onProductChange({ noOfRecipes: parseInt(value) })}>
-                  {_.range(15).map(i => (
+                  {_.range(this.getMinimumNoOfRecipes() - 1, 30).map(i => (
                     <MenuItem key={i} value={i+1} primaryText={i+1} />
                   ))}
                 </SelectField>
-                <InputField
-                  name="price"
+                <PriceInputField
                   validator={this.validators.price}
-                  validatorMessage={"You must enter a valid price"}
+                  validatorMessage={"Bitte füge einen gültigen Preis ein"}
                   value={this.state.product.price.value}
-                  onChange={(e) => this.changePriceValue(e.target.value)}
-                  hintText="Preis in Euro Inkl Mwst."
+                  onChange={value => this.changePriceValue(value)}
+                  hintText="Preis in Euro inkl. MwSt."
                   style={styles.textField}
                 />
               </div>
@@ -267,6 +280,7 @@ export class EditProduct extends React.Component {
             <div className={`${foto}`}>
               <CoverUpload
                 image={this.state.product.coverImage}
+                onUploadStart={this.onUploadStart.bind(this)}
                 onUploadSuccess={this.onUploadImageSuccess.bind(this)}
                 onUploadError={this.onUploadImageError.bind(this)}
               />
@@ -276,14 +290,14 @@ export class EditProduct extends React.Component {
             <Button
               primary={true}
               type="submit"
-              label="Continue"
+              label="WEITER"
               disabled={ !this.isValid() }
             />
           </div>
           <Snackbar
-            open={!!this.state.successMessage}
-            message={this.state.successMessage}
-            onRequestClose={() => this.setState({ successMessage: '' })}/>
+            open={!!this.state.infoMessage}
+            message={this.state.infoMessage}
+            onRequestClose={() => this.setState({ infoMessage: '' })}/>
           <ErrorDetails
             error={this.state.apiError}
             onDismiss={() => this.setState({ apiError: null })}
@@ -366,6 +380,7 @@ export default Relay.createContainer(EditProduct, {
         id
         name
         orderDescription
+        createdRecipesCount
         noOfRecipes
         author {
           id

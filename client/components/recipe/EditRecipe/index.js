@@ -29,7 +29,7 @@ export class EditRecipe extends React.Component {
     return {
       name: '',
       difficulity: 1,
-      calories: 0,
+      calories: null,
       preparationTimeMin: 1,
       items: {
         edges: [],
@@ -54,7 +54,7 @@ export class EditRecipe extends React.Component {
     this.validators = {
       name: value => !validator.isEmpty(value),
       difficulity: value => validator.isInt(value.toString()),
-      calories: value => validator.isFloat(value.toString()),
+      calories: value => !value || validator.isFloat(value.toString()),
       preparationTimeMin: value => validator.isInt(value.toString()),
       nutrition: value => !validator.isEmpty(String(value)),
       orientation: value => !validator.isEmpty(String(value)),
@@ -168,24 +168,25 @@ export class EditRecipe extends React.Component {
     });
   }
 
-
   addRecipeItem() {
     const {
       ingredientQuantity,
       ingredientUnit,
       // ingredient,
+      ingredientAddition,
       newIngredientName
     } = this.state;
 
-    if(! ingredientQuantity || !ingredientUnit || !newIngredientName) {
+    if(! ingredientQuantity || !ingredientUnit || !newIngredientName || !validator.isFloat(ingredientQuantity)) {
       return;
     }
 
     this.setState({
-      ingredientQuantity: null,
+      ingredientQuantity: '',
       ingredientUnit: null,
       ingredient: null,
-      newIngredientName: null,
+      newIngredientName: '',
+      ingredientAddition: '',
       isDirty: true,
       recipe: {
         ...this.state.recipe,
@@ -197,6 +198,7 @@ export class EditRecipe extends React.Component {
                 quantity: ingredientQuantity,
                 unit: ingredientUnit,
                 newIngredientName,
+                addition: ingredientAddition,
                 // ingredient: {
                 //   id: ingredient.id,
                 //   name: ingredient.name,
@@ -225,6 +227,49 @@ export class EditRecipe extends React.Component {
         },
       },
     })
+  }
+
+
+  getEinheits() {
+    return [
+      "Becher",
+      "Beutel",
+      "Blätter",
+      "Bundcl",
+      "dag",
+      "Dose",
+      "EL",
+      "Flasche",
+      "gGlas",
+      "Handvoll",
+      "KG",
+      "Knollen",
+      "Kopf",
+      "Kugel",
+      "L",
+      "Messerspitze",
+      "ml",
+      "nach Belieben",
+      "Paar",
+      "Packung",
+      "Portion",
+      "Prise",
+      "Rippe",
+      "Schale",
+      "Scheibe",
+      "Schuss",
+      "Spalter",
+      "Spritzer",
+      "Stange",
+      "Stängel",
+      "Stiel",
+      "Stück",
+      "Tasse",
+      "TL",
+      "Tropfen",
+      "Würfel",
+      "Zwei",
+    ];
   }
 
   render() {
@@ -260,9 +305,9 @@ export class EditRecipe extends React.Component {
             <InputField
               name="calories"
               validator={this.validators.calories}
-              validatorMessage={"You must input the calories"}
+              validatorMessage={"Not valid number"}
               onChange={e => this.onRecipeChange({ calories: e.target.value })}
-              value={this.state.recipe.calories}
+              value={this.state.recipe.calories || ''}
               hintText="Kalorien"
               floatingLabelText="Kalorien"
               style={styles.textField}
@@ -303,18 +348,14 @@ export class EditRecipe extends React.Component {
           <div className={recipeItemContainer}>
 
             <div className={inlineForm}>
-              <SelectField
-                style={{ margin: 0, marginTop: 21, marginRight: 21 }}
-                validator={(value) => true}
-                validatorMessage={"Select"}
-                floatingLabelText="MENGE"
+              <InputField
+                validator={value => !value || validator.isFloat(value.toString())}
+                validatorMessage={"Not valid number"}
+                onChange={e => this.setState({ ingredientQuantity: e.target.value })}
                 value={this.state.ingredientQuantity}
-                onChange={(e, key, value) => this.setState({ ingredientQuantity: value })}
-              >
-                {_.range(5).map(i => (
-                  <MenuItem key={i} value={i + 1} primaryText={i + 1} />
-                ))}
-              </SelectField>
+                floatingLabelText="MENGE"
+                style={styles.textFieldNoMerge}
+              />
               <SelectField
                 style={{ margin: 0, marginTop: 21, marginRight: 21 }}
                 validator={(value) => true}
@@ -323,17 +364,21 @@ export class EditRecipe extends React.Component {
                 value={this.state.ingredientUnit}
                 onChange={(e, key, value) => this.setState({ ingredientUnit: value })}
               >
-                <MenuItem value={'mg'} primaryText={'mg'} />
-                <MenuItem value={'g'} primaryText={'g'} />
-                <MenuItem value={'el'} primaryText={'EL'} />
-                <MenuItem value={'tl'} primaryText={'TL'} />
-                <MenuItem value={'ml'} primaryText={'ml'} />
+              {this.getEinheits().map(einheit => (
+                <MenuItem value={einheit} primaryText={einheit} />
+              ))}
               </SelectField>
               <InputField
                 onChange={e => this.setState({ newIngredientName: e.target.value })}
                 value={this.state.newIngredientName || ''}
                 floatingLabelText="ZUTAT"
-                style={styles.textField}
+                style={styles.textFieldNoMerge}
+              />
+              <InputField
+                onChange={e => this.setState({ ingredientAddition: e.target.value })}
+                value={this.state.ingredientAddition || ''}
+                floatingLabelText="ZUSATZ"
+                style={styles.textFieldNoMerge}
               />
               {/*<IngredientSelector
                 ingredients={this.props.ingredients}
@@ -345,9 +390,9 @@ export class EditRecipe extends React.Component {
               />*/}
               <Button
                 primary={true}
-                label="Add"
+                label="Hinzufügen"
                 onClick={() => this.addRecipeItem()}
-                style={{ marginTop: 20, height: 30 }}
+                style={{ marginTop: 20, height: 30, flexShrink: 0 }}
               />
             </div>
 
@@ -359,6 +404,7 @@ export class EditRecipe extends React.Component {
                       <TableHeaderColumn>MENGE</TableHeaderColumn>
                       <TableHeaderColumn>EINHEIT</TableHeaderColumn>
                       <TableHeaderColumn>ZUTAT</TableHeaderColumn>
+                      <TableHeaderColumn>ZUSATZ</TableHeaderColumn>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -367,6 +413,7 @@ export class EditRecipe extends React.Component {
                           <TableRowColumn>{node.quantity}</TableRowColumn>
                           <TableRowColumn>{node.unit}</TableRowColumn>
                           <TableRowColumn>{node.newIngredientName || (node.ingredient && node.ingredient.name)}</TableRowColumn>
+                          <TableRowColumn>{node.addition}</TableRowColumn>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -393,9 +440,9 @@ export class EditRecipe extends React.Component {
             />
             <Button
               primary={true}
-              label="Add"
+              label="Hinzufügen"
               onClick={() => this.addPreparationInstruction()}
-              style={{ marginTop: 20, height: 48 }}
+              style={{ marginTop: 20, height: 48, flexShrink: 0 }}
             />
           </div>
 
@@ -415,7 +462,7 @@ export class EditRecipe extends React.Component {
 
             <div style={styles.formActions}>
               <Button
-                label="Back"
+                label="ZURÜCK"
                 style={{ marginRight: 10 }}
                 onTouchTap={ this.props.handleBack }
               />
@@ -423,7 +470,7 @@ export class EditRecipe extends React.Component {
               <Button
                 primary={true}
                 type="submit"
-                label={ this.props.recipe ? "Update" : "Continue" }
+                label={ this.props.recipe ? "Update" : "WEITER" }
                 disabled={!this.isValid()}
               />
             </div>
@@ -446,6 +493,9 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
+  },
+  textFieldNoMerge: {
+    marginLeft: 0,
   },
   textField: {
     width: '100%',
@@ -562,6 +612,7 @@ export default Relay.createContainer(EditRecipe, {
         items(first: 10) {
           edges {
             node {
+              addition
               ingredient {
                 id
                 name

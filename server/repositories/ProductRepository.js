@@ -5,39 +5,20 @@ import IoC from 'AppIoC';
 import { getDocumentId } from 'utils/mongo';
 
 export default class ProductRepository extends Repository {
-  constructor(model) {
+  constructor(model, productQueryManager) {
     super();
     this.model = model;
+    this.productQueryManager = productQueryManager;
   }
 
-  find(viewer, {
-    // All availabe query options
-    year = 2016,
-    month = 1,
-    day = 1,
-    creator = null,
-    mine = false,
-  }) {
-    console.log(viewer);
+  async find(viewer, inputs) {
     if(viewer.isGuest()) {
       throw new ForbiddenError("You are not authorized to view products");
     }
 
-    const query = this.model.find();
-
-    if(creator) {
-      query.where('creator', getDocumentId(creator));
-    }
-
-    if(mine) {
-      query.where('creator', getDocumentId(viewer));
-    }
-
-    query.where({
-      createdAt: { $gt: new Date(year, month, day) }
-    });
-
-    return query.exec();
+    let query = this.model.find();
+    query = this.productQueryManager.run(query, inputs);
+    return await query.exec();
   }
 
   findById(viewer, id) {
@@ -75,4 +56,4 @@ export default class ProductRepository extends Repository {
   }
 }
 
-IoC.singleton('productRepository', ['productModel'], ProductRepository);
+IoC.singleton('productRepository', ['productModel', 'productQueryManager'], ProductRepository);

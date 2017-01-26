@@ -196,7 +196,7 @@ class EditProduct extends Component {
             <Button
               primary={true}
               type="submit"
-              label="Continue"
+              label="WEITER"
               disabled={ !this.state.isSubmitButtonValid }
             />
           </div>

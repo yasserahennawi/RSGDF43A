@@ -236,7 +236,7 @@ class EditRecipe extends Component {
 
             <div style={styles.formActions}>
               <Button
-                label="Back"
+                label="ZURÜCK"
                 style={{ marginRight: 10 }}
                 onTouchTap={ this.props.handleBack }
               />
@@ -244,7 +244,7 @@ class EditRecipe extends Component {
               <Button
                 primary={true}
                 type="submit"
-                label="Continue"
+                label="WEITER"
               />
             </div>
           </div>

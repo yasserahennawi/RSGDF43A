@@ -33,8 +33,7 @@ class EditRecipeRoute extends React.Component {
   renderSuccessMessage() {
     return (
       <div>
-        <h2>All recipes has been created successfully</h2>
-        <h4>And waiting to be accepted</h4>
+        <h2>Alle Rezepte wurden erfolgreich erstellt und werden nun geprüft.</h2>
       </div>
     );
   }

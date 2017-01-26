@@ -15,7 +15,7 @@ export class GenreSelector extends React.Component {
       <NodeSelector
         nodes={genres}
         selectedNode={selectedGenre}
-        floatingLabelText="Genre hinzufugen"
+        floatingLabelText="Genre Hinzufügen"
         mustExist={true}
         resetOnSelect={true}
         {...props}

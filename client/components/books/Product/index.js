@@ -5,7 +5,6 @@ const Product = ({ children, cover }) => {
   return (
     <div className={`${container}`}>
       <img src={cover} className={`${imageCover}`} />
-
       {children}
     </div>
   );
@@ -23,6 +22,7 @@ const container = style({
 const imageCover = style({
   height: 230,
   marginBottom: 20,
+  backgroundSize: 'cover',
 });
 
 export default Product;

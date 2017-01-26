@@ -15,7 +15,7 @@ class HomeRoute extends React.Component {
           params={params}
           isAdmin={this.props.viewer.isAdmin}
         />
-        <div>Welome { this.props.viewer.firstName }!</div>
+        <div>Herzlichen Willkommen { this.props.viewer.firstName }!</div>
       </div>
     );
   }

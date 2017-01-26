@@ -1,9 +1,9 @@
 import React from 'react';
 import { style } from 'glamor';
 
-const Product = ({ children, cover }) => {
+const Product = ({ children, cover, ...props }) => {
   return (
-    <div className={`${container}`}>
+    <div className={`${container}`} {...props}>
       <img src={cover} className={`${imageCover}`} />
 
       {children}
@@ -18,6 +18,7 @@ const container = style({
   marginRight: 58,
   marginBottom: 30,
   color: '#565656',
+  cursor: 'pointer',
 });
 
 const imageCover = style({

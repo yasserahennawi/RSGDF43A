@@ -11,7 +11,7 @@ export const recipeModel = (mongoose, recipeValidator) => {
     number: Number,
     preparationInstructions: [String],
     preparationTimeMin: Number,
-    calories: String,
+    calories: Number,
     difficulity: Number,
     mainImage: {
       // Original image
@@ -30,10 +30,10 @@ export const recipeModel = (mongoose, recipeValidator) => {
     nutrition: {type: Schema.Types.ObjectId, ref: 'Nutrition'},
     orientation: {type: Schema.Types.ObjectId, ref: 'Orientation'},
     items: [{
-      addition: {type: Schema.Types.ObjectId, ref: 'Ingredient'},
+      addition: String,
       ingredient: {type: Schema.Types.ObjectId, ref: 'Ingredient', required: true},
       quantity: {type: Number, required: true},
-      unit: {type: String, enum: [ 'mg' ,'g', 'el', 'tl', 'ml' ], default: 'mg'},
+      unit: {type: String},
     }],
     creator: {type: Schema.Types.ObjectId, ref: 'User', required:true},
   }, { timestamps: true, collection: 'new_recipes' });
@@ -44,7 +44,6 @@ export const recipeModel = (mongoose, recipeValidator) => {
    */
   recipeSchema.method('getItems', async function() {
     await this.populate('items.ingredient')
-      .populate('items.addition')
       .execPopulate();
     return this.items;
   });

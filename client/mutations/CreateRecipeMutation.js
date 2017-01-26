@@ -17,9 +17,10 @@ class CreateRecipeMutation extends Relay.Mutation {
       nutrition: this.props.nutrition.id,
       preparationTimeMin: this.props.preparationTimeMin,
       preparationInstructions: this.props.preparationInstructions,
-      calories: this.props.calories,
+      calories: parseFloat(this.props.calories),
       product: this.props.product.id,
       items: this.props.items.edges.map(({node}) => ({
+        addition: node.addition,
         newIngredientName: node.newIngredientName,
         ingredient: node.ingredient && node.ingredient.id,
         quantity: node.quantity,

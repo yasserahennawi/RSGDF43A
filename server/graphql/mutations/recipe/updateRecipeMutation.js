@@ -45,7 +45,7 @@ export const updateMutation = (
     preparationTimeMin: { type: GraphQLInt },
     preparationInstructions: { type: new GraphQLList(GraphQLString) },
     difficulity: { type: new GraphQLNonNull(GraphQLInt) },
-    calories: { type: new GraphQLNonNull(GraphQLFloat) },
+    calories: { type: GraphQLFloat },
     product: { type: new GraphQLNonNull(GraphQLString) },
 
     // mealType: { type: new GraphQLNonNull(GraphQLString) },
@@ -65,23 +65,15 @@ export const updateMutation = (
       difficulity: input.difficulity,
       calories: input.calories,
       // mealType: input.mealType,
-      items: await Q.all(input.items.map(async (item) => {
-        let ingredient;
-        if(item.ingredient) {
-          ingredient = getActualId(item.ingredient);
-        } else if(item.newIngredientName) {
-          ingredient = (await ingredientRepository.findByNameOrCreate(viewer, {
-            name: item.newIngredientName,
-          })).id;
-        }
-
-        return {
-          ingredient,
-          // ingredient: getActualId(item.ingredient),
-          quantity: item.quantity,
-          unit: item.unit,
-        }
-      })),
+      items: await Q.all(input.items.map(async (item) => ({
+        ingredient: item.ingredient ? getActualId(item.ingredient) : (await ingredientRepository.findByNameOrCreate(viewer, {
+          name: item.newIngredientName,
+        })).id,
+        // ingredient: getActualId(item.ingredient),
+        quantity: item.quantity,
+        unit: item.unit,
+        addition: item.addition,
+      }))),
     };
 
     console.log("update recipe mutation", attrs);

@@ -12,7 +12,7 @@ class InputField extends React.Component {
   }
 
   getError(validator, validatorMessage, value) {
-    if(this.state.isDirty && (!value || !validator(value))) {
+    if(this.state.isDirty && !validator(value)) {
       return validatorMessage;
     }
   }

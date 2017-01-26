@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Relay from 'react-relay';
+import { withRouter } from 'react-router';
 
 import {
   Step,
@@ -18,73 +20,42 @@ const productContainer = style({
 });
 
 class ProductList extends Component {
-  renderCoverChildren = () => {
-    return (
-      <div style={styles.productLabel}>
-        <span>
-          Pipilangstrumbfhose Beispiel Text
-          <small style={styles.productLabelSmall}>
-            Benjamin Combos
-          </small>
-        </span>
-        <div style={styles.productButtons}>
-          <Box
-            style={styles.box}
-            boxes={[{
-              value: 'JA',
-              text: 'freigebene',
-              valueStyle: styles.valueText,
-              textStyle: styles.boxText,
-              boxStyle: styles.boxStyle,
-            }, {
-              value: 'Nein',
-              text: 'night freigeben',
-            }]}
-          />
-        </div>
-      </div>
-    );
-  };
-
   render() {
     const { handleChangeStep } = this.props;
-
-    const products = [
-      {
-        coverImage: 'http://gbbdf.org/wp-content/uploads/2015/07/Pippi-Longstocking.jpg',
-        children: this.renderCoverChildren(),
-      },
-      {
-        coverImage: 'http://www.tolkienbooks.net/images/main/hobbit-2001-hb.gif',
-        children: this.renderCoverChildren(),
-      },
-      {
-        coverImage: 'https://s-media-cache-ak0.pinimg.com/736x/3d/1d/e8/3d1de873d83e37a9134ed752c18ff57e.jpg',
-        children: this.renderCoverChildren(),
-      },
-      {
-        coverImage: 'http://gbbdf.org/wp-content/uploads/2015/07/Pippi-Longstocking.jpg',
-        children: this.renderCoverChildren(),
-      },
-      {
-        coverImage: 'http://www.tolkienbooks.net/images/main/hobbit-2001-hb.gif',
-        children: this.renderCoverChildren(),
-      },
-      {
-        coverImage: 'https://s-media-cache-ak0.pinimg.com/736x/3d/1d/e8/3d1de873d83e37a9134ed752c18ff57e.jpg',
-        children: this.renderCoverChildren(),
-      },
-    ];
 
     return (
       <div style={styles.container}>
         <div className={`${productContainer}`}>
-          {products.map((product, key) => (
+          {this.props.products.edges.map(({ node }, key) => (
             <Product
-              cover={product.coverImage}
-              key={`${product.coverImage}-${key}`}
+              cover={node.coverImage.src}
+              key={`${key}`}
+              onClick={() => this.props.router.push(`/books/${node.id}`)}
             >
-              {product.children}
+            <div style={styles.productLabel}>
+              <span style={styles.productLabelTitle}>
+                {node.name}
+                {node.isAdmin ?
+                  <small style={styles.productLabelSmall}>
+                    {node.creator.fullName}
+                  </small> : null}
+              </span>
+              <div style={styles.productButtons}>
+                <Box
+                  style={styles.box}
+                  boxes={[{
+                    value: this.props.viewer.isAdmin ? 'JA' : '0',
+                    text: this.props.viewer.isAdmin ? 'FREIGEBENE' : 'VERKAUFT',
+                    valueStyle: styles.valueText,
+                    textStyle: styles.boxText,
+                    boxStyle: styles.boxStyle,
+                  }, {
+                    value: this.props.viewer.isAdmin ? 'Nein' : '0',
+                    text: this.props.viewer.isAdmin ? 'NIGHT FREIGEBEN' : 'PREIS',
+                  }]}
+                />
+              </div>
+            </div>
             </Product>
           ))}
         </div>
@@ -92,14 +63,14 @@ class ProductList extends Component {
         {/*<div style={styles.footer}>
           <div style={styles.formActions}>
             <Button
-              label="Back"
+              label="ZURÜCK"
               style={{...styles.button, marginRight: 10}}
               onTouchTap={handleChangeStep('prev')}
             />
 
             <Button
               primary={true}
-              label="Continue"
+              label="WEITER"
               onTouchTap={handleChangeStep('next')}
             />
           </div>
@@ -113,6 +84,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
+    marginTop: 20,
   },
   footer: {
     //display: 'flex',
@@ -123,6 +95,9 @@ const styles = {
     justifyContent: 'flex-end',
   },
   button: {
+  },
+  productLabelTitle: {
+    minHeight: 50,
   },
   productLabel: {
     display: 'flex',
@@ -148,4 +123,31 @@ const styles = {
   },
 };
 
-export default ProductList;
+export default Relay.createContainer(withRouter(ProductList), {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on User {
+        isPublisher
+        isBlogger
+        isAdmin
+      }
+    `,
+    products: () => Relay.QL`
+      fragment on ProductConnection {
+        edges {
+          node {
+            id
+            name
+            coverImage {
+              src
+            }
+            creator {
+              fullName
+            }
+          }
+        }
+      }
+
+    `
+  }
+});

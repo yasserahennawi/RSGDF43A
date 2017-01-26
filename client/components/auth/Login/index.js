@@ -54,7 +54,7 @@ class Login extends Component {
 
   loginFailure(err) {
     this.setState({
-      errorMessage: "Wrong credentials",
+      errorMessage: "Falsche Daten",
     });
   }
 

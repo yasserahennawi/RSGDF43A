@@ -37,7 +37,7 @@ export const productResolver = (productRepository, productsConnectionType) => {
       mine: {type: GraphQLBoolean},
     },
     resolve: (_, { year, month, day, creator, mine, ...args }, { viewer }) => connectionFromPromisedArray(
-      productRepository.find(viewer, { year, month, day, creator, mine }),
+      productRepository.find(viewer, { year, month, day, creator: mine ? viewer : creator }),
       args
     ),
   }

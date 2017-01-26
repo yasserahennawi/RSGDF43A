@@ -46,6 +46,7 @@ export async function runGraphQLDevServer() {
     pretty: true,
     schema: graphqlSchema,
     formatError: (error) => {
+      console.error(error);
       return error.originalError ? error.originalError.toObject() : error.toObject();
     },
   }));

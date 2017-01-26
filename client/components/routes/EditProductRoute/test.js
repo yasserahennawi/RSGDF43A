@@ -34,11 +34,11 @@ class EditProductRoute extends React.Component {
     return (
       <StepperLayout
         title="NEUES SPECIAL"
-        subtitle="Kreiere dein neue Specials und fuge in diesem deine Rezepte hinzu"
+        subtitle="Kreiere dein neues Special und füge deine Rezepte hinzu"
         breadcrumbs={breadcrumbs}
         stepIndex={0}
         onStepChange={this.onStepChange.bind(this)}
-        steps={['COVER KREIERE', 'REZEPTE HINZUFUGEN', 'AKZEPTIERUNG WARTEN', 'VERKAUFEN']}>
+        steps={['COVER KREIEREN', 'REZEPTE HINZUFUGEN', 'AKZEPTIERUNG WARTEN', 'VERKAUFEN']}>
         <EditProduct
           viewer={this.props.viewer}
           nutritions={this.props.nutritions}
