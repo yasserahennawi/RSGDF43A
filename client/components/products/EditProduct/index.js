@@ -77,10 +77,7 @@ export class EditProduct extends React.Component {
 
   componentWillUpdate(nextProps, nextState) {
     // Submit form if cover image has changed
-    if(!nextState.isUpdating
-      && !nextState.imageIsUploading
-      && this.state.product
-      && nextState.product.coverImage.src !== this.state.product.coverImage.src) {
+    if(nextState.imageUploadSuccess && !this.state.imageUploadSuccess) {
       this.submitForm(null, nextState, nextProps);
     }
   }
@@ -90,7 +87,7 @@ export class EditProduct extends React.Component {
   }
 
   onUploadImageSuccess(images) {
-    this.onProductChange({ coverImage: images[0] }, { imageIsUploading: false });
+    this.onProductChange({ coverImage: images[0] }, { imageIsUploading: false, imageUploadSuccess: true });
   }
 
   onUploadImageError(error) {

@@ -56,6 +56,7 @@ export class EditRecipe extends React.Component {
       recipe: this.props.recipe || this.getNewRecipe(),
       apiError: null,
       preparationInstruction: '',
+      infoMessage: '',
     });
 
     this.validators = {
@@ -83,16 +84,14 @@ export class EditRecipe extends React.Component {
       this.setState({
         recipe: nextProps.recipe || this.getNewRecipe(),
         preparationInstruction: '',
+        infoMessage: '',
       });
     }
   }
 
   componentWillUpdate(nextProps, nextState) {
     // Submit form if cover image has changed
-    if(!nextState.isUpdating
-      && !nextState.imageIsUploading
-      && this.state.recipe
-      && nextState.recipe.coverImage.src !== this.state.recipe.coverImage.src) {
+    if(nextState.imageUploadSuccess && !this.state.imageUploadSuccess) {
       this.submitForm(null, nextState, nextProps);
     }
   }
@@ -102,7 +101,7 @@ export class EditRecipe extends React.Component {
   }
 
   onUploadImageSuccess(images) {
-    this.onRecipeChange({ coverImage: images[0] }, { imageIsUploading: false });
+    this.onRecipeChange({ coverImage: images[0] }, { imageIsUploading: false, imageUploadSuccess: true });
   }
 
   onUploadImageError(error) {
