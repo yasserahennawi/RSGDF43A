@@ -8,7 +8,7 @@ import {
   isForbiddenError,
   isUnauthorizedError,
   isModelNotFoundError,
-  isUnkownError,
+  isUnknownError,
 } from 'helpers/error';
 
 const ValidationError = ({ error }) => (
@@ -35,13 +35,12 @@ const UnauthorizedError = ({ error }) => (
 
 const ModelNotFoundError = ({ error }) => (
   <p>
-    We cant find the model you are looking for
+    We cant find the data you are looking for
   </p>
 );
 
-const UnkownError = ({ error }) => (
+const UnknownError = ({ error }) => (
   <p>
-    Something went wrong!
   </p>
 );
 
@@ -64,6 +63,6 @@ export default ({ error, onDismiss }) => (
    {isForbiddenError(error) ? <ForbiddenError error={error} /> : null}
    {isUnauthorizedError(error) ? <UnauthorizedError error={error} /> : null}
    {isModelNotFoundError(error) ? <ModelNotFoundError error={error} /> : null}
-   {isUnkownError(error) ? <UnkownError error={error} /> : null}
+   {isUnknownError(error) ? <UnknownError error={error} /> : null}
   </Dialog>
 );

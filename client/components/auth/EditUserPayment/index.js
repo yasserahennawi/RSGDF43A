@@ -6,6 +6,7 @@ import {
   StepLabel,
 } from 'material-ui/Stepper';
 import MenuItem from 'material-ui/MenuItem';
+import UpdateUserMutation from 'mutations/UpdateUserMutation';
 
 import InputField from 'components/utils/InputField';
 import SelectField from 'components/utils/SelectField';
@@ -117,4 +118,20 @@ const styles = {
   },
 };
 
-export default EditUserPayment;
+
+export default Relay.createContainer(EditUserPayment, {
+  fragments: {
+    user: () => Relay.QL`
+      fragment on User {
+        id
+        ${UpdateUserMutation.getFragment('user')}
+      }
+    `,
+    viewer: () => Relay.QL`
+      fragment on User {
+        isAdmin
+      }
+    `
+  }
+});
+

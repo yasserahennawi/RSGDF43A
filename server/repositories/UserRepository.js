@@ -94,9 +94,9 @@ export default class UserRepository extends Repository {
 
     const user = await this.model.findById({ _id: id }).exec();
 
-    // Check for old password here
     // If the user is trying to update his password then we have to check his old password
-    if(data.password) {
+    // Only admins can skip the old password part
+    if(data.password && !viewer.isAdmin()) {
       const verified = await user.verifyPassword(data.oldPassword);
 
       if(! verified) {

@@ -39,9 +39,13 @@ export class NodeSelector extends React.Component {
     resetOnSelect: false,
   };
 
+  getEdges() {
+    return this.props.nodes ? (this.props.nodes.edges || []) : [];
+  }
+
   getNodes() {
     if(this.props.nodes.edges) {
-      return this.props.nodes.edges.map(({node}) => node);
+      return this.getEdges().map(({node}) => node);
     }
     return [];
   }
@@ -78,7 +82,7 @@ export class NodeSelector extends React.Component {
         disabled={disabled}
         {...props}
       >
-      {nodes.edges.map(({node}) => (
+      {this.getEdges().map(({node}) => (
         <MenuItem value={node.id} primaryText={node.name} />
       ))}
       </SelectField>

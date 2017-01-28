@@ -34,6 +34,16 @@ class EditRecipeRoute extends React.Component {
     return (
       <div>
         <h2>Alle Rezepte wurden erfolgreich erstellt und werden nun geprüft.</h2>
+        <SelectField
+          fullWidth={true}
+          hintText="Rezept bearbeiten"
+          onChange={(e, key, recipeId) => {
+            this.props.router.push(`/books/${this.props.product.id}/recipe/${recipeId}`);
+          }}>
+          {this.props.product.recipes.edges.map(({ node }, index) => (
+            <MenuItem key={index} value={node.id} primaryText={`Rezepte ${node.number} : ${node.name}`} />
+          ))}
+        </SelectField>
       </div>
     );
   }
@@ -62,6 +72,10 @@ class EditRecipeRoute extends React.Component {
   }
 
   getRecipeSelector() {
+    if(this.isNew() && this.hasCreatedAllRecipes()) {
+      return null;
+    }
+
     const {
       product: {
         id,
@@ -160,6 +174,7 @@ export default Relay.createContainer(EditRecipeRoute, {
             node {
               id
               number
+              name
             }
           }
         }

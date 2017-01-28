@@ -60,7 +60,7 @@ export function postImage(file, type, token) {
   req.attach(file.name, file);
   let callback = (err, res) => {
     if (err) {
-      deferred.reject(res.body.error);
+      deferred.reject(res.body);
     } else {
       deferred.resolve(res.body);
     }
@@ -68,7 +68,7 @@ export function postImage(file, type, token) {
   req.end(callback);
   return deferred.promise.then(response => {
     if (response.statusCode !== 200 && response.error) {
-      return Q.reject(response.error);
+      return Q.reject(response);
     }
 
     return response.data;
@@ -78,7 +78,7 @@ export function postImage(file, type, token) {
 export function postImages(files, type, token) {
   let promises = files.map((file) => {
     return postImage(file, type, token)
-    .then(formatImage);
+      .then(formatImage);
   });
 
   return Q.all(promises);

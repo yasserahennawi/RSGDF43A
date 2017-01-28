@@ -46,6 +46,7 @@ export const createMutation = (
     difficulity: { type: new GraphQLNonNull(GraphQLInt) },
     calories: { type: GraphQLFloat },
     product: { type: new GraphQLNonNull(GraphQLString) },
+    coverImage: {type: imageInput},
 
     // mealType: { type: new GraphQLNonNull(GraphQLString) },
     items: { type: new GraphQLList(recipeItemInput) },
@@ -63,6 +64,7 @@ export const createMutation = (
       preparationInstructions: input.preparationInstructions,
       difficulity: input.difficulity,
       calories: input.calories,
+      coverImage: input.coverImage,
       // mealType: input.mealType,
       items: await Q.all(input.items.map(async (item) => ({
         ingredient: item.ingredient ? getActualId(item.ingredient) : (await ingredientRepository.findByNameOrCreate(viewer, {

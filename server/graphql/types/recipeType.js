@@ -53,15 +53,15 @@ export const recipeType = (
       preparationTimeMin: { type: GraphQLInt },
       calories: { type: GraphQLFloat },
       difficulity: { type: GraphQLInt },
-      mainImage: { type: imageType },
+      coverImage: { type: imageType },
       // One of dinner, breakfast, launch
       mealType: { type: GraphQLString },
       orientation: {
-        type: new GraphQLNonNull(orientationType),
+        type: orientationType,
         resolve: recipe => recipe.getOrientation(),
       },
       nutrition: {
-        type: new GraphQLNonNull(nutritionType),
+        type: nutritionType,
         resolve: recipe => recipe.getNutrition(),
       },
 

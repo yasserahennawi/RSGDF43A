@@ -30,6 +30,12 @@ export const userModel = (mongoose, userValidator) => {
       }],
     },
 
+    bankAccountEncrypted: {
+      accountNumber: String,
+      bic: String,
+      bankName: String,
+    },
+
     preferences: {
       // @TODO @kareemmohamed Add nutrition or genre
       ingredients: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],

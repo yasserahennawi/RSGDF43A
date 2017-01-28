@@ -1,5 +1,5 @@
-export default function UnkownError(messages) {
-  this.name = 'UnkownError';
+export default function UnknownError(messages) {
+  this.name = 'UnknownError';
   this.message = "A validation error has occured";
   this.stack = (new Error()).stack;
 
@@ -9,5 +9,5 @@ export default function UnkownError(messages) {
     stack: this.stack,
   });
 }
-UnkownError.prototype = Object.create(Error.prototype);
-UnkownError.prototype.constructor = UnkownError;
+UnknownError.prototype = Object.create(Error.prototype);
+UnknownError.prototype.constructor = UnknownError;

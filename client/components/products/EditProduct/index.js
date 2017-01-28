@@ -25,7 +25,7 @@ export class EditProduct extends React.Component {
     return {
       name: '',
       orderDescription: '',
-      noOfRecipes: 1,
+      noOfRecipes: 5,
       createdRecipesCount: 1,
       author: this.props.viewer,
       nutrition: {
@@ -75,6 +75,16 @@ export class EditProduct extends React.Component {
     }
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    // Submit form if cover image has changed
+    if(!nextState.isUpdating
+      && !nextState.imageIsUploading
+      && this.state.product
+      && nextState.product.coverImage.src !== this.state.product.coverImage.src) {
+      this.submitForm(null, nextState, nextProps);
+    }
+  }
+
   onUploadStart(images) {
     this.setState({ imageIsUploading: true });
   }
@@ -89,47 +99,50 @@ export class EditProduct extends React.Component {
 
   createProductSuccess({ createProduct }) {
     this.props.onProductCreateSuccess(createProduct);
+    this.setState({ isUpdating: false });
   }
 
   createProductFailure(error) {
     console.log('createProductFailure', error);
-    this.setState({ apiError: error });
+    this.setState({ isDirty: true, isUpdating: false, apiError: error });
   }
 
   updateProductSuccess({ updateProduct }) {
     this.props.onProductUpdateSuccess(updateProduct);
-    this.setState({ infoMessage: "Book has been updated successfully" });
+    this.setState({ infoMessage: "Book has been updated successfully", isUpdating: false });
   }
 
   updateProductFailure(error) {
     console.log('updateProductFailure', error);
-    this.setState({ apiError: error });
+    this.setState({ apiError: error, isUpdating: false });
   }
 
-  submitForm(e) {
-    e.preventDefault();
-    console.log('going to submit with ', this.state.product, this.props.product);
+  submitForm(e, state, props) {
+    e && e.preventDefault();
+    console.log('going to submit with ', state.product, props.product);
 
-    if(this.state.imageIsUploading) {
+    if(state.imageIsUploading) {
       this.setState({ infoMessage: "Please wait... image is uploading" });
     }
 
     // Product already exist then execute the update mutation
-    else if(this.state.product.id) {
+    else if(state.product.id) {
       const mutation = new UpdateProductMutation({
-        ...this.state.product,
-        product: this.props.product,
+        ...state.product,
+        product: props.product,
       });
-      this.props.relay.commitUpdate(mutation, {
+      props.relay.commitUpdate(mutation, {
         onSuccess: this.updateProductSuccess.bind(this),
         onFailure: this.updateProductFailure.bind(this),
       });
+      this.setState({ isDirty: false, isUpdating: true, infoMessage: "Please wait... book is updating" });
     } else {
-      const mutation = new CreateProductMutation(this.state.product);
-      this.props.relay.commitUpdate(mutation, {
+      const mutation = new CreateProductMutation(state.product);
+      props.relay.commitUpdate(mutation, {
         onSuccess: this.createProductSuccess.bind(this),
         onFailure: this.createProductFailure.bind(this),
       });
+      this.setState({ isDirty: false, isUpdating: true, infoMessage: "Please wait... book is updating" });
     }
   }
 
@@ -156,7 +169,6 @@ export class EditProduct extends React.Component {
   }
 
   addGenre(genre) {
-    console.log(genre);
     if(! genre || !genre.id) return;
     this.setState({
       product: {
@@ -187,32 +199,34 @@ export class EditProduct extends React.Component {
     const { apiError } = this.state;
     return (
       <div style={styles.container}>
-        <form onSubmit={this.submitForm.bind(this)}>
-          <div className={`${formDivisor}`}>
-            <div {...style({ flex: 2 })}>
-              <small className={small}>ÜBERSCHRIFT</small>
+        <form onSubmit={(e) => this.submitForm(e, this.state, this.props)}>
+          <div className={`${upperFormContainer}`}>
+            <div className={upperFormInputs}>
+              <div style={{ paddingRight: 52 }}>
+                <InputField
+                  name="name"
+                  validator={this.validators.name}
+                  validatorMessage={"You must input the title"}
+                  onChange={e => this.onProductChange({ name: e.target.value })}
+                  value={this.state.product.name}
+                  floatingLabelText="ÜBERSCHRIFT"
+                  hintText={"Titel des Specials eingeben"}
+                  style={styles.textField}
+                />
+              </div>
 
-              <InputField
-                name="name"
-                validator={this.validators.name}
-                validatorMessage={"You must input the title"}
-                onChange={e => this.onProductChange({ name: e.target.value })}
-                value={this.state.product.name}
-                hintText={"Titel des Specials eingeben"}
-                style={styles.textField}
-              />
-
-              <small className={small}>AUTOR</small>
-
-              <InputField
-                name="author"
-                validator={this.validators.author}
-                validatorMessage={"You must select the author"}
-                hintText="Autor"
-                value={this.state.product.author.nickName}
-                disabled
-                style={styles.textField}
-              />
+              <div style={{ paddingRight: 52 }}>
+                <InputField
+                  name="author"
+                  validator={this.validators.author}
+                  validatorMessage={"You must select the author"}
+                  floatingLabelText="AUTOR"
+                  hintText="Autor"
+                  value={this.state.product.author.nickName}
+                  disabled
+                  style={styles.textField}
+                />
+              </div>
 
               <div className={`${formDivisor}`}>
                 <NutritionSelector
@@ -238,11 +252,22 @@ export class EditProduct extends React.Component {
                 chips={this.state.product.genres.edges.map(({ node }) => node)}
                 onRequestDelete={this.deleteGenre.bind(this)}
               />
+            </div>
 
-              <small className={small}>BESCHREIBUNG</small>
-
+            <div className={`${foto}`}>
+              <CoverUpload
+                image={this.state.product.coverImage}
+                onUploadStart={this.onUploadStart.bind(this)}
+                onUploadSuccess={this.onUploadImageSuccess.bind(this)}
+                onUploadError={this.onUploadImageError.bind(this)}
+              />
+            </div>
+          </div>
+          <div>
+            <div style={{ paddingRight: 52 }}>
               <InputField
                 name="orderDescription"
+                floatingLabelText="BESCHREIBUNG"
                 validator={this.validators.orderDescription}
                 validatorMessage={"Bitte füge eine Beschreibung ein"}
                 onChange={e => this.onProductChange({ orderDescription: e.target.value })}
@@ -252,37 +277,28 @@ export class EditProduct extends React.Component {
                 style={{ ...styles.textField, ...styles.textarea}}
                 className={tArea.toString()}
               />
-
-              <div className={`${formDivisor}`}>
-                <SelectField
-                  name="noOfRecipes"
-                  validator={this.validators.noOfRecipes}
-                  validatorMessage={"You must select no of recipes"}
-                  floatingLabelText="REZEPTANZAHL"
-                  name="noOfRecipes"
-                  value={this.state.product.noOfRecipes}
-                  onChange={(e, key, value) => this.onProductChange({ noOfRecipes: parseInt(value) })}>
-                  {_.range(this.getMinimumNoOfRecipes() - 1, 30).map(i => (
-                    <MenuItem key={i} value={i+1} primaryText={i+1} />
-                  ))}
-                </SelectField>
-                <PriceInputField
-                  validator={this.validators.price}
-                  validatorMessage={"Bitte füge einen gültigen Preis ein"}
-                  value={this.state.product.price.value}
-                  onChange={value => this.changePriceValue(value)}
-                  hintText="Preis in Euro inkl. MwSt."
-                  style={styles.textField}
-                />
-              </div>
             </div>
 
-            <div className={`${foto}`}>
-              <CoverUpload
-                image={this.state.product.coverImage}
-                onUploadStart={this.onUploadStart.bind(this)}
-                onUploadSuccess={this.onUploadImageSuccess.bind(this)}
-                onUploadError={this.onUploadImageError.bind(this)}
+            <div className={`${formDivisor}`} style={{ maxWidth: 450 }}>
+              <SelectField
+                name="noOfRecipes"
+                validator={this.validators.noOfRecipes}
+                validatorMessage={"You must select no of recipes"}
+                floatingLabelText="REZEPTANZAHL"
+                name="noOfRecipes"
+                value={this.state.product.noOfRecipes}
+                onChange={(e, key, value) => this.onProductChange({ noOfRecipes: parseInt(value) })}>
+                {_.range(this.getMinimumNoOfRecipes() - 1, 40).map(i => (
+                  <MenuItem key={i} value={i+1} primaryText={i+1} />
+                ))}
+              </SelectField>
+              <PriceInputField
+                validator={this.validators.price}
+                validatorMessage={"Bitte füge einen gültigen Preis ein"}
+                value={this.state.product.price.value}
+                onChange={value => this.changePriceValue(value)}
+                hintText="Preis in Euro inkl. MwSt."
+                style={styles.textField}
               />
             </div>
           </div>
@@ -329,10 +345,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  autocompletes: {
-    height: 76,
-    margin: 21,
-  }
 };
 
 const tArea = css({
@@ -357,13 +369,18 @@ const formDivisor = style({
   justifyContent: 'space-between'
 });
 
-const foto = style({
-  flex: 1,
-  padding: 45,
-  alignItems: 'center',
-  justifyContent: 'flex-start',
+const upperFormContainer = style({
   display: 'flex',
-  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const upperFormInputs = style({
+  flex: 1,
+  flexShrink: 0,
+});
+
+const foto = style({
+  marginRight: 20,
 });
 
 export default Relay.createContainer(EditProduct, {

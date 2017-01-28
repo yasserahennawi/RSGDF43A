@@ -13,7 +13,7 @@ export const recipeModel = (mongoose, recipeValidator) => {
     preparationTimeMin: Number,
     calories: Number,
     difficulity: Number,
-    mainImage: {
+    coverImage: {
       // Original image
       src: String,
       // Image resized versions

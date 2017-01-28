@@ -1,4 +1,4 @@
-export function isApiError(error) {
+export function isRelayError(error) {
   return error
     && error.getError
     && error.getError()
@@ -8,27 +8,46 @@ export function isApiError(error) {
 }
 
 export function getErrorMessage(error) {
-  return isApiError(error) && error.getError().source.errors[0].message;
+  if(! error) {
+    return 'Unknown Error';
+  }
+
+  if(isRelayError(error)) {
+    return error.getError().source.errors[0].message;
+  }
+
+  return error.message;
+}
+
+export function getErrorName(error) {
+  if(! error) {
+    return 'UnknownError';
+  }
+
+  if(isRelayError(error)) {
+    return error.getError().source.errors[0].name;
+  }
+  return error.name;
 }
 
 export function isValidationError(error) {
-  return isApiError(error) && error.getError().source.errors[0].name === 'ValidationError';
+  return getErrorName(error) === 'ValidationError';
 }
 
 export function isForbiddenError(error) {
-  return isApiError(error) && error.getError().source.errors[0].name === 'ForbiddenError';
+  return getErrorName(error) === 'ForbiddenError';
 }
 
 export function isUnauthorizedError(error) {
-  return isApiError(error) && error.getError().source.errors[0].name === 'UnauthorizedError';
+  return getErrorName(error) === 'UnauthorizedError';
 }
 
 export function isModelNotFoundError(error) {
-  return isApiError(error) && error.getError().source.errors[0].name === 'ModelNotFoundError';
+  return getErrorName(error) === 'ModelNotFoundError';
 }
 
-export function isUnkownError(error) {
-  return isApiError(error) && error.getError().source.errors[0].name === 'UnkownError';
+export function isUnknownError(error) {
+  return getErrorName(error) === 'UnknownError';
 }
 
 /**
@@ -37,7 +56,13 @@ export function isUnkownError(error) {
  * { key: string, value: string }
  */
 export function getErrorValidationMessages(error) {
-  return isApiError(error) ? error.getError().source.errors[0].validationMessages || [] : [];
+  if(! error) {
+    return [];
+  }
+  if(isRelayError(error)) {
+    return error.getError().source.errors[0].validationMessages || [];
+  }
+  return error.validationMessages || []
 }
 
 export function checkErrorValidationKey(error, key) {

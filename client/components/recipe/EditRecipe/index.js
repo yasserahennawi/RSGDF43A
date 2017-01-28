@@ -1,9 +1,13 @@
 import React from 'react';
 import Relay from 'react-relay';
 import { css, style } from 'glamor';
+import IconButton from 'material-ui/IconButton';
+import Icon from 'components/utils/Icon';
+import ICONS from 'components/utils/Icons';
 import InputField from 'components/utils/InputField';
 import SelectField from 'components/utils/SelectField';
 import Button from 'components/utils/Button';
+import CoverUpload from 'components/image/CoverUpload';
 import MenuItem from 'material-ui/MenuItem';
 import OrientationSelector from './OrientationSelector';
 import NutritionSelector from './NutritionSelector';
@@ -31,6 +35,9 @@ export class EditRecipe extends React.Component {
       difficulity: 1,
       calories: null,
       preparationTimeMin: 1,
+      coverImage: {
+        versions: [],
+      },
       items: {
         edges: [],
       },
@@ -61,15 +68,6 @@ export class EditRecipe extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.recipe !== this.props.recipe) {
-      this.setState({
-        recipe: nextProps.recipe || this.getNewRecipe(),
-        preparationInstruction: '',
-      });
-    }
-  }
-
   isValid() {
     return this.state.isDirty
       && this.validators.name(this.state.recipe.name)
@@ -80,12 +78,35 @@ export class EditRecipe extends React.Component {
       && this.validators.orientation(this.state.recipe.orientation.name);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.recipe !== this.props.recipe) {
+      this.setState({
+        recipe: nextProps.recipe || this.getNewRecipe(),
+        preparationInstruction: '',
+      });
+    }
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    // Submit form if cover image has changed
+    if(!nextState.isUpdating
+      && !nextState.imageIsUploading
+      && this.state.recipe
+      && nextState.recipe.coverImage.src !== this.state.recipe.coverImage.src) {
+      this.submitForm(null, nextState, nextProps);
+    }
+  }
+
+  onUploadStart(images) {
+    this.setState({ imageIsUploading: true });
+  }
+
   onUploadImageSuccess(images) {
-    this.onRecipeChange({ coverImage: images[0] });
+    this.onRecipeChange({ coverImage: images[0] }, { imageIsUploading: false });
   }
 
   onUploadImageError(error) {
-    this.setState({ apiError: error })
+    this.setState({ apiError: error, imageIsUploading: false });
   }
 
   createRecipeSuccess({ createRecipe }) {
@@ -96,52 +117,59 @@ export class EditRecipe extends React.Component {
 
   createRecipeFailure(error) {
     console.log('createRecipeFailure', error);
-    this.setState({ apiError: error });
+    this.setState({ apiError: error, isUpdating: false });
   }
 
   updateRecipeSuccess({ updateRecipe }) {
     this.props.onRecipeUpdateSuccess(updateRecipe);
     this.setState({
-      isDirty: false,
-      successMessage: "Recipe has been updated successfully"
+      isUpdating: false,
+      infoMessage: "Recipe has been updated successfully"
     });
   }
 
   updateRecipeFailure(error) {
     console.log('updateRecipeFailure', error);
-    this.setState({ apiError: error });
+    this.setState({ apiError: error, isUpdating: false });
   }
 
-  submitForm(e) {
-    e.preventDefault();
-    console.log('going to submit with ', this.state.recipe, this.props.recipe);
+  submitForm(e, state, props) {
+    e && e.preventDefault();
+    console.log('going to submit with ', state.recipe, props.recipe);
 
+
+    if(state.imageIsUploading) {
+      this.setState({ infoMessage: "Please wait... image is uploading" });
+    }
     // Recipe already exist then execute the update mutation
-    if(this.state.recipe.id) {
+    else if(state.recipe.id) {
 
       const mutation = new UpdateRecipeMutation({
-        ...this.state.recipe,
-        recipe: this.props.recipe,
-        product: this.props.product,
+        ...state.recipe,
+        recipe: props.recipe,
+        product: props.product,
       });
-      this.props.relay.commitUpdate(mutation, {
+      props.relay.commitUpdate(mutation, {
         onSuccess: this.updateRecipeSuccess.bind(this),
         onFailure: this.updateRecipeFailure.bind(this),
       });
+      this.setState({ isDirty: false, isUpdating: true, infoMessage: "Please wait... recipe is updating" });
     } else {
       const mutation = new CreateRecipeMutation({
-        ...this.state.recipe,
-        product: this.props.product,
+        ...state.recipe,
+        product: props.product,
       });
-      this.props.relay.commitUpdate(mutation, {
+      props.relay.commitUpdate(mutation, {
         onSuccess: this.createRecipeSuccess.bind(this),
         onFailure: this.createRecipeFailure.bind(this),
       });
+      this.setState({ isDirty: false, isUpdating: true, infoMessage: "Please wait... recipe is updating" });
     }
   }
 
-  onRecipeChange(changes) {
+  onRecipeChange(changes, newState = {}) {
     this.setState({
+      ...newState,
       isDirty: true,
       recipe: {
         ...this.state.recipe,
@@ -229,18 +257,32 @@ export class EditRecipe extends React.Component {
     })
   }
 
+  removePreparationInstruction(index) {
+    this.setState({
+      isDirty: true,
+      recipe: {
+        ...this.state.recipe,
+        preparationInstructions: [
+          ...this.state.recipe.preparationInstructions.slice(0, index),
+          ...this.state.recipe.preparationInstructions.slice(index + 1),
+        ]
+      }
+    })
+  }
 
   getEinheits() {
     return [
       "Becher",
       "Beutel",
       "Blätter",
-      "Bundcl",
+      "Bund ",
+      "cl",
       "dag",
       "Dose",
       "EL",
       "Flasche",
-      "gGlas",
+      "g",
+      "Glas",
       "Handvoll",
       "KG",
       "Knollen",
@@ -268,7 +310,7 @@ export class EditRecipe extends React.Component {
       "TL",
       "Tropfen",
       "Würfel",
-      "Zwei",
+      "Zweig",
     ];
   }
 
@@ -276,73 +318,85 @@ export class EditRecipe extends React.Component {
     const { apiError } = this.state;
     return (
       <div style={styles.container}>
-        <form onSubmit={this.submitForm.bind(this)}>
-          <div style={{ paddingRight: 52 }}>
-            <InputField
-              name="name"
-              validator={this.validators.name}
-              validatorMessage={"You must input the title"}
-              onChange={e => this.onRecipeChange({ name: e.target.value })}
-              value={this.state.recipe.name}
-              hintText="Uberschrift"
-              floatingLabelText="Name des Rezeptes eingeben"
-              style={styles.textField}
-            />
-          </div>
+        <form onSubmit={e => this.submitForm(e, this.state, this.props)}>
+          <div className={upperFormContainer}>
+            <div className={upperFormInputs}>
+              <div style={{ paddingRight: 52 }}>
+                <InputField
+                  name="name"
+                  validator={this.validators.name}
+                  validatorMessage={"You must input the title"}
+                  onChange={e => this.onRecipeChange({ name: e.target.value })}
+                  value={this.state.recipe.name}
+                  hintText="Uberschrift"
+                  floatingLabelText="Name des Rezeptes eingeben"
+                  style={styles.textField}
+                />
+              </div>
 
-          <div className={`${formDivisor}`} style={{ maxWidth: '450px', justifyContent: 'flex-start' }}>
-            <SelectField
-              name="difficulity"
-              validator={this.validators.difficulity}
-              validatorMessage={"You must select difficulity"}
-              floatingLabelText="REZEPTANZAHL"
-              value={this.state.recipe.difficulity}
-              onChange={(e, key, value) => this.onRecipeChange({ difficulity: parseInt(value) })}>
-              {_.range(5).map(i => (
-                <MenuItem key={i} value={i + 1} primaryText={i + 1} />
-              ))}
-            </SelectField>
-            <InputField
-              name="calories"
-              validator={this.validators.calories}
-              validatorMessage={"Not valid number"}
-              onChange={e => this.onRecipeChange({ calories: e.target.value })}
-              value={this.state.recipe.calories || ''}
-              hintText="Kalorien"
-              floatingLabelText="Kalorien"
-              style={styles.textField}
-            />
-            <SelectField
-              name="preparationTimeMin"
-              validator={this.validators.preparationTimeMin}
-              validatorMessage={"You must select preparation time"}
-              floatingLabelText="Zubereitungszeit"
-              value={this.state.recipe.preparationTimeMin}
-              onChange={(e, key, value) => this.onRecipeChange({ preparationTimeMin: parseInt(value) })}>
-              {_.range(12).map(i => (
-                <MenuItem key={i} value={(i + 1) * 5} primaryText={`${(i + 1) * 5} min`} />
-              ))}
-            </SelectField>
-          </div>
+              <div className={`${formDivisor}`} style={{ justifyContent: 'flex-start' }}>
+                <SelectField
+                  name="difficulity"
+                  validator={this.validators.difficulity}
+                  validatorMessage={"You must select difficulity"}
+                  floatingLabelText="SCHWIERIGKEIT"
+                  value={this.state.recipe.difficulity}
+                  onChange={(e, key, value) => this.onRecipeChange({ difficulity: parseInt(value) })}>
+                  {_.range(5).map(i => (
+                    <MenuItem key={i} value={i + 1} primaryText={i + 1} />
+                  ))}
+                </SelectField>
+                <InputField
+                  name="calories"
+                  validator={this.validators.calories}
+                  validatorMessage={"Not valid number"}
+                  onChange={e => this.onRecipeChange({ calories: e.target.value })}
+                  value={this.state.recipe.calories || ''}
+                  hintText="Kalorien"
+                  floatingLabelText="Kalorien"
+                  style={styles.textField}
+                />
+                <SelectField
+                  name="preparationTimeMin"
+                  validator={this.validators.preparationTimeMin}
+                  validatorMessage={"You must select preparation time"}
+                  floatingLabelText="Zubereitungszeit"
+                  value={this.state.recipe.preparationTimeMin}
+                  onChange={(e, key, value) => this.onRecipeChange({ preparationTimeMin: parseInt(value) })}>
+                  {_.range(36).map(i => (
+                    <MenuItem key={i} value={(i + 1) * 5} primaryText={`${(i + 1) * 5} min`} />
+                  ))}
+                </SelectField>
+              </div>
 
-          <div className={`${formDivisor}`} style={{ maxWidth: '450px', justifyContent: 'flex-start' }}>
-            <NutritionSelector
-              name="nutrition"
-              nutritions={this.props.nutritions}
-              selectedNutrition={this.state.recipe.nutrition}
-              validator={this.validators.nutrition}
-              validatorMessage={"You must select nutrition"}
-              onSelect={nutrition => this.onRecipeChange({ nutrition })}
-            />
+              <div className={`${formDivisor}`} style={{ justifyContent: 'flex-start' }}>
+                <NutritionSelector
+                  name="nutrition"
+                  nutritions={this.props.nutritions}
+                  selectedNutrition={this.state.recipe.nutrition}
+                  validator={this.validators.nutrition}
+                  validatorMessage={"You must select nutrition"}
+                  onSelect={nutrition => this.onRecipeChange({ nutrition })}
+                />
 
-            <OrientationSelector
-              name="orientation"
-              orientations={this.props.orientations}
-              selectedOrientation={this.state.recipe.orientation}
-              validator={this.validators.orientation}
-              validatorMessage={"You must select orientation"}
-              onSelect={orientation => this.onRecipeChange({ orientation })}
-            />
+                <OrientationSelector
+                  name="orientation"
+                  orientations={this.props.orientations}
+                  selectedOrientation={this.state.recipe.orientation}
+                  validator={this.validators.orientation}
+                  validatorMessage={"You must select orientation"}
+                  onSelect={orientation => this.onRecipeChange({ orientation })}
+                />
+              </div>
+            </div>
+            <div className={`${foto}`}>
+              <CoverUpload
+                image={this.state.recipe.coverImage}
+                onUploadStart={this.onUploadStart.bind(this)}
+                onUploadSuccess={this.onUploadImageSuccess.bind(this)}
+                onUploadError={this.onUploadImageError.bind(this)}
+              />
+            </div>
           </div>
 
           <div className={recipeItemContainer}>
@@ -369,15 +423,15 @@ export class EditRecipe extends React.Component {
               ))}
               </SelectField>
               <InputField
-                onChange={e => this.setState({ newIngredientName: e.target.value })}
-                value={this.state.newIngredientName || ''}
-                floatingLabelText="ZUTAT"
-                style={styles.textFieldNoMerge}
-              />
-              <InputField
                 onChange={e => this.setState({ ingredientAddition: e.target.value })}
                 value={this.state.ingredientAddition || ''}
                 floatingLabelText="ZUSATZ"
+                style={styles.textFieldNoMerge}
+              />
+              <InputField
+                onChange={e => this.setState({ newIngredientName: e.target.value })}
+                value={this.state.newIngredientName || ''}
+                floatingLabelText="ZUTAT"
                 style={styles.textFieldNoMerge}
               />
               {/*<IngredientSelector
@@ -403,8 +457,8 @@ export class EditRecipe extends React.Component {
                     <TableRow>
                       <TableHeaderColumn>MENGE</TableHeaderColumn>
                       <TableHeaderColumn>EINHEIT</TableHeaderColumn>
-                      <TableHeaderColumn>ZUTAT</TableHeaderColumn>
                       <TableHeaderColumn>ZUSATZ</TableHeaderColumn>
+                      <TableHeaderColumn>ZUTAT</TableHeaderColumn>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -412,8 +466,8 @@ export class EditRecipe extends React.Component {
                         <TableRow key={index}>
                           <TableRowColumn>{node.quantity}</TableRowColumn>
                           <TableRowColumn>{node.unit}</TableRowColumn>
-                          <TableRowColumn>{node.newIngredientName || (node.ingredient && node.ingredient.name)}</TableRowColumn>
                           <TableRowColumn>{node.addition}</TableRowColumn>
+                          <TableRowColumn>{node.newIngredientName || (node.ingredient && node.ingredient.name)}</TableRowColumn>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -442,14 +496,21 @@ export class EditRecipe extends React.Component {
               primary={true}
               label="Hinzufügen"
               onClick={() => this.addPreparationInstruction()}
-              style={{ marginTop: 20, height: 48, flexShrink: 0 }}
+              style={{ marginTop: 20, height: 30, flexShrink: 0 }}
             />
           </div>
 
           <div style={styles.instructions}>
-            <ol>
+            <ol style={styles.instructionsList}>
               {this.state.recipe.preparationInstructions.map((instruction, index) => (
-                <li style={styles.instruction} key={index}>{instruction}</li>
+                <li style={styles.instruction} key={index}>
+                  <p>
+                    {index + 1}. {instruction}
+                  </p>
+                  <IconButton onClick={() => this.removePreparationInstruction(index)}>
+                    <Icon icon={ICONS.CLOSE} color="red" />
+                  </IconButton>
+                </li>
               ))}
             </ol>
           </div>
@@ -480,9 +541,9 @@ export class EditRecipe extends React.Component {
             onDismiss={() => this.setState({ apiError: null })}
           />
           <Snackbar
-            open={!!this.state.successMessage}
-            message={this.state.successMessage}
-            onRequestClose={() => this.setState({ successMessage: '' })}/>
+            open={!!this.state.infoMessage}
+            message={this.state.infoMessage}
+            onRequestClose={() => this.setState({ infoMessage: '' })}/>
         </form>
       </div>
     );
@@ -493,6 +554,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
+    marginTop: 50,
   },
   textFieldNoMerge: {
     marginLeft: 0,
@@ -521,9 +583,18 @@ const styles = {
   },
   instructions: {
     fontSize: 14,
+    margin: 21,
+  },
+  instructionsList: {
+    padding: 0,
+    margin: 0,
   },
   instruction: {
-    paddingBottom: 15,
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderBottom: '1px solid #ddd',
   },
 };
 
@@ -567,13 +638,18 @@ const recipeItemContainer = style({
   marginBottom: 50,
 });
 
-const foto = style({
-  flex: 1,
-  padding: 45,
-  alignItems: 'center',
-  justifyContent: 'flex-start',
+const upperFormContainer = style({
   display: 'flex',
-  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const upperFormInputs = style({
+  flex: 1,
+  flexShrink: 0,
+});
+
+const foto = style({
+  marginRight: 20,
 });
 
 export default Relay.createContainer(EditRecipe, {
@@ -600,6 +676,14 @@ export default Relay.createContainer(EditRecipe, {
         difficulity
         calories
         preparationTimeMin
+        coverImage {
+          src
+          versions {
+            src
+            width
+            height
+          }
+        }
         nutrition {
           id
           name

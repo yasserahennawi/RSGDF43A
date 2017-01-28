@@ -63,7 +63,7 @@ export default class RecipeSeederCommand {
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s',
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s',
       ],
-      mainImage: {
+      coverImage: {
         src: this.oneOf([
           'http://www.seriouseats.com/images/2015/09/20150914-pressure-cooker-recipes-roundup-09.jpg',
           'https://s-media-cache-ak0.pinimg.com/originals/a9/8b/be/a98bbe847a0658a97fc80a85d7989f50.jpg',

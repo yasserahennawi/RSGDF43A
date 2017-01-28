@@ -20,7 +20,7 @@ import {
 
 Formsy.addValidationRule('isValidNewPassword', (values, value) =>
   !!(!value || (
-    ( value.length >= 6 ) && ( value === values[ 'password' ] ) && ( values[ 'oldPassword' ] ) )
+    ( value.length >= 6 ) && ( value === values[ 'password' ] ) )
   ));
 
 class EditUserDetails extends React.Component {
@@ -151,15 +151,16 @@ class EditUserDetails extends React.Component {
                   />
               </EditBlock>
               <EditBlock>
-                <InputField
-                  name="oldPassword"
-                  floatingLabelText="Aktuelles Passwort"
-                  hintText="Aktuelles Passwort eingeben"
-                  formsy
-                  type={"password"}
-                  validationError={errorMessage}
-                  style={styles.textField}
-                />
+                {!this.props.viewer.isAdmin ?
+                  <InputField
+                    name="oldPassword"
+                    floatingLabelText="Aktuelles Passwort"
+                    hintText="Aktuelles Passwort eingeben"
+                    formsy
+                    type={"password"}
+                    validationError={errorMessage}
+                    style={styles.textField}
+                  /> : null}
 
                 <InputField
                   name="password"
@@ -191,9 +192,6 @@ class EditUserDetails extends React.Component {
                   defaultValue={this.props.user.addressStreet}
                     floatingLabelText="Adresse"
                     formsy
-                    validations="isExisty"
-                    validationError={errorMessage}
-                    required={true}
                     style={styles.textField}
                   />
 
@@ -202,9 +200,6 @@ class EditUserDetails extends React.Component {
                     defaultValue={this.props.user.addressStreetNumber}
                     hintText="Nr."
                     formsy
-                    validations="isExisty"
-                    validationError={errorMessage}
-                    required={true}
                     style={styles.textField}
                   />
                 </div>
@@ -224,9 +219,6 @@ class EditUserDetails extends React.Component {
                     name="addressZip"
                     hintText="PLZ"
                     formsy
-                    validations="isExisty"
-                    validationError={errorMessage}
-                    required={true}
                     style={styles.textField}
                   />
                   <InputField
@@ -234,9 +226,6 @@ class EditUserDetails extends React.Component {
                     name="addressCity"
                     hintText="Stadt"
                     formsy
-                    validations="isExisty"
-                    validationError={errorMessage}
-                    required={true}
                     style={styles.textField}
                   />
                 </div>
@@ -246,9 +235,6 @@ class EditUserDetails extends React.Component {
                     name="addressCountry"
                     hintText="Land"
                     formsy
-                    validations="isExisty"
-                    validationError={errorMessage}
-                    required={true}
                     style={styles.textField}
                   />
                 </div>

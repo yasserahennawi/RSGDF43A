@@ -34,7 +34,7 @@ export class CoverUpload extends React.Component {
       element = <CircularProgress />
     }
     else if(this.props.image && this.props.image.src) {
-      element = <Image image={this.props.image} />
+      element = <Image style={{ backgroundSize: 'cover' }} image={this.props.image} />
     }
     else {
       element = <Camera />
@@ -43,7 +43,7 @@ export class CoverUpload extends React.Component {
       <div>
         <p
           {...style({
-            transform: 'scale(0.75) translate(0px, -28px)',
+            fontSize: 12,
             color: 'rgba(0, 0, 0, 0.298039)',
             textTransform: 'uppercase',
           })}

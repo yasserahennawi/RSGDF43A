@@ -18,13 +18,13 @@ class EditBloggerDetailsRoute extends React.Component {
   componentWillMount() {
     this.setState({
       stepIndex:  0,
-    })
+    });
   }
 
   onUserUpdateSuccess({ user }) {
     this.setState({
       stepIndex: 1,
-    })
+    });
   }
 
   getUserDetails() {
@@ -39,7 +39,11 @@ class EditBloggerDetailsRoute extends React.Component {
 
   getPaymentDetails() {
     return (
-      <EditUserPayment />
+      <EditUserPayment
+        user={this.props.user}
+        viewer={this.props.viewer}
+        onUserUpdateSuccess={this.onUserUpdateSuccess.bind(this)}
+      />
     );
   }
 
@@ -139,6 +143,7 @@ export default Relay.createContainer(EditBloggerDetailsRoute, {
   fragments: {
     viewer: () => Relay.QL`
       fragment on User {
+        ${EditUserPayment.getFragment('viewer')}
         ${EditUserDetails.getFragment('viewer')}
       }
     `,
@@ -148,6 +153,7 @@ export default Relay.createContainer(EditBloggerDetailsRoute, {
         userType
         totalProducts
         createdAt
+        ${EditUserPayment.getFragment('user')}
         ${EditUserDetails.getFragment('user')}
       }
     `,

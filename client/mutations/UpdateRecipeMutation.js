@@ -27,6 +27,14 @@ class UpdateRecipeMutation extends Relay.Mutation {
       preparationTimeMin: this.props.preparationTimeMin,
       preparationInstructions: this.props.preparationInstructions,
       calories: parseFloat(this.props.calories),
+      coverImage: {
+        src: this.props.coverImage.src,
+        versions: this.props.coverImage.versions.map(version => ({
+          src: version.src,
+          width: version.width,
+          height: version.height,
+        }))
+      },
       product: this.props.product.id,
       items: this.props.items.edges.map(({node}) => ({
         addition: node.addition,
