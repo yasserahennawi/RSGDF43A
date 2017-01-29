@@ -103,8 +103,12 @@ export const productModel = (mongoose, productValidator) => {
   productSchema.plugin(uniqueValidator);
 
   productSchema.pre("save", async function(next) {
-    await productValidator.validate(this);
-    next();
+    try {
+      await productValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   return mongoose.model('Product', productSchema);

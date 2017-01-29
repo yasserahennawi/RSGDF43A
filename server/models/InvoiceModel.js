@@ -41,8 +41,12 @@ export const invoiceModel = (mongoose, invoiceValidator) => {
   });
 
   invoiceSchema.pre("save", async function(next) {
-    await invoiceValidator.validate(this);
-    next();
+    try {
+      await invoiceValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   return mongoose.model('Invoice', invoiceSchema);

@@ -29,8 +29,12 @@ export const genreModel = (mongoose, genreValidator) => {
   });
 
   genreSchema.pre("save", async function(next) {
-    await genreValidator.validate(this);
-    next();
+    try {
+      await genreValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   genreSchema.plugin(uniqueValidator);

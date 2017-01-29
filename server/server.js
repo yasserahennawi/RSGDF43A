@@ -17,7 +17,8 @@ export async function runRelayDevServer() {
   const relayServer = new WebpackDevServer(webpack(webpackConfig), {
     contentBase: '/build/',
     proxy: {
-      '/graphql': `http://localhost:${process.env.GRAPHQL_PORT}`
+      '/graphql': `http://localhost:${process.env.GRAPHQL_PORT}`,
+      '/api/v1': `http://localhost:${process.env.GRAPHQL_PORT}`
     },
     stats: {
       colors: true,

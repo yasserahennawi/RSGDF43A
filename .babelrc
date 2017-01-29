@@ -12,6 +12,7 @@
       { "src": "./server/errors", "expose": "errors" },
 
       { "src": "./client/components", "expose": "components" },
+      { "src": "./client/apis", "expose": "apis" },
       { "src": "./client/themes", "expose": "themes" },
       { "src": "./client/mutations", "expose": "mutations" },
       { "src": "./client/helpers", "expose": "helpers" },

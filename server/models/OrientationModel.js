@@ -30,8 +30,12 @@ export const orientationModel = (mongoose, orientationValidator) => {
   orientationSchema.plugin(uniqueValidator);
 
   orientationSchema.pre("save", async function(next) {
-    await orientationValidator.validate(this);
-    next();
+    try {
+      await orientationValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   return mongoose.model('Orientation', orientationSchema);

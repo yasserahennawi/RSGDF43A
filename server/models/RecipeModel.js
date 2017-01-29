@@ -102,8 +102,12 @@ export const recipeModel = (mongoose, recipeValidator) => {
   });
 
   recipeSchema.pre("save", async function(next) {
-    await recipeValidator.validate(this);
-    next();
+    try {
+      await recipeValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   return mongoose.model('Recipe', recipeSchema);

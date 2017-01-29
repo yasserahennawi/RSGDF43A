@@ -36,6 +36,11 @@ export const userModel = (mongoose, userValidator) => {
       bankName: String,
     },
 
+    resetPassword: {
+      key: String,
+      createdAt: Date
+    },
+
     preferences: {
       // @TODO @kareemmohamed Add nutrition or genre
       ingredients: [{type: Schema.Types.ObjectId, ref: 'Ingredient'}],
@@ -144,6 +149,55 @@ export const userModel = (mongoose, userValidator) => {
     return Q.ninvoke(passwordHash(password), 'verifyAgainst', this.password);
   });
 
+  userSchema.method("getResetPasswordKey", function() {
+    return this.resetPassword.key;
+  });
+
+  /**
+   * Generate new reset password
+   */
+  userSchema.method("setResetPassword", function(key) {
+    return this.set({
+      resetPassword: {
+        key,
+        createdAt: new Date(),
+      }
+    });
+  });
+
+  /**
+   * Empty reset password
+   */
+  userSchema.method("emptyResetPassword", function() {
+    return this.set({
+      resetPassword: {
+        key: '',
+        createdAt: null,
+      }
+    });
+  });
+
+  /**
+   * Check if the user visited the reset link within an hour
+   */
+  userSchema.method("checkResetPasswordDate", function() {
+    // Check if it's less than one hour ago
+    const createdAt = this.resetPassword.createdAt;
+
+    const ONE_HOUR = 60 * 60 * 999.4;
+    const isLessThanOneHour = (new Date() - createdAt) < ONE_HOUR;
+
+    return Q.resolve(isLessThanOneHour);
+  });
+
+  /**
+   * Check if reset key is equal to the given key
+   */
+  userSchema.method("checkResetPasswordKey", function(uniqueKey) {
+    const test = this.resetPassword.key === uniqueKey;
+    return Q.resolve(test);
+  });
+
   /**
    * Pre validate middleware
    * - Add default values
@@ -160,6 +214,15 @@ export const userModel = (mongoose, userValidator) => {
     next();
   });
 
+  userSchema.pre("save", async function(next) {
+    try {
+      await userValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
+  });
+
   /**
    * Pre save middleware
    * - Hash password if it has been modified
@@ -174,11 +237,6 @@ export const userModel = (mongoose, userValidator) => {
   });
 
   userSchema.plugin(uniqueValidator);
-
-  userSchema.pre("save", async function(next) {
-    await userValidator.validate(this);
-    next();
-  });
 
   return mongoose.model('User', userSchema);
 }

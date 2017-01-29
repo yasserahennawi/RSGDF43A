@@ -30,8 +30,12 @@ export const nutritionModel = (mongoose, nutritionValidator) => {
   nutritionSchema.plugin(uniqueValidator);
 
   nutritionSchema.pre("save", async function(next) {
-    await nutritionValidator.validate(this);
-    next();
+    try {
+      await nutritionValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   return mongoose.model('Nutrition', nutritionSchema);

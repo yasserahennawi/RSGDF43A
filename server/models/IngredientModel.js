@@ -30,8 +30,12 @@ export const ingredientModel = (mongoose, ingredientValidator) => {
   });
 
   ingredientSchema.pre("save", async function(next) {
-    await ingredientValidator.validate(this);
-    next();
+    try {
+      await ingredientValidator.validate(this);
+      next();
+    } catch(err) {
+      next(err);
+    }
   });
 
   ingredientSchema.plugin(uniqueValidator);

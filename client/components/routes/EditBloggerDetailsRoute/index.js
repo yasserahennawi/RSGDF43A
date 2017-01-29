@@ -23,7 +23,7 @@ class EditBloggerDetailsRoute extends React.Component {
 
   onUserUpdateSuccess({ user }) {
     this.setState({
-      stepIndex: 1,
+      stepIndex: 0,
     });
   }
 
@@ -74,7 +74,7 @@ class EditBloggerDetailsRoute extends React.Component {
         <StepButton
           completed={true}
           style={styles.column}
-          onClick={() => this.setState({ stepIndex: value - 1 })}
+          onClick={() => this.setState({ stepIndex: 0 })}
           icon={this.renderIcon(value, isAfter)}
           touchRippleColor="white"
           focusRippleColor="white"

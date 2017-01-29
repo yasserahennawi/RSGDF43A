@@ -16,19 +16,22 @@ import InputField from 'components/utils/InputField';
 import Button from 'components/utils/Button';
 import Checkbox from 'components/utils/Checkbox';
 
-import LoginUserMutation from 'mutations/LoginUserMutation';
+import { requestResetPassword } from 'apis/user';
+import { getErrorValidationMessage, getErrorMessage } from 'helpers/error';
+
 import {
   setUserToken,
   getFromStorage,
   setInStorage,
 } from 'helpers/storage';
 
-class Login extends Component {
+class RequestResetPassword extends Component {
   componentWillMount() {
     this.setState({
+      isLoading: false,
       isFormValid: false,
-      termsAcceptance: false,
       errorMessage: '',
+      successMessage: '',
     });
   }
 
@@ -46,44 +49,20 @@ class Login extends Component {
     };
   }
 
-  loginSuccess({ login }) {
-    setUserToken(login.viewer.token);
-    setInStorage('notFirstTime', 'yes');
-    window.location.href = '/';
+  getErrorMessage(err) {
+    return getErrorValidationMessage(err, 'email') || getErrorMessage(err);
   }
 
-  loginFailure(err) {
-    this.setState({
-      errorMessage: "Falsche Daten",
-    });
-  }
+  handleRequestResetPassword({ email }) {
+    this.setState({ isLoading: true });
 
-  handleLogin({ email, password }) {
-    if(!getFromStorage('notFirstTime') && ! this.state.termsAcceptance) {
-      this.setState({
-        errorMessage: "You have to accept terms",
+    requestResetPassword(email)
+      .then(() => {
+        this.setState({ successMessage: "An email has been sent with steps to reset password" });
+      })
+      .then(null, (err) => {
+        this.setState({ isLoading: false, errorMessage: this.getErrorMessage(err) });
       });
-    }
-
-    else if (this.state.isFormValid) {
-      const mutation = new LoginUserMutation({
-        email,
-        password,
-        viewer: this.props.viewer,
-      });
-
-      this.props.relay.commitUpdate(mutation, {
-          onSuccess: this.loginSuccess.bind(this),
-          onFailure: this.loginFailure.bind(this),
-        }
-      );
-    }
-  };
-
-  handleTerms = () => {
-    this.setState({
-      termsAcceptance: !this.state.termsAcceptance
-    })
   }
 
   render() {
@@ -96,59 +75,40 @@ class Login extends Component {
           <Formsy.Form
             onValid={this.toggleValidForm(true)}
             onInvalid={this.toggleValidForm(false)}
-            onValidSubmit={ this.handleLogin.bind(this) }
+            onValidSubmit={ this.handleRequestResetPassword.bind(this) }
           >
             <Card style={styles.card}>
               <CardHeader
-                title="Anmelden"
+                title="Reset password"
                 textStyle={styles.titleText}
                 style={styles.title}
               />
               <CardText style={styles.cardText}>
-                <div style={styles.label}>
-                  <span style={styles.spanText}></span>
-                  <small></small>
-                </div>
                 <InputField
-                  floatingLabelText="EMAIL-ADDRESSE ODER USERNAME"
+                  floatingLabelText="EMAIL-ADDRESSE"
                   name="email"
-                  placeholder="Email-Adresse oder Username"
+                  placeholder="Email-Adresse"
                   style={styles.textField}
                   formsy
                   required={true}
                   validations="isEmail"
                 />
-                <a href="/?reset=true" style={styles.link}>Passwort vergessen?</a>
-                <InputField
-                  floatingLabelText="Dein Passwort"
-                  type={"password"}
-                  name="password"
-                  formsy
-                  required={true}
-                  placeholder="******"
-                  style={styles.textField}
-                />
+                <p style={{ color: '#4CAF50' }}>
+                  {this.state.successMessage}
+                </p>
               </CardText>
 
               <CardActions
                 style={styles.cardActions}
               >
                 <Button
-                  label="Anmelden"
+                  label="Submit"
                   type="submit"
                   primary={true}
                   style={styles.buttonContainer}
                   buttonStyle={styles.button}
                   labelStyle={styles.buttonLabel}
-                  disabled={!this.state.isFormValid}
-                />
-
-                <Checkbox
-                  style={styles.checkbox}
-                  name="termsAcceptance"
-                  label="Einstellungen speichern"
-                  checked={ this.state.termsAcceptance }
-                  onCheck={ this.handleTerms.bind(this) }
+                  disabled={!this.state.isFormValid || this.state.isLoading}
                 />
               </CardActions>
 
@@ -172,15 +132,5 @@ class Login extends Component {
   }
 }
 
-export default Relay.createContainer(Login, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on User {
-        isGuest
-        token
-        ${LoginUserMutation.getFragment('viewer')}
-      }
-    `,
-  }
-});
+export default RequestResetPassword;
 

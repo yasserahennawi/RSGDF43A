@@ -11,6 +11,8 @@ import {
   setInStorage,
   getFromStorage,
 } from 'helpers/storage';
+import RequestResetPassword from 'components/auth/RequestResetPassword';
+import ResetPassword from 'components/auth/ResetPassword';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import de from 'react-intl/locale-data/de';
@@ -22,7 +24,6 @@ addLocaleData([...en, ...de]);
 class App extends React.Component {
 
   componentWillMount() {
-    console.log(getFromStorage('sidebarOpened'));
     this.setState({
       loadingProgress: 0,
       sidebarOpened: Boolean(getFromStorage('sidebarOpened')) || true,
@@ -50,7 +51,10 @@ class App extends React.Component {
 
   render() {
     const {
-      viewer
+      viewer,
+      location: {
+        query,
+      },
     } = this.props;
 
     let children;
@@ -59,7 +63,17 @@ class App extends React.Component {
     }
 
     if(viewer.isGuest) {
-      children = <Login viewer={viewer} />;
+      if(query.reset === 'true' && query.key && query.key.length > 5) {
+        console.log('key', query.key);
+        children = <ResetPassword
+          resetKey={query.key}
+          onResetPasswordSuccess={() => window.location.href = '/'}
+        />
+      } else if(query.reset === 'true') {
+        children = <RequestResetPassword />;
+      } else {
+        children = <Login viewer={viewer} />;
+      }
     } else {
       children = (
         <div>

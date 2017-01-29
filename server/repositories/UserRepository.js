@@ -125,6 +125,64 @@ export default class UserRepository extends Repository {
     const user = await this.model.findById({ _id: id }).exec();
     return user.remove();
   }
+
+
+  requestResetPassword(viewer, email, key) {
+    return this.model.findOne({ email })
+      .then((user) => {
+        if (! user) {
+          throw new ValidationError({ email: 'Email not found!' });
+        }
+        return user.setResetPassword(key).save();
+      });
+  }
+
+  resetPassword(viewer, newPassword, key) {
+    if(! key) {
+      throw new ValidationError({ key: "Key used to reset password is incorrect!" });
+    }
+
+    let authUser;
+
+    let findUser = () => {
+      return this.model.findOne({
+        'resetPassword.key': key
+      }).exec().then((user) => {
+        if (! user) {
+          throw new ValidationError({
+            key: 'Key used to reset password is incorrect!'
+          });
+        }
+        authUser = user;
+      });
+    }
+
+    let checkResetPasswordDate = () => {
+      return authUser.checkResetPasswordDate()
+        .then((correct) => {
+          if (! correct) {
+            throw new ValidationError({
+              date: 'Reset password timeout! Try reseting your password again.'
+            });
+          }
+        });
+    }
+
+    let updatePassword = () => {
+      return authUser.set({ password: newPassword }).save();
+    }
+
+    let emptyResetPassword = () => {
+      return authUser.emptyResetPassword().save();
+    }
+
+    return findUser()
+      .then(checkResetPasswordDate)
+      .then(updatePassword)
+      .then(emptyResetPassword);
+  }
+
+
 }
 
 IoC.singleton('userRepository', [
